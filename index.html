@@ -266,17 +266,19 @@ select.inp{cursor:pointer}
 /* MOBILE */
 @media(max-width:700px){
   .side-panel{display:none!important}
+  /* 3D panel always hidden on mobile — wall settings come up as a bottom sheet on tap */
+  .panel3d{display:none!important}
   .statusbar{display:none}
   .coords{bottom:auto;top:8px;left:50%;transform:translateX(-50%)}
   .zoom-wrap{top:auto;bottom:8px;right:8px}
   .finish-bar{display:none!important}
   .bom-settings{width:100%;display:none;min-height:0}
-  .bom-settings.mob-show{display:flex;flex-direction:column;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .bom-settings.mob-show{display:flex;flex-direction:column;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
   .bom-preview-wrap.mob-hide{display:none}
-  .bom-mob-tabs{display:flex}
+  .bom-mob-tabs{display:flex;flex-shrink:0}
   .bom-area{flex-direction:column}
-  #quote-preview-outer{flex:1;min-height:0}
-  .bom-preview-wrap{padding:8px;overflow:auto;-webkit-overflow-scrolling:touch;background:#d8d4ce;align-items:flex-start;height:100%}
+  #quote-preview-outer{flex:1;min-height:0;display:flex;flex-direction:column}
+  .bom-preview-wrap{padding:8px;overflow:auto;-webkit-overflow-scrolling:touch;background:#d8d4ce;align-items:flex-start;flex:1;min-height:0}
   .constraint-bar{display:none!important}
 }
 @media(min-width:701px){
@@ -914,6 +916,7 @@ function renderLogoArea(){
 // STATE
 // ═══════════════════════════════════════════════
 const objs=[];let nid=1;
+let isClientView=false;
 const undoStack=[],redoStack=[];
 let zoom=0.15,pan={x:0,y:0};
 let tool='select',selId=null;
@@ -1471,6 +1474,7 @@ function cancelPendingTap(){
   if(pendingTap){clearTimeout(pendingTap.timer);pendingTap=null;}
 }
 function processTouchDown(sp){
+  if(isClientView)return;
   if(isPinching)return;
   const raw=s2w(sp.x,sp.y);
   // DRAW MODE — closed: vertex/edge selection
@@ -1658,6 +1662,7 @@ function handleMove(sp,isTouch){
   render();
 }
 function handleDown(sp,isTouch){
+  if(isClientView)return;
   const raw=s2w(sp.x,sp.y);
   if(settingOrigin!=null){const fl=objs.find(o=>o.id===settingOrigin);if(fl)fl.tileOrigin=snapOriginPt(raw,settingOrigin);settingOrigin=null;cv.style.cursor='default';updatePanel();render();return;}
   if(offsetMode){handleOffsetClick(raw);return;}
@@ -2260,18 +2265,23 @@ async function serializeProject(){
 async function getShortURL(){
   const url=await getShareURL();
   const token=(appSettings.bitlyToken||'').trim();
-  if(!token)return url; // no token — return raw URL
+  if(!token)return url; // no token — return raw URL as-is
   try{
     const resp=await fetch('https://api-ssl.bitly.com/v4/shorten',{
       method:'POST',
       headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body:JSON.stringify({long_url:url})
     });
-    if(!resp.ok)throw new Error('bit.ly '+resp.status);
+    if(!resp.ok){
+      const err=await resp.text().catch(()=>'');
+      throw new Error('bit.ly HTTP '+resp.status+': '+err.substring(0,120));
+    }
     const j=await resp.json();
-    return j.link||url;
+    if(!j.link)throw new Error('bit.ly returned no link: '+JSON.stringify(j).substring(0,120));
+    return j.link;
   }catch(e){
-    console.warn('bit.ly shorten failed:',e);
+    console.error('bit.ly shorten failed:',e);
+    alert('bit.ly shortening failed:\n'+e.message+'\n\nFalling back to full URL. Check your token in Settings.');
     return url; // fallback to full URL on error
   }
 }
@@ -2327,8 +2337,8 @@ async function checkShareMode(){
 }
 
 function enterClientView(data){
-  // Load project data into app state
-  // Support both v1 (old) and v2 (compact) format
+  isClientView=true;
+  // Load project data into app state — v1 (old) and v2 (compact) format
   const isV2=data.v===2;
   const src_objs=isV2?data.o:data.objs;
   const src_ws=isV2?data.ws:data.wallSettings;
@@ -2342,7 +2352,7 @@ function enterClientView(data){
   globalWallOriginY=src_gy||0;
   miscItems.length=0;(src_mi||[]).forEach(m=>miscItems.push(m));
   if(src_ch!=null)ceilH3d=src_ch;
-  const setVal=(id,v)=>{const el=document.getElementById(id);if(el&&v)el.value=v;};
+  const setVal=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v;};
   if(isV2){
     setVal('q-biz',qs.a);setVal('q-abn',qs.b);setVal('q-addr',qs.c);
     setVal('q-phone',qs.d);setVal('q-email',qs.e);
@@ -2358,31 +2368,41 @@ function enterClientView(data){
     setVal('lab-grout-rate',qs.groutRate);setVal('lab-grout-hrs',qs.groutHrs);
     setVal('lab-misc-rate',qs.miscRate);setVal('lab-drain-hrs',qs.drainHrs);setVal('lab-screen-hrs',qs.screenHrs);
   }
-  // Show client view banner and switch to 3D
-  const banner=document.createElement('div');
-  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--ac);color:#000;padding:6px 16px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:space-between;letter-spacing:.04em';
-  banner.innerHTML='<span>👁 CLIENT VIEW</span><div style="display:flex;gap:10px"><button onclick="switchTab(\'bom\')" style="background:rgba(0,0,0,.2);border:none;color:#000;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:700">Quote</button><button onclick="switchTab(\'3d\')" style="background:rgba(0,0,0,.2);border:none;color:#000;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:700">3D View</button></div>';
-  document.body.prepend(banner);
-  // Add top padding so content clears the banner
-  document.querySelector('header').style.paddingTop='38px';
-  // Disable all editing controls
-  document.querySelectorAll('.tbtn,.toolbar button').forEach(b=>b.style.pointerEvents='none');
-  // Hide the Plan tab and Settings button — client only needs 3D + Quote
-  const tabD=document.getElementById('tab-d');if(tabD)tabD.style.display='none';
-  document.querySelectorAll('.hdr-icon-btn').forEach(b=>b.style.display='none');
-  // Override switchTab to always hide editing panels when client switches view
+
+  // Replace header with a minimal client nav — no editing tools visible
+  const header=document.querySelector('header');
+  header.innerHTML=`
+    <div class="logo">Tile<em>Pro</em></div>
+    <div class="hdr-right">
+      <button class="tab-btn active" id="tab-cv-3d" onclick="switchTab('3d')">3D View</button>
+      <button class="tab-btn" id="tab-cv-bom" onclick="switchTab('bom')">Quote</button>
+      <span style="font-size:10px;color:rgba(0,0,0,.45);padding:0 4px;white-space:nowrap;font-weight:600">VIEW ONLY</span>
+    </div>`;
+
+  // Hide toolbar entirely
+  const tb=document.getElementById('toolbar');if(tb)tb.style.display='none';
+
+  // Helper: strip editing panels after any tab switch
+  const _hideEditPanels=()=>{
+    document.querySelectorAll('.panel3d,.side-panel').forEach(el=>el.style.display='none');
+    const bs=document.getElementById('bom-settings');
+    if(bs){bs.style.display='none';bs.classList.remove('mob-show');}
+    const bmt=document.getElementById('bmt-s');if(bmt)bmt.style.display='none';
+    const qpo=document.getElementById('quote-preview-outer');if(qpo)qpo.style.flex='1';
+    const pw=document.getElementById('bom-preview-wrap');if(pw){pw.style.flex='1';pw.style.minWidth='0';}
+  };
+
+  // Override switchTab
   const _origSwitchTab=switchTab;
   window.switchTab=function(tab){
     _origSwitchTab(tab);
-    // Hide side panels that allow editing
-    document.querySelectorAll('.panel3d,.side-panel').forEach(el=>el.style.display='none');
-    // Hide BOM settings panel (labour rates, business info, etc.)
-    const bs=document.getElementById('bom-settings');if(bs){bs.style.display='none';bs.classList.remove('mob-show');}
-    // Hide mobile BOM tab that shows settings
-    const bmt=document.getElementById('bmt-s');if(bmt)bmt.style.display='none';
-    // Expand the quote preview to fill the full width
-    const pw=document.getElementById('bom-preview-wrap');if(pw)pw.style.flex='1';
+    _hideEditPanels();
+    // Update active state on client buttons
+    const cv3=document.getElementById('tab-cv-3d');if(cv3)cv3.classList.toggle('active',tab==='3d');
+    const cvb=document.getElementById('tab-cv-bom');if(cvb)cvb.classList.toggle('active',tab==='bom');
+    if(tab==='bom'){refreshQuote();setTimeout(()=>scaleQuoteDoc(true),80);}
   };
+
   render();
   setTimeout(()=>switchTab('3d'),300);
 }
@@ -4324,6 +4344,7 @@ function buildDrain3D(o){
 // ─ SELECTION & PANEL ──────────────────────────
 function on3DClick(e){
   if(!t3)return;
+  if(isClientView)return; // client can orbit/pan but not select
   // Don't fire if we just finished dragging an origin marker
   if(wallOriginDrag?._justDragged)return;
   const cv=document.getElementById('cv3d');
