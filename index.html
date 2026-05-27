@@ -732,6 +732,12 @@ select.inp{cursor:pointer}
   <div class="theme-grid" id="theme-grid"></div>
   <div class="sth">Custom Theme Colours</div>
   <div class="custom-theme-grid" id="custom-theme-grid"></div>
+  <div class="sth">Share & QR Code</div>
+  <div class="mfld">
+    <label class="mlbl">Bit.ly Access Token <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0">(optional — shortens QR code URLs)</span></label>
+    <input class="minp" id="def-bitly" type="password" placeholder="Paste your bit.ly generic access token">
+    <div style="font-size:10px;color:var(--tx3);margin-top:4px">Get a free token at <span style="color:var(--ac)">app.bitly.com → Settings → API</span>. When set, every QR code and shared link will use a short bit.ly URL instead of the long encoded URL.</div>
+  </div>
   <div class="sth">Quote Defaults</div>
   <div class="mfld"><label class="mlbl">Logo</label>
     <div id="settings-logo-area"></div>
@@ -767,7 +773,7 @@ const THEMES={
   slate:{bg:'#0e0e14',sf:'#16161e',sf2:'#1c1c26',sf3:'#202030',bd:'#26263a',bd2:'#32324e',bd3:'#3e3e5e',ac:'#a060e0',bl:'#5b8def',tx:'#cccce0',tx2:'#7070a0',tx3:'#404060',red:'#e04455',grn:'#2ec880',pur:'#a060e0',label:'Slate'},
 };
 
-let appSettings={theme:'ocean',logoDataUrl:null,defBiz:'',defABN:'',defAddr:'',defPhone:'',defEmail:'',defNotes:'',defTileRate:0,defTileHrs:0,defGroutRate:0,defGroutHrs:0,defMiscRate:0,defDrainHrs:0,defScreenHrs:0};
+let appSettings={theme:'ocean',logoDataUrl:null,defBiz:'',defABN:'',defAddr:'',defPhone:'',defEmail:'',defNotes:'',defTileRate:0,defTileHrs:0,defGroutRate:0,defGroutHrs:0,defMiscRate:0,defDrainHrs:0,defScreenHrs:0,bitlyToken:''};
 let cachedAC='#8fe3ff';
 function getAC(){return cachedAC;}
 
@@ -841,6 +847,7 @@ function openSettings(){
   document.getElementById('def-misc-rate').value=appSettings.defMiscRate||'';
   document.getElementById('def-drain-hrs').value=appSettings.defDrainHrs||'';
   document.getElementById('def-screen-hrs').value=appSettings.defScreenHrs||'';
+  document.getElementById('def-bitly').value=appSettings.bitlyToken||'';
   buildThemeGrid();
   renderLogoArea();
   document.getElementById('settings-movl').classList.add('show');
@@ -875,6 +882,7 @@ function saveSettings(){
   if(appSettings.defMiscRate)document.getElementById('lab-misc-rate').value=appSettings.defMiscRate;
   if(appSettings.defDrainHrs)document.getElementById('lab-drain-hrs').value=appSettings.defDrainHrs;
   if(appSettings.defScreenHrs)document.getElementById('lab-screen-hrs').value=appSettings.defScreenHrs;
+  appSettings.bitlyToken=document.getElementById('def-bitly').value.trim();
   persistSettings();
   closeSettings();refreshQuote();
 }
@@ -2249,15 +2257,35 @@ async function serializeProject(){
   }
 }
 
+async function getShortURL(){
+  const url=await getShareURL();
+  const token=(appSettings.bitlyToken||'').trim();
+  if(!token)return url; // no token — return raw URL
+  try{
+    const resp=await fetch('https://api-ssl.bitly.com/v4/shorten',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify({long_url:url})
+    });
+    if(!resp.ok)throw new Error('bit.ly '+resp.status);
+    const j=await resp.json();
+    return j.link||url;
+  }catch(e){
+    console.warn('bit.ly shorten failed:',e);
+    return url; // fallback to full URL on error
+  }
+}
+
 async function getShareURL(){
   const encoded=await serializeProject();
   return location.href.split('#')[0]+'#share='+encoded;
 }
 
 async function copyShareLink(){
-  const url=await getShareURL();
+  const url=await getShortURL();
   await navigator.clipboard.writeText(url);
-  alert('Share link copied to clipboard!\n\nAnyone with this link can view the 3D bathroom and quote.');
+  const isShort=url.includes('bit.ly');
+  alert('Share link copied to clipboard!\n\n'+(isShort?'Shortened via bit.ly: ':'URL: ')+url+'\n\nAnyone with this link can view the 3D bathroom and quote.');
 }
 
 function qrCodeURL(url,size=200){
@@ -2265,7 +2293,7 @@ function qrCodeURL(url,size=200){
 }
 
 async function getShareQRImgTag(size=120){
-  const url=await getShareURL();
+  const url=await getShortURL();
   return `<img src="${qrCodeURL(url,size)}" width="${size}" height="${size}" style="display:block" alt="Scan for online quote">`;
 }
 
@@ -2361,15 +2389,15 @@ function enterClientView(data){
 
 // ─ QR code integration in print/PDF ──────────────────────────────────────────
 async function quoteDocWithQR(){
-  const qrTag=await getShareQRImgTag(120);
-  const url=await getShareURL();
+  const url=await getShortURL();
+  const qrTag=`<img src="${qrCodeURL(url,120)}" width="120" height="120" style="display:block" alt="Scan for online quote">`;
   return quoteDocHTML()+`
     <div style="page-break-inside:avoid;margin-top:20px;padding:14px 20px;border:2px solid #f0ebe0;border-radius:6px;display:flex;gap:20px;align-items:center">
       ${qrTag}
       <div>
         <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:6px">Interactive 3D View & Quote</div>
         <div style="font-size:12px;color:#333;margin-bottom:8px">Scan the QR code to view your bathroom in 3D and see the full itemised quote online.</div>
-        <div style="font-size:9px;color:#aaa;word-break:break-all;font-family:monospace;max-width:350px">${url.substring(0,120)}${url.length>120?'…':''}</div>
+        <div style="font-size:9px;color:#aaa;word-break:break-all;font-family:monospace;max-width:350px">${url}</div>
       </div>
     </div>`;
 }
