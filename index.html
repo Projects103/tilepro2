@@ -736,15 +736,23 @@ select.inp{cursor:pointer}
   <div class="custom-theme-grid" id="custom-theme-grid"></div>
   <div class="sth">Share & QR Code</div>
   <div class="mfld">
-    <label class="mlbl">Shorten share links & QR codes</label>
+    <label class="mlbl">GitHub Personal Access Token <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0">(recommended — ultra-short links)</span></label>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input class="minp" id="def-ghtoken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="flex:1">
+      <button class="btn btn-ol" style="white-space:nowrap;font-size:11px;padding:6px 10px;flex-shrink:0" onclick="testGithubToken()">Test</button>
+    </div>
+    <div id="ghtoken-status" style="font-size:10px;margin-top:4px;color:var(--tx3)">Go to <strong>github.com → Settings → Developer Settings → Personal access tokens → Fine-grained</strong>. Create token with <strong>Gists: Read & Write</strong> permission. When set, links are ~75 chars and always work.</div>
+  </div>
+  <div class="mfld">
+    <label class="mlbl">Fallback: shorten via is.gd <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0">(may be blocked on some networks)</span></label>
     <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="def-shorturl" style="width:18px;height:18px;accent-color:var(--ac);cursor:pointer">
-        <span style="font-size:12px;color:var(--tx)">Use short URLs via is.gd (free, no account needed)</span>
+        <span style="font-size:12px;color:var(--tx)">Try is.gd / v.gd / shrtco.de if no GitHub token</span>
       </label>
       <button class="btn btn-ol" style="white-space:nowrap;font-size:11px;padding:6px 10px;flex-shrink:0" onclick="testBitly()">Test</button>
     </div>
-    <div id="bitly-status" style="font-size:10px;margin-top:6px;color:var(--tx3)">When enabled, share links and QR codes are shortened via is.gd, making QR codes simpler to scan.</div>
+    <div id="bitly-status" style="font-size:10px;margin-top:4px;color:var(--tx3)"></div>
   </div>
   <div class="sth">Quote Defaults</div>
   <div class="mfld"><label class="mlbl">Logo</label>
@@ -781,7 +789,7 @@ const THEMES={
   slate:{bg:'#0e0e14',sf:'#16161e',sf2:'#1c1c26',sf3:'#202030',bd:'#26263a',bd2:'#32324e',bd3:'#3e3e5e',ac:'#a060e0',bl:'#5b8def',tx:'#cccce0',tx2:'#7070a0',tx3:'#404060',red:'#e04455',grn:'#2ec880',pur:'#a060e0',label:'Slate'},
 };
 
-let appSettings={theme:'ocean',logoDataUrl:null,defBiz:'',defABN:'',defAddr:'',defPhone:'',defEmail:'',defNotes:'',defTileRate:0,defTileHrs:0,defGroutRate:0,defGroutHrs:0,defMiscRate:0,defDrainHrs:0,defScreenHrs:0,useShortUrl:false};
+let appSettings={theme:'ocean',logoDataUrl:null,defBiz:'',defABN:'',defAddr:'',defPhone:'',defEmail:'',defNotes:'',defTileRate:0,defTileHrs:0,defGroutRate:0,defGroutHrs:0,defMiscRate:0,defDrainHrs:0,defScreenHrs:0,useShortUrl:false,githubToken:''};
 let cachedAC='#8fe3ff';
 function getAC(){return cachedAC;}
 
@@ -856,6 +864,7 @@ function openSettings(){
   document.getElementById('def-drain-hrs').value=appSettings.defDrainHrs||'';
   document.getElementById('def-screen-hrs').value=appSettings.defScreenHrs||'';
   document.getElementById('def-shorturl').checked=!!appSettings.useShortUrl;
+  document.getElementById('def-ghtoken').value=appSettings.githubToken||'';
   buildThemeGrid();
   renderLogoArea();
   document.getElementById('settings-movl').classList.add('show');
@@ -891,6 +900,7 @@ function saveSettings(){
   if(appSettings.defDrainHrs)document.getElementById('lab-drain-hrs').value=appSettings.defDrainHrs;
   if(appSettings.defScreenHrs)document.getElementById('lab-screen-hrs').value=appSettings.defScreenHrs;
   appSettings.useShortUrl=document.getElementById('def-shorturl').checked;
+  appSettings.githubToken=document.getElementById('def-ghtoken').value.trim();
   persistSettings();
   closeSettings();refreshQuote();
 }
@@ -2279,6 +2289,44 @@ async function serializeProject(){
   }
 }
 
+async function testGithubToken(){
+  const token=document.getElementById('def-ghtoken').value.trim();
+  const status=document.getElementById('ghtoken-status');
+  if(!token){status.style.color='var(--tx3)';status.textContent='Enter a token first.';return;}
+  status.style.color='var(--tx3)';status.textContent='Testing…';
+  try{
+    const resp=await fetch('https://api.github.com/gists',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},
+      body:JSON.stringify({description:'TilePro test',public:false,files:{'tp.txt':{content:'test'}}})
+    });
+    if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(resp.status+': '+(e.message||'error'));}
+    const gist=await resp.json();
+    // Clean up test gist
+    fetch('https://api.github.com/gists/'+gist.id,{method:'DELETE',headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
+    status.style.color='#3a3';
+    status.textContent='✓ Token works! Share links will be ~75 chars.';
+  }catch(e){
+    status.style.color='#c33';
+    status.textContent='✗ Failed: '+e.message+'. Check token has Gist write permission.';
+  }
+}
+
+async function createGistURL(){
+  const token=(appSettings.githubToken||'').trim();
+  if(!token)throw new Error('No GitHub token');
+  const encoded=await serializeProject();
+  const resp=await fetch('https://api.github.com/gists',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},
+    body:JSON.stringify({description:'TilePro shared project',public:false,files:{'tp.txt':{content:encoded}}})
+  });
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error('GitHub '+resp.status+': '+(e.message||'error'));}
+  const gist=await resp.json();
+  const base=location.href.split('?')[0].split('#')[0];
+  return base+'?gist='+gist.id;
+}
+
 async function testBitly(){
   const status=document.getElementById('bitly-status');
   status.style.color='var(--tx3)';status.textContent='Testing…';
@@ -2297,6 +2345,17 @@ async function testBitly(){
 
 async function getShortURL(){
   // Returns {url, short, err, len} — caller decides what to show
+  // GitHub Gist: most reliable (proper CORS, not blocked by carriers)
+  if((appSettings.githubToken||'').trim()){
+    try{
+      const url=await createGistURL();
+      return {url,short:true,err:null,len:url.length};
+    }catch(e){
+      console.error('Gist failed:',e);
+      const url=await getShareURL();
+      return {url,short:false,err:'Gist: '+e.message,len:url.length};
+    }
+  }
   const url=await getShareURL();
   const len=url.length;
   if(!appSettings.useShortUrl)return {url,short:false,err:null,len};
@@ -2374,14 +2433,38 @@ async function getShareQRImgTag(size=120){
 
 // ─ CLIENT VIEW (read-only mode) ──────────────────────────────────────────────
 async function checkShareMode(){
-  // Support ?share= (new) and #share= (legacy links)
   const params=new URLSearchParams(location.search);
+
+  // Handle ?gist=ID (GitHub Gist storage — ultra-short links)
+  const gistId=params.get('gist');
+  if(gistId){
+    try{
+      const resp=await fetch('https://api.github.com/gists/'+gistId,{
+        headers:{'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+      });
+      if(!resp.ok)throw new Error('HTTP '+resp.status);
+      const gist=await resp.json();
+      const encoded=gist.files['tp.txt']?.content;
+      if(!encoded)throw new Error('No project data in Gist');
+      // Reuse the same decode path as ?share=
+      await decodeShareData(encoded);
+    }catch(e){
+      alert('Failed to load shared project: '+e.message);
+    }
+    return;
+  }
+
+  // Support ?share= (new) and #share= (legacy links)
   let encoded=params.get('share');
   if(!encoded){
     const hash=location.hash;
     if(!hash.startsWith('#share='))return;
     encoded=hash.slice(7);
   }
+  await decodeShareData(encoded);
+}
+
+async function decodeShareData(encoded){
   try{
     const b64=encoded.replace(/-/g,'+').replace(/_/g,'/');
     const padded=b64+('='.repeat((4-b64.length%4)%4));
