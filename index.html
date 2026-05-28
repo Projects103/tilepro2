@@ -2191,26 +2191,34 @@ function applyVanityOffset(vid){
 // ─ PROJECT SHARE / CLIENT VIEW ───────────────────────────────────────────────
 
 async function serializeProject(){
-  // Compact serialization — strip STL, defaults, nulls
-  // Shorten object keys and remove zero/null values
-  const FLOOR_DEFAULTS={tileW:300,tileH:300,groutW:3,tileColor:'#e0d4c0',groutColor:'#c0b090',
+  // v3: single-char keys + flat vertex arrays for minimal JSON before compression
+  // Key map — long name → short key
+  const KM={type:'t',id:'i',vertices:'v',tileOrigin:'o',angle:'a',x:'x',y:'y',
+    tileColor:'tc',groutColor:'gc',tileW:'tw',tileH:'th',groutW:'gw',tileThick:'tt',
+    tilePrice:'tp',groutBagPrice:'gp',groutBagSizeKg:'gk',wastage:'ws',tiled:'td',
+    _manualAngle:'ma',name:'nm',edgeConstraints:'ec',wallHeight:'wh',
+    wallColor:'wc',ceilColor:'cc',floorColor:'fc'};
+  // Type shortcodes
+  const TM={wall:'w',floor:'f',screen:'sc',drain:'dr',niche:'n',fixture:'fx'};
+  const FLOOR_DEF={tileW:300,tileH:300,groutW:3,tileColor:'#e0d4c0',groutColor:'#c0b090',
     groutBagSizeKg:2,groutBagPrice:0,tileThick:8,wastage:10,tiled:false,tilePrice:0};
-  const rnd=v=>Math.round(v*10)/10; // 0.1mm precision
+  const rnd=v=>Math.round(v*10)/10;
   const compact=o=>{
-    const {stlData,stlTx,stlTy,stlTz,stlRx,stlRy,stlRz,stlSx,stlSy,stlSz,...rest}=o;
     const out={};
-    for(const [k,v] of Object.entries(rest)){
+    for(const [k,v] of Object.entries(o)){
+      if(k.startsWith('stl'))continue; // strip all STL fields
       if(v===null||v===undefined)continue;
       if(k==='_manualAngle'&&!v)continue;
-      if(k==='_editing'&&!v)continue;
-      // Skip floor-type default values to shrink payload
-      if(o.type==='floor'&&k in FLOOR_DEFAULTS&&v===FLOOR_DEFAULTS[k])continue;
-      // Round coordinate arrays and positions to reduce string length
-      if(k==='vertices'){out[k]=v.map(p=>({x:Math.round(p.x),y:Math.round(p.y)}));continue;}
-      if(k==='tileOrigin'){out[k]={x:Math.round(v.x),y:Math.round(v.y)};continue;}
-      if((k==='x'||k==='y')&&typeof v==='number'){out[k]=Math.round(v);continue;}
-      if(k==='angle'&&typeof v==='number'){out[k]=rnd(v);continue;}
-      out[k]=v;
+      if(k==='_editing')continue;
+      if((o.type==='floor'||o.t==='f')&&k in FLOOR_DEF&&v===FLOOR_DEF[k])continue;
+      const sk=KM[k]||k; // use short key if mapped, else keep original
+      if(k==='type'){out[sk]=TM[v]||v;continue;}
+      // Flatten vertices: [{x,y},...] → [x1,y1,x2,y2,...]
+      if(k==='vertices'){out[sk]=v.flatMap(p=>[Math.round(p.x),Math.round(p.y)]);continue;}
+      if(k==='tileOrigin'){out[sk]=[Math.round(v.x),Math.round(v.y)];continue;}
+      if((k==='x'||k==='y')&&typeof v==='number'){out[sk]=Math.round(v);continue;}
+      if(k==='angle'&&typeof v==='number'){out[sk]=rnd(v);continue;}
+      out[sk]=v;
     }
     return out;
   };
@@ -2221,7 +2229,7 @@ async function serializeProject(){
     compactWS[k]=v;
   }
   const data={
-    v:2,
+    v:3,
     o: objs.map(compact),
     ws: compactWS,
     gy: globalWallOriginY||undefined,
@@ -2287,18 +2295,22 @@ async function testBitly(){
 async function getShortURL(){
   const url=await getShareURL();
   if(!appSettings.useShortUrl)return url;
+  if(url.length>4900){
+    showToast('Project too large to shorten (≥'+url.length+' chars) — using full URL');
+    return url;
+  }
   try{
-    // Use POST to avoid query-string length limits on long share URLs
     const body=new URLSearchParams({format:'json',url});
     const resp=await fetch('https://is.gd/create.php',{method:'POST',body});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
-    const j=await resp.json();
-    if(j.errorcode)throw new Error('is.gd: '+j.errormessage);
-    if(!j.shorturl)throw new Error('No short URL returned');
+    const text=await resp.text();
+    let j;try{j=JSON.parse(text);}catch{throw new Error('Bad response: '+text.substring(0,80));}
+    if(j.errorcode)throw new Error('is.gd error '+j.errorcode+': '+j.errormessage);
+    if(!j.shorturl)throw new Error('No shorturl in response');
     return j.shorturl;
   }catch(e){
-    console.error('is.gd shorten failed:',e);
-    showToast('Shortening failed — using full URL');
+    console.error('is.gd failed:',e);
+    showToast('Shortening failed: '+e.message.substring(0,60));
     return url;
   }
 }
@@ -2378,14 +2390,35 @@ async function checkShareMode(){
 function enterClientView(data){
   isClientView=true;
   // Load project data into app state — v1 (old) and v2 (compact) format
-  const isV2=data.v===2;
-  const src_objs=isV2?data.o:data.objs;
-  const src_ws=isV2?data.ws:data.wallSettings;
-  const src_gy=isV2?data.gy:data.globalWallOriginY;
-  const src_mi=isV2?data.mi:data.miscItems;
-  const src_ch=isV2?data.ch:data.ceilH3d;
-  const qs=isV2?data.q:data.quoteSettings||{};
-  objs.length=0;(src_objs||[]).forEach(o=>objs.push(o));
+  const isV3=data.v===3, isV2=data.v===2;
+  // v3: expand short keys + flat vertices back to full objects
+  const expandObj=o=>{
+    if(!isV3)return o;
+    const KMR={t:'type',i:'id',v:'vertices',o:'tileOrigin',a:'angle',
+      tc:'tileColor',gc:'groutColor',tw:'tileW',th:'tileH',gw:'groutW',tt:'tileThick',
+      tp:'tilePrice',gp:'groutBagPrice',gk:'groutBagSizeKg',ws:'wastage',td:'tiled',
+      ma:'_manualAngle',nm:'name',ec:'edgeConstraints',wh:'wallHeight',
+      wc:'wallColor',cc:'ceilColor',fc:'floorColor'};
+    const TMR={w:'wall',f:'floor',sc:'screen',dr:'drain',n:'niche',fx:'fixture'};
+    const out={};
+    for(const [k,v] of Object.entries(o)){
+      const lk=KMR[k]||k;
+      if(lk==='type'){out[lk]=TMR[v]||v;continue;}
+      // Expand flat vertices [x1,y1,x2,y2,...] back to [{x,y},...]
+      if(lk==='vertices'&&Array.isArray(v)&&typeof v[0]==='number'){
+        out[lk]=[];for(let i=0;i<v.length;i+=2)out[lk].push({x:v[i],y:v[i+1]});continue;}
+      if(lk==='tileOrigin'&&Array.isArray(v)){out[lk]={x:v[0],y:v[1]};continue;}
+      out[lk]=v;
+    }
+    return out;
+  };
+  const src_objs=(isV3||isV2)?data.o:data.objs;
+  const src_ws=(isV3||isV2)?data.ws:data.wallSettings;
+  const src_gy=(isV3||isV2)?data.gy:data.globalWallOriginY;
+  const src_mi=(isV3||isV2)?data.mi:data.miscItems;
+  const src_ch=(isV3||isV2)?data.ch:data.ceilH3d;
+  const qs=(isV3||isV2)?data.q:data.quoteSettings||{};
+  objs.length=0;(src_objs||[]).forEach(o=>objs.push(expandObj(o)));
   Object.keys(wallSettings).forEach(k=>delete wallSettings[k]);
   Object.assign(wallSettings,src_ws||{});
   globalWallOriginY=src_gy||0;
