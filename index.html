@@ -2288,15 +2288,17 @@ async function getShortURL(){
   const url=await getShareURL();
   if(!appSettings.useShortUrl)return url;
   try{
-    const resp=await fetch('https://is.gd/create.php?format=json&url='+encodeURIComponent(url));
+    // Use POST to avoid query-string length limits on long share URLs
+    const body=new URLSearchParams({format:'json',url});
+    const resp=await fetch('https://is.gd/create.php',{method:'POST',body});
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const j=await resp.json();
-    if(j.errorcode)throw new Error(j.errormessage);
+    if(j.errorcode)throw new Error('is.gd: '+j.errormessage);
     if(!j.shorturl)throw new Error('No short URL returned');
     return j.shorturl;
   }catch(e){
     console.error('is.gd shorten failed:',e);
-    showToast('URL shortening failed — using full URL');
+    showToast('Shortening failed — using full URL');
     return url;
   }
 }
