@@ -2333,16 +2333,23 @@ async function getShareURL(){
 }
 
 async function copyShareLink(){
-  const {url,short,err,len,skip}=await getShortURL();
+  const {url,short,err,len}=await getShortURL();
+  // On mobile, prefer native share sheet (WhatsApp, SMS, email etc.)
+  if(navigator.share){
+    try{
+      await navigator.share({title:'TilePro Quote',text:'View your 3D bathroom and quote:',url});
+      return; // native share handled it
+    }catch(e){
+      if(e.name==='AbortError')return; // user cancelled — do nothing
+      // else fall through to clipboard
+    }
+  }
+  // Desktop / fallback: copy to clipboard
   try{await navigator.clipboard.writeText(url);}catch(e){prompt('Copy this link:',url);return;}
   if(short){
-    showToast('✓ Short link copied: '+url);
-  } else if(err){
-    showToast('Full URL copied ('+len+' chars) — shortening failed: '+err);
-  } else if(skip){
-    showToast('✓ Link copied — already compact ('+len+' chars), QR will scan fine');
+    showToast('✓ Short link copied!');
   } else {
-    showToast('Link copied • Turn on short URLs in ⚙ Settings for simpler QR codes');
+    showToast('✓ Link copied ('+len+' chars)');
   }
 }
 
