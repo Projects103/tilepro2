@@ -2296,26 +2296,23 @@ async function testBitly(){
 }
 
 async function getShortURL(){
+  // Returns {url, short, err, len} — caller decides what to show
   const url=await getShareURL();
-  if(!appSettings.useShortUrl)return url;
-  const shareLen=url.length;
-  if(shareLen>4900){
-    showToast('Too large to shorten ('+shareLen+' chars) — full URL copied');
-    return url;
-  }
+  const len=url.length;
+  if(!appSettings.useShortUrl)return {url,short:false,err:null,len};
+  if(len>4900)return {url,short:false,err:'URL too long ('+len+' chars) for shortener',len};
   try{
     const apiUrl='https://is.gd/create.php?format=json&url='+encodeURIComponent(url);
     const resp=await fetch(apiUrl);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
     const text=await resp.text();
-    let j;try{j=JSON.parse(text);}catch{throw new Error('Bad response: '+text.substring(0,80));}
-    if(j.errorcode)throw new Error('is.gd '+j.errorcode+': '+j.errormessage);
-    if(!j.shorturl)throw new Error('No shorturl in response');
-    return j.shorturl;
+    let j;try{j=JSON.parse(text);}catch{throw new Error('Bad response: '+text.substring(0,60));}
+    if(j.errorcode)throw new Error('is.gd code '+j.errorcode+': '+j.errormessage);
+    if(!j.shorturl)throw new Error('No shorturl field in: '+JSON.stringify(j).substring(0,60));
+    return {url:j.shorturl,short:true,err:null,len};
   }catch(e){
     console.error('is.gd failed:',e);
-    showToast('Shortening failed (URL '+shareLen+' chars): '+e.message.substring(0,50));
-    return url;
+    return {url,short:false,err:e.message,len};
   }
 }
 
@@ -2327,22 +2324,22 @@ async function getShareURL(){
 }
 
 async function copyShareLink(){
-  const url=await getShortURL();
+  const {url,short,err,len}=await getShortURL();
   try{await navigator.clipboard.writeText(url);}catch(e){prompt('Copy this link:',url);return;}
-  const isShort=url.includes('is.gd');
-  if(isShort){
-    showToast('\u2713 Short link copied: '+url);
-  } else if(appSettings.useShortUrl){
-    showToast('Link copied (shortening failed \u2014 using full URL)');
+  if(short){
+    showToast('✓ Short link copied: '+url);
+  } else if(err){
+    showToast('Full URL copied ('+len+' chars) — shortening failed: '+err);
   } else {
-    showToast('Link copied  \u2022  Enable short URLs in \u2699 Settings for simpler QR codes');
+    showToast('Link copied • Turn on short URLs in ⚙ Settings for simpler QR codes');
   }
 }
 
-function showToast(msg,dur=3500){
+function showToast(msg,dur=5000){
   let t=document.getElementById('tilepro-toast');
   if(!t){t=document.createElement('div');t.id='tilepro-toast';
-    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(0,0,0,.82);color:#fff;padding:9px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:99999;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;max-width:88vw;text-align:center';
+    // env(safe-area-inset-bottom) keeps it above Android nav bar
+    t.style.cssText='position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,20,20,.95);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:2147483647;pointer-events:none;opacity:0;transition:opacity .25s,transform .25s;max-width:92vw;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.5);word-break:break-word';
     document.body.appendChild(t);}
   t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
   clearTimeout(t._tid);t._tid=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},dur);
@@ -2353,7 +2350,7 @@ function qrCodeURL(url,size=200){
 }
 
 async function getShareQRImgTag(size=120){
-  const url=await getShortURL();
+  const {url}=await getShortURL();
   return `<img src="${qrCodeURL(url,size)}" width="${size}" height="${size}" style="display:block" alt="Scan for online quote">`;
 }
 
@@ -2485,7 +2482,7 @@ function enterClientView(data){
 
 // ─ QR code integration in print/PDF ──────────────────────────────────────────
 async function quoteDocWithQR(){
-  const url=await getShortURL();
+  const {url}=await getShortURL();
   const qrTag=`<img src="${qrCodeURL(url,120)}" width="120" height="120" style="display:block" alt="Scan for online quote">`;
   return quoteDocHTML()+`
     <div style="page-break-inside:avoid;margin-top:20px;padding:14px 20px;border:2px solid #f0ebe0;border-radius:6px;display:flex;gap:20px;align-items:center">
