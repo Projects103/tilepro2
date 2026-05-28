@@ -2271,8 +2271,11 @@ async function serializeProject(){
     for(let i=0;i<compressed.length;i+=CHUNK)b64+=String.fromCharCode(...compressed.subarray(i,i+CHUNK));
     return btoa(b64).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
   } else {
-    // Fallback: just base64 the JSON
-    return btoa(encodeURIComponent(json)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+    // Fallback: UTF-8 bytes → base64url (no encodeURIComponent — that triples length)
+    const bytes=new TextEncoder().encode(json);
+    let b64='';
+    for(let i=0;i<bytes.length;i+=8192)b64+=String.fromCharCode(...bytes.subarray(i,i+8192));
+    return btoa(b64).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
   }
 }
 
@@ -2295,12 +2298,12 @@ async function testBitly(){
 async function getShortURL(){
   const url=await getShareURL();
   if(!appSettings.useShortUrl)return url;
-  if(url.length>4900){
-    showToast('Project too large to shorten (≥'+url.length+' chars) — using full URL');
+  const shareLen=url.length;
+  if(shareLen>4900){
+    showToast('Too large to shorten ('+shareLen+' chars) — full URL copied');
     return url;
   }
   try{
-    // GET only — is.gd does not support CORS for POST
     const apiUrl='https://is.gd/create.php?format=json&url='+encodeURIComponent(url);
     const resp=await fetch(apiUrl);
     if(!resp.ok)throw new Error('HTTP '+resp.status);
@@ -2311,7 +2314,7 @@ async function getShortURL(){
     return j.shorturl;
   }catch(e){
     console.error('is.gd failed:',e);
-    showToast('Shortening failed: '+e.message.substring(0,60));
+    showToast('Shortening failed (URL '+shareLen+' chars): '+e.message.substring(0,50));
     return url;
   }
 }
