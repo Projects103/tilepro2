@@ -737,8 +737,11 @@ select.inp{cursor:pointer}
   <div class="sth">Share & QR Code</div>
   <div class="mfld">
     <label class="mlbl">Bit.ly Access Token <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0">(optional — shortens QR code URLs)</span></label>
-    <input class="minp" id="def-bitly" type="password" placeholder="Paste your bit.ly generic access token">
-    <div style="font-size:10px;color:var(--tx3);margin-top:4px">Get a free token at <span style="color:var(--ac)">app.bitly.com → Settings → API</span>. When set, every QR code and shared link will use a short bit.ly URL instead of the long encoded URL.</div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input class="minp" id="def-bitly" type="password" placeholder="Paste your bit.ly generic access token" style="flex:1">
+      <button class="btn btn-ol" style="white-space:nowrap;font-size:11px;padding:6px 10px" onclick="testBitly()">Test</button>
+    </div>
+    <div id="bitly-status" style="font-size:10px;margin-top:4px;color:var(--tx3)">Get a free token at <strong>app.bitly.com → Settings → API</strong>. When set, share links and QR codes use a short bit.ly URL.</div>
   </div>
   <div class="sth">Quote Defaults</div>
   <div class="mfld"><label class="mlbl">Logo</label>
@@ -1791,7 +1794,7 @@ function switchTab(tab){
   document.getElementById('tab-b').classList.toggle('active',tab==='bom');
   document.getElementById('tab-3').classList.toggle('active',tab==='3d');
 }
-function bomTab(t){document.getElementById('bom-settings').classList.toggle('mob-show',t==='s');document.getElementById('bom-preview-wrap').classList.toggle('mob-hide',t==='s');document.getElementById('bmt-p').classList.toggle('active',t==='p');document.getElementById('bmt-s').classList.toggle('active',t==='s');}
+function bomTab(t){document.getElementById('bom-settings').classList.toggle('mob-show',t==='s');document.getElementById('bom-preview-wrap').classList.toggle('mob-hide',t==='s');const qpo=document.getElementById('quote-preview-outer');if(qpo)qpo.style.display=(t==='s'?'none':'');document.getElementById('bmt-p').classList.toggle('active',t==='p');document.getElementById('bmt-s').classList.toggle('active',t==='s');}
 
 // ─ SHEET ──────────────────────────────────────
 function openSheet(){if(!isMob())return;document.getElementById('bsheet').classList.add('open');document.getElementById('sheet-bd').classList.add('show');}
@@ -2262,6 +2265,31 @@ async function serializeProject(){
   }
 }
 
+async function testBitly(){
+  const token=document.getElementById('def-bitly').value.trim();
+  const status=document.getElementById('bitly-status');
+  if(!token){status.style.color='var(--tx3)';status.textContent='Enter a token first.';return;}
+  status.style.color='var(--tx3)';status.textContent='Testing…';
+  try{
+    // Use a short known URL as test payload
+    const resp=await fetch('https://api-ssl.bitly.com/v4/shorten',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify({long_url:'https://bitly.com'})
+    });
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({description:'HTTP '+resp.status}));
+      throw new Error(err.description||('HTTP '+resp.status));
+    }
+    const j=await resp.json();
+    status.style.color='#3a3';
+    status.textContent='✓ Token works! Test link: '+j.link;
+  }catch(e){
+    status.style.color='#c33';
+    status.textContent='✗ Failed: '+e.message;
+  }
+}
+
 async function getShortURL(){
   const url=await getShareURL();
   const token=(appSettings.bitlyToken||'').trim();
@@ -2292,10 +2320,26 @@ async function getShareURL(){
 }
 
 async function copyShareLink(){
+  const token=(appSettings.bitlyToken||'').trim();
   const url=await getShortURL();
-  await navigator.clipboard.writeText(url);
+  try{await navigator.clipboard.writeText(url);}catch(e){prompt('Copy this link:',url);return;}
   const isShort=url.includes('bit.ly');
-  alert('Share link copied to clipboard!\n\n'+(isShort?'Shortened via bit.ly: ':'URL: ')+url+'\n\nAnyone with this link can view the 3D bathroom and quote.');
+  if(isShort){
+    showToast('\u2713 bit.ly link copied!');
+  } else if(!token){
+    showToast('Link copied  \u2022  Add a bit.ly token in \u2699 Settings for short QR codes');
+  } else {
+    showToast('Link copied  \u2022  bit.ly failed \u2014 check token in \u2699 Settings');
+  }
+}
+
+function showToast(msg,dur=3500){
+  let t=document.getElementById('tilepro-toast');
+  if(!t){t=document.createElement('div');t.id='tilepro-toast';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(0,0,0,.82);color:#fff;padding:9px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:99999;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;max-width:88vw;text-align:center';
+    document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._tid);t._tid=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},dur);
 }
 
 function qrCodeURL(url,size=200){
