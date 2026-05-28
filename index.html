@@ -2316,7 +2316,9 @@ async function getShortURL(){
 
 async function getShareURL(){
   const encoded=await serializeProject();
-  return location.href.split('#')[0]+'#share='+encoded;
+  // Use query param (?share=) not fragment (#share=) — bit.ly rejects URLs with # fragments
+  const base=location.href.split('?')[0].split('#')[0];
+  return base+'?share='+encoded;
 }
 
 async function copyShareLink(){
@@ -2353,9 +2355,14 @@ async function getShareQRImgTag(size=120){
 
 // ─ CLIENT VIEW (read-only mode) ──────────────────────────────────────────────
 async function checkShareMode(){
-  const hash=location.hash;
-  if(!hash.startsWith('#share='))return;
-  const encoded=hash.slice(7);
+  // Support ?share= (new) and #share= (legacy links)
+  const params=new URLSearchParams(location.search);
+  let encoded=params.get('share');
+  if(!encoded){
+    const hash=location.hash;
+    if(!hash.startsWith('#share='))return;
+    encoded=hash.slice(7);
+  }
   try{
     const b64=encoded.replace(/-/g,'+').replace(/_/g,'/');
     const padded=b64+('='.repeat((4-b64.length%4)%4));
