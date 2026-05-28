@@ -2300,25 +2300,27 @@ async function getShortURL(){
   const url=await getShareURL();
   const len=url.length;
   if(!appSettings.useShortUrl)return {url,short:false,err:null,len};
-  // Under 500 chars — already compact enough, skip shortener
-  if(len<=500)return {url,short:false,err:null,len,skip:true};
+  // Under 100 chars — already tiny, skip shortener
+  if(len<=100)return {url,short:false,err:null,len,skip:true};
   if(len>4900)return {url,short:false,err:'URL too long ('+len+' chars) for shortener',len};
-  // Try is.gd then v.gd as fallback (same service, different domain)
+  // Try multiple free shorteners with CORS support
   const services=[
-    'https://is.gd/create.php?format=json&url=',
-    'https://v.gd/create.php?format=json&url='
+    {base:'https://is.gd/create.php?format=json&url=',  parse:j=>j.shorturl, check:j=>j.errorcode},
+    {base:'https://v.gd/create.php?format=json&url=',   parse:j=>j.shorturl, check:j=>j.errorcode},
+    {base:'https://api.shrtco.de/v2/shorten?url=',      parse:j=>j.result?.full_short_link, check:j=>!j.ok},
   ];
   let lastErr='';
-  for(const base of services){
+  for(const svc of services){
     try{
-      const resp=await fetch(base+encodeURIComponent(url));
+      const resp=await fetch(svc.base+encodeURIComponent(url),{credentials:'omit'});
       if(!resp.ok)throw new Error('HTTP '+resp.status);
       const text=await resp.text();
       let j;try{j=JSON.parse(text);}catch{throw new Error('Bad response: '+text.substring(0,60));}
-      if(j.errorcode)throw new Error('code '+j.errorcode+': '+j.errormessage);
-      if(!j.shorturl)throw new Error('No shorturl in response');
-      return {url:j.shorturl,short:true,err:null,len};
-    }catch(e){lastErr=e.message;console.warn('Shortener failed:',base,e.message);}
+      if(svc.check(j))throw new Error(j.errorcode?('code '+j.errorcode+': '+j.errormessage):'Service error');
+      const short=svc.parse(j);
+      if(!short)throw new Error('No short URL in response');
+      return {url:short,short:true,err:null,len};
+    }catch(e){lastErr=e.message;console.warn('Shortener failed:',svc.base,e.message);}
   }
   return {url,short:false,err:lastErr,len};
 }
