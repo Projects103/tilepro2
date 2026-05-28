@@ -736,12 +736,15 @@ select.inp{cursor:pointer}
   <div class="custom-theme-grid" id="custom-theme-grid"></div>
   <div class="sth">Share & QR Code</div>
   <div class="mfld">
-    <label class="mlbl">Bit.ly Access Token <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0">(optional — shortens QR code URLs)</span></label>
-    <div style="display:flex;gap:6px;align-items:center">
-      <input class="minp" id="def-bitly" type="password" placeholder="Paste your bit.ly generic access token" style="flex:1">
-      <button class="btn btn-ol" style="white-space:nowrap;font-size:11px;padding:6px 10px" onclick="testBitly()">Test</button>
+    <label class="mlbl">Shorten share links & QR codes</label>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="def-shorturl" style="width:18px;height:18px;accent-color:var(--ac);cursor:pointer">
+        <span style="font-size:12px;color:var(--tx)">Use short URLs via is.gd (free, no account needed)</span>
+      </label>
+      <button class="btn btn-ol" style="white-space:nowrap;font-size:11px;padding:6px 10px;flex-shrink:0" onclick="testBitly()">Test</button>
     </div>
-    <div id="bitly-status" style="font-size:10px;margin-top:4px;color:var(--tx3)">Get a free token at <strong>app.bitly.com → Settings → API</strong>. When set, share links and QR codes use a short bit.ly URL.</div>
+    <div id="bitly-status" style="font-size:10px;margin-top:6px;color:var(--tx3)">When enabled, share links and QR codes are shortened via is.gd, making QR codes simpler to scan.</div>
   </div>
   <div class="sth">Quote Defaults</div>
   <div class="mfld"><label class="mlbl">Logo</label>
@@ -778,7 +781,7 @@ const THEMES={
   slate:{bg:'#0e0e14',sf:'#16161e',sf2:'#1c1c26',sf3:'#202030',bd:'#26263a',bd2:'#32324e',bd3:'#3e3e5e',ac:'#a060e0',bl:'#5b8def',tx:'#cccce0',tx2:'#7070a0',tx3:'#404060',red:'#e04455',grn:'#2ec880',pur:'#a060e0',label:'Slate'},
 };
 
-let appSettings={theme:'ocean',logoDataUrl:null,defBiz:'',defABN:'',defAddr:'',defPhone:'',defEmail:'',defNotes:'',defTileRate:0,defTileHrs:0,defGroutRate:0,defGroutHrs:0,defMiscRate:0,defDrainHrs:0,defScreenHrs:0,bitlyToken:''};
+let appSettings={theme:'ocean',logoDataUrl:null,defBiz:'',defABN:'',defAddr:'',defPhone:'',defEmail:'',defNotes:'',defTileRate:0,defTileHrs:0,defGroutRate:0,defGroutHrs:0,defMiscRate:0,defDrainHrs:0,defScreenHrs:0,useShortUrl:false};
 let cachedAC='#8fe3ff';
 function getAC(){return cachedAC;}
 
@@ -852,7 +855,7 @@ function openSettings(){
   document.getElementById('def-misc-rate').value=appSettings.defMiscRate||'';
   document.getElementById('def-drain-hrs').value=appSettings.defDrainHrs||'';
   document.getElementById('def-screen-hrs').value=appSettings.defScreenHrs||'';
-  document.getElementById('def-bitly').value=appSettings.bitlyToken||'';
+  document.getElementById('def-shorturl').checked=!!appSettings.useShortUrl;
   buildThemeGrid();
   renderLogoArea();
   document.getElementById('settings-movl').classList.add('show');
@@ -887,7 +890,7 @@ function saveSettings(){
   if(appSettings.defMiscRate)document.getElementById('lab-misc-rate').value=appSettings.defMiscRate;
   if(appSettings.defDrainHrs)document.getElementById('lab-drain-hrs').value=appSettings.defDrainHrs;
   if(appSettings.defScreenHrs)document.getElementById('lab-screen-hrs').value=appSettings.defScreenHrs;
-  appSettings.bitlyToken=document.getElementById('def-bitly').value.trim();
+  appSettings.useShortUrl=document.getElementById('def-shorturl').checked;
   persistSettings();
   closeSettings();refreshQuote();
 }
@@ -2266,24 +2269,15 @@ async function serializeProject(){
 }
 
 async function testBitly(){
-  const token=document.getElementById('def-bitly').value.trim();
   const status=document.getElementById('bitly-status');
-  if(!token){status.style.color='var(--tx3)';status.textContent='Enter a token first.';return;}
   status.style.color='var(--tx3)';status.textContent='Testing…';
   try{
-    // Use a short known URL as test payload
-    const resp=await fetch('https://api-ssl.bitly.com/v4/shorten',{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-      body:JSON.stringify({long_url:'https://github.com/features'})
-    });
-    if(!resp.ok){
-      const err=await resp.json().catch(()=>({description:'HTTP '+resp.status}));
-      throw new Error(err.description||('HTTP '+resp.status));
-    }
+    const resp=await fetch('https://is.gd/create.php?format=json&url='+encodeURIComponent('https://github.com/features'));
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     const j=await resp.json();
+    if(j.errorcode)throw new Error(j.errormessage);
     status.style.color='#3a3';
-    status.textContent='✓ Token works! Test link: '+j.link;
+    status.textContent='✓ Shortener works! Test: '+j.shorturl;
   }catch(e){
     status.style.color='#c33';
     status.textContent='✗ Failed: '+e.message;
@@ -2292,25 +2286,18 @@ async function testBitly(){
 
 async function getShortURL(){
   const url=await getShareURL();
-  const token=(appSettings.bitlyToken||'').trim();
-  if(!token)return url; // no token — return raw URL as-is
+  if(!appSettings.useShortUrl)return url;
   try{
-    const resp=await fetch('https://api-ssl.bitly.com/v4/shorten',{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-      body:JSON.stringify({long_url:url})
-    });
-    if(!resp.ok){
-      const err=await resp.text().catch(()=>'');
-      throw new Error('bit.ly HTTP '+resp.status+': '+err.substring(0,120));
-    }
+    const resp=await fetch('https://is.gd/create.php?format=json&url='+encodeURIComponent(url));
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
     const j=await resp.json();
-    if(!j.link)throw new Error('bit.ly returned no link: '+JSON.stringify(j).substring(0,120));
-    return j.link;
+    if(j.errorcode)throw new Error(j.errormessage);
+    if(!j.shorturl)throw new Error('No short URL returned');
+    return j.shorturl;
   }catch(e){
-    console.error('bit.ly shorten failed:',e);
-    alert('bit.ly shortening failed:\n'+e.message+'\n\nFalling back to full URL. Check your token in Settings.');
-    return url; // fallback to full URL on error
+    console.error('is.gd shorten failed:',e);
+    showToast('URL shortening failed — using full URL');
+    return url;
   }
 }
 
@@ -2322,16 +2309,15 @@ async function getShareURL(){
 }
 
 async function copyShareLink(){
-  const token=(appSettings.bitlyToken||'').trim();
   const url=await getShortURL();
   try{await navigator.clipboard.writeText(url);}catch(e){prompt('Copy this link:',url);return;}
-  const isShort=url.includes('bit.ly');
+  const isShort=url.includes('is.gd');
   if(isShort){
-    showToast('\u2713 bit.ly link copied!');
-  } else if(!token){
-    showToast('Link copied  \u2022  Add a bit.ly token in \u2699 Settings for short QR codes');
+    showToast('\u2713 Short link copied: '+url);
+  } else if(appSettings.useShortUrl){
+    showToast('Link copied (shortening failed \u2014 using full URL)');
   } else {
-    showToast('Link copied  \u2022  bit.ly failed \u2014 check token in \u2699 Settings');
+    showToast('Link copied  \u2022  Enable short URLs in \u2699 Settings for simpler QR codes');
   }
 }
 
