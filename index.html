@@ -2300,20 +2300,27 @@ async function getShortURL(){
   const url=await getShareURL();
   const len=url.length;
   if(!appSettings.useShortUrl)return {url,short:false,err:null,len};
+  // Under 500 chars — already compact enough, skip shortener
+  if(len<=500)return {url,short:false,err:null,len,skip:true};
   if(len>4900)return {url,short:false,err:'URL too long ('+len+' chars) for shortener',len};
-  try{
-    const apiUrl='https://is.gd/create.php?format=json&url='+encodeURIComponent(url);
-    const resp=await fetch(apiUrl);
-    if(!resp.ok)throw new Error('HTTP '+resp.status);
-    const text=await resp.text();
-    let j;try{j=JSON.parse(text);}catch{throw new Error('Bad response: '+text.substring(0,60));}
-    if(j.errorcode)throw new Error('is.gd code '+j.errorcode+': '+j.errormessage);
-    if(!j.shorturl)throw new Error('No shorturl field in: '+JSON.stringify(j).substring(0,60));
-    return {url:j.shorturl,short:true,err:null,len};
-  }catch(e){
-    console.error('is.gd failed:',e);
-    return {url,short:false,err:e.message,len};
+  // Try is.gd then v.gd as fallback (same service, different domain)
+  const services=[
+    'https://is.gd/create.php?format=json&url=',
+    'https://v.gd/create.php?format=json&url='
+  ];
+  let lastErr='';
+  for(const base of services){
+    try{
+      const resp=await fetch(base+encodeURIComponent(url));
+      if(!resp.ok)throw new Error('HTTP '+resp.status);
+      const text=await resp.text();
+      let j;try{j=JSON.parse(text);}catch{throw new Error('Bad response: '+text.substring(0,60));}
+      if(j.errorcode)throw new Error('code '+j.errorcode+': '+j.errormessage);
+      if(!j.shorturl)throw new Error('No shorturl in response');
+      return {url:j.shorturl,short:true,err:null,len};
+    }catch(e){lastErr=e.message;console.warn('Shortener failed:',base,e.message);}
   }
+  return {url,short:false,err:lastErr,len};
 }
 
 async function getShareURL(){
@@ -2324,12 +2331,14 @@ async function getShareURL(){
 }
 
 async function copyShareLink(){
-  const {url,short,err,len}=await getShortURL();
+  const {url,short,err,len,skip}=await getShortURL();
   try{await navigator.clipboard.writeText(url);}catch(e){prompt('Copy this link:',url);return;}
   if(short){
     showToast('✓ Short link copied: '+url);
   } else if(err){
     showToast('Full URL copied ('+len+' chars) — shortening failed: '+err);
+  } else if(skip){
+    showToast('✓ Link copied — already compact ('+len+' chars), QR will scan fine');
   } else {
     showToast('Link copied • Turn on short URLs in ⚙ Settings for simpler QR codes');
   }
