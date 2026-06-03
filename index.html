@@ -391,9 +391,9 @@ h1.hero-title em{color:var(--terra);font-style:italic}
 
           <div id="rect-inputs">
             <label class="lbl">Width (mm)</label>
-            <input class="inp" type="number" id="rW" value="2800" min="800" max="15000" step="50" oninput="onRoomChange()">
+            <input class="inp" type="number" id="rW" value="2000" min="800" max="15000" step="50" oninput="onRoomChange()">
             <label class="lbl">Length (mm)</label>
-            <input class="inp" type="number" id="rL" value="2585" min="800" max="15000" step="50" oninput="onRoomChange()">
+            <input class="inp" type="number" id="rL" value="2000" min="800" max="15000" step="50" oninput="onRoomChange()">
             <label class="lbl">Ceiling Height (mm)</label>
             <input class="inp" type="number" id="rH" value="2400" min="2000" max="4000" step="100" oninput="onRoomChange()">
           </div>
@@ -524,17 +524,17 @@ h1.hero-title em{color:var(--terra);font-style:italic}
         <div style="display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap">
           <span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Tile Height</span>
           <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-            <button class="grout-w-btn" id="wh-full" onclick="setWallTileHeight(this,'full')">Full Height</button>
+            <button class="grout-w-btn on" id="wh-full" onclick="setWallTileHeight(this,'full')">Full Height</button>
             <button class="grout-w-btn" id="wh-1800" onclick="setWallTileHeight(this,1800)">1800mm</button>
             <button class="grout-w-btn" id="wh-1200" onclick="setWallTileHeight(this,1200)">1200mm</button>
             <button class="grout-w-btn" id="wh-900" onclick="setWallTileHeight(this,900)">900mm</button>
             <button class="grout-w-btn" id="wh-600" onclick="setWallTileHeight(this,600)">600mm (dado)</button>
-            <button class="grout-w-btn on" id="wh-none" onclick="setWallTileHeight(this,'none')">No walls</button>
+            <button class="grout-w-btn" id="wh-none" onclick="setWallTileHeight(this,'none')">No walls</button>
           </div>
           <span id="wallTileHeightLabel" style="font-size:.75rem;color:#9AABB8">Full ceiling height</span>
         </div>
       </div>
-      <div id="wallTileOptions" style="display:none">
+      <div id="wallTileOptions">
       <!-- Wall grout + thickness -->
       <div class="card" style="margin-bottom:1rem;padding:.9rem 1.2rem">
         <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap">
@@ -652,8 +652,8 @@ h1.hero-title em{color:var(--terra);font-style:italic}
         <div style="margin-bottom:.9rem">
           <label class="lbl">Labour scope</label>
           <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem">
-            <button class="grout-w-btn on" id="dl-low" onclick="setDemoLabour('low',this)">Low ($400)</button>
-            <button class="grout-w-btn" id="dl-med" onclick="setDemoLabour('medium',this)">Medium ($800)</button>
+            <button class="grout-w-btn" id="dl-low" onclick="setDemoLabour('low',this)">Low ($400)</button>
+            <button class="grout-w-btn on" id="dl-med" onclick="setDemoLabour('medium',this)">Medium ($800)</button>
             <button class="grout-w-btn" id="dl-large" onclick="setDemoLabour('large',this)">Large ($1,400)</button>
             <button class="grout-w-btn" id="dl-massive" onclick="setDemoLabour('massive',this)">Massive ($2,200)</button>
           </div>
@@ -661,9 +661,9 @@ h1.hero-title em{color:var(--terra);font-style:italic}
         <div>
           <label class="lbl">Skip bin</label>
           <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem">
-            <button class="grout-w-btn on" id="ds-none" onclick="setDemoSkip('none',this)">No skip</button>
+            <button class="grout-w-btn" id="ds-none" onclick="setDemoSkip('none',this)">No skip</button>
             <button class="grout-w-btn" id="ds-2m" onclick="setDemoSkip('2m',this)">2m³ ($280)</button>
-            <button class="grout-w-btn" id="ds-4m" onclick="setDemoSkip('4m',this)">4m³ ($500)</button>
+            <button class="grout-w-btn on" id="ds-4m" onclick="setDemoSkip('4m',this)">4m³ ($500)</button>
             <button class="grout-w-btn" id="ds-6m" onclick="setDemoSkip('6m',this)">6m³ ($600)</button>
             <button class="grout-w-btn" id="ds-9m" onclick="setDemoSkip('9m',this)">9m³ ($800)</button>
           </div>
@@ -697,9 +697,9 @@ h1.hero-title em{color:var(--terra);font-style:italic}
           <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;line-height:1.5">Required in wet areas. Disable only if existing waterproofing is confirmed intact by a licensed inspector.</p>
         </div>
         <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;flex-shrink:0">
-          <input type="checkbox" id="wpToggle" onchange="S.waterproofing=this.checked;updateExtras()"
+          <input type="checkbox" id="wpToggle" checked onchange="S.waterproofing=this.checked;updateExtras()"
             style="width:20px;height:20px;cursor:pointer;accent-color:var(--terra)">
-          <span style="font-size:.9rem;font-weight:600;color:var(--slate)" id="wpLabel">Not included</span>
+          <span style="font-size:.9rem;font-weight:600;color:var(--slate)" id="wpLabel">Included</span>
         </label>
       </div>
     </div>
@@ -804,7 +804,7 @@ const URL_STATUS = {};
 // ══════════════════════════════════════════════
 const S = {
   step:1,
-  room:{w:2.8,l:2.585,h:2.4},
+  room:{w:2.0,l:2.0,h:2.4},
   fixes:{},
   fixSizes:{},
   fixRotations:{},
@@ -813,19 +813,19 @@ const S = {
   shapeMode:'rect',
   customPts:[],
   customClosed:false,
-  sel:{floorTile:'b-crema-600',wallTile:null,tap:null,van:null,toi:null,sho:null},
+  sel:{floorTile:null,wallTile:null,tap:null,van:null,toi:null,sho:null},
   supplier:null,
   draggingFix:null,
   grout:{floor:{color:'#C8B89A'},wall:{color:'#C8B89A'}},
-  wallTileHeight:'none',
+  wallTileHeight:'full',
   tileSort:{floor:'name',wall:'name'},
   tileUsage:{floor:'all',wall:'all'},
   groutThickness:{floor:3,wall:3}, // mm
-  waterproofing:false,
+  waterproofing:true,
   chargeTiles:true,
   demoIncluded:true,
-  demoLabour:'low',
-  demoSkip:'none',
+  demoLabour:'medium',
+  demoSkip:'4m',
   extras:[], // [{desc:'',amount:0}]
   dropEdges:[],
   customWalls:[], // [{id,label,length,height,tiled,tileSel}]
