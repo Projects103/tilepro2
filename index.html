@@ -77,6 +77,15 @@ h1.hero-title em{color:var(--terra);font-style:italic}
 
 /* Step panels */
 .sp{display:none}.sp.active{display:block;animation:fsi .38s ease}
+/* Mobile: room-cfg becomes flex column, canvas sits between shape and stats */
+@media(max-width:640px){
+  #step1{display:none}
+  #step1.active{display:flex;flex-direction:column}
+  .room-cfg{display:flex;flex-direction:column}
+  .step1-sidebar{order:1}
+  .step1-canvas-card{order:2}
+  .step1-stats-card{order:3}
+}
 @keyframes fsi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
 .step-hdr{text-align:center;margin-bottom:2rem}
@@ -381,7 +390,7 @@ h1.hero-title em{color:var(--terra);font-style:italic}
     </div>
 
     <div class="room-cfg">
-      <div>
+      <div class="step1-sidebar">
         <div class="card">
           <h4>Room Shape</h4>
           <div class="shape-tabs">
@@ -432,17 +441,17 @@ h1.hero-title em{color:var(--terra);font-style:italic}
           </div>
           </div>
         </div>
-
-        <div class="room-stats">
-          <div class="stat"><div class="stat-v" id="stA">4.3</div><div class="stat-l">Floor m²</div></div>
-          <div class="stat"><div class="stat-v" id="stW">20.2</div><div class="stat-l">Wall m²</div></div>
-          <div class="stat"><div class="stat-v" id="stP">8.4</div><div class="stat-l">Perimeter m</div></div>
-        </div>
       </div>
 
-      <div class="card">
+      <div class="card step1-canvas-card">
         <h4>Floor Plan <span style="font-size:.75rem;color:#9AABB8;font-family:'DM Sans',sans-serif;font-weight:400" id="canvasHint">— drag fixtures from the left panel</span></h4>
         <canvas id="floorCanvas" height="380"></canvas>
+      </div>
+
+      <div class="room-stats step1-stats-card">
+        <div class="stat"><div class="stat-v" id="stA">4.3</div><div class="stat-l">Floor m²</div></div>
+        <div class="stat"><div class="stat-v" id="stW">20.2</div><div class="stat-l">Wall m²</div></div>
+        <div class="stat"><div class="stat-v" id="stP">8.4</div><div class="stat-l">Perimeter m</div></div>
       </div>
     </div>
 
@@ -482,8 +491,8 @@ h1.hero-title em{color:var(--terra);font-style:italic}
           <span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Grout Joint</span>
           <select onchange="setGroutThickness('floor',this.value)" style="padding:.3rem .7rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--slate);background:var(--cream);cursor:pointer">
             <option value="1">1mm — rectified/large format</option>
-            <option value="2">2mm — polished/honed stone</option>
-            <option value="3" selected>3mm — standard ceramic</option>
+            <option value="2" selected>2mm — polished/honed stone</option>
+            <option value="3">3mm — standard ceramic</option>
             <option value="5">5mm — handmade/terracotta</option>
             <option value="8">8mm — rustic/feature tiles</option>
             <option value="10">10mm — travertine/natural stone</option>
@@ -555,8 +564,8 @@ h1.hero-title em{color:var(--terra);font-style:italic}
           <span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Grout Joint</span>
           <select onchange="setGroutThickness('wall',this.value)" style="padding:.3rem .7rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--slate);background:var(--cream);cursor:pointer">
             <option value="1">1mm — rectified/large format</option>
-            <option value="2">2mm — polished/honed stone</option>
-            <option value="3" selected>3mm — standard ceramic</option>
+            <option value="2" selected>2mm — polished/honed stone</option>
+            <option value="3">3mm — standard ceramic</option>
             <option value="5">5mm — handmade/terracotta</option>
             <option value="8">8mm — rustic/feature tiles</option>
             <option value="10">10mm — travertine/natural stone</option>
@@ -722,7 +731,7 @@ h1.hero-title em{color:var(--terra);font-style:italic}
   <div class="sp" id="step5">
     <div class="step-hdr">
       <h2 class="step-title">🎉 Your Bathroom Preview & Quote</h2>
-      <p class="step-sub">Drag to orbit · Scroll to zoom · Switch views below</p>
+
     </div>
     <div class="luke-cmnt"><div class="sm-av">L</div><div id="prevcmt">"Looking great! This quote is my best estimate — I'll confirm the final price after an on-site visit. I'm usually booked about 6 weeks out, so feel free to reach out any time."</div></div>
 
@@ -757,6 +766,9 @@ h1.hero-title em{color:var(--terra);font-style:italic}
         <div class="tp" id="qTot">—</div>
       </div>
 
+      <div style="text-align:center;margin:.8rem 0">
+        <button onclick="shareProject()" style="padding:.55rem 1.4rem;background:var(--sage);color:white;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem">🔗 Share this quote</button>
+      </div>
       <div class="q-note">ℹ️ Indicative estimate only. Final price confirmed after Luke's on-site visit. Rates may vary based on site conditions, existing waterproofing, and wall substrate. Luke Drummond is fully licensed and insured (SA).</div>
 
       <div class="q-acts">
@@ -784,9 +796,12 @@ const WORKER_URL = 'https://bathroomrenovations.tobias-58b.workers.dev';
 // All rates in AUD per m² unless noted
 // ══════════════════════════════════════════════
 const RATES = {
-  tiling_floor:     250,   // $/m² — floor + wall tile laying (combined rate)
-  tiling_wall:      250,   // $/m² — wall tile laying
+  tiling_hourly:    200,   // $/hr — tiler hourly rate
+  tiling_floor:     133,   // $/m² — floor laying ($200/hr ÷ 1.5m²/hr)
+  tiling_wall:      200,   // $/m² — wall laying ($200/hr ÷ 1m²/hr, slower due to cuts)
   grouting:         180,   // $ flat — grouting (total job)
+  glue_bag_price:    27,   // $ per 20kg bag — BT500 tile adhesive
+  glue_kg_per_m2:   4.5,   // kg/m² coverage (20kg bag covers ~4.4m² floor, ~3.5m² wall)
   waterproof_mat:    30,   // $/m² — membrane + primer materials
   waterproof_labour: 35,   // $/m² — waterproofing application labour
   screed_labour:     50,   // $/m² — screed bed laying incl. fall setting
@@ -820,7 +835,7 @@ const S = {
   wallTileHeight:'full',
   tileSort:{floor:'name',wall:'name'},
   tileUsage:{floor:'all',wall:'all'},
-  groutThickness:{floor:3,wall:3}, // mm
+  groutThickness:{floor:2,wall:2}, // mm
   waterproofing:true,
   chargeTiles:true,
   demoIncluded:true,
@@ -938,14 +953,16 @@ const FIXES_BASE={
                  shapes:['Square','Rectangle','L-shape','Corner Quadrant']},
   vanity:        {emoji:'🪥',fw:0.9, fh:0.5, col:'rgba(230,228,225,.9)',  minW:0.5, maxW:2.0, minH:0.35,maxH:0.7},
   bath:          {emoji:'🛁',fw:1.7, fh:0.75,col:'rgba(220,232,248,.9)',  minW:1.2, maxW:2.0, minH:0.65,maxH:0.9},
-  'drain-floor': {emoji:'⊙', fw:0.1, fh:0.1, col:'rgba(80,80,80,.7)',    minW:0.08,maxW:0.2, minH:0.08,maxH:0.2, isDrain:true},
-  'drain-shower':{emoji:'⊕', fw:0.15,fh:0.15,col:'rgba(60,60,60,.7)',    minW:0.08,maxW:0.25,minH:0.08,maxH:0.25,isDrain:true},
+  'drain-floor': {emoji:'⊙', fw:0.1, fh:0.1, col:'rgba(80,80,80,.7)',    minW:0.08,maxW:0.2, minH:0.08,maxH:0.2, isDrain:true,drainShape:'round'},
+  'drain-shower':{emoji:'⊕', fw:0.15,fh:0.15,col:'rgba(60,60,60,.7)',    minW:0.08,maxW:0.25,minH:0.08,maxH:0.25,isDrain:true,drainShape:'round'},
+
   door:          {emoji:'🚪',fw:0.9, fh:0.1, col:'rgba(200,180,150,.9)',  minW:0.6, maxW:1.2, minH:0.05,maxH:0.15,isDoor:true},
   window:        {emoji:'🪟',fw:1.0, fh:0.1, col:'rgba(180,220,255,.6)',  minW:0.4, maxW:2.0, minH:0.05,maxH:0.15,isWindow:true},
 };
 
 function getFixDef(name){
   const base=FIXES_BASE[name];
+  const isDrain=base?.isDrain;
   if(!base)return null;
   const ovr=S.fixSizes&&S.fixSizes[name]||{};
   return{...base,...ovr};
@@ -968,9 +985,101 @@ function goHome(){
   window.scrollTo(0,0);
 }
 function startOver(){location.reload()}
-function nextStep(){if(S.step<5)setStep(S.step+1)}
+
+// ── State sharing via URL hash ────────────────────────────────────────────────
+function encodeState(){
+  // Serialise only the key fields needed to reconstruct the quote
+  const snap={
+    room:S.room,
+    sel:S.sel,
+    grout:S.grout,
+    groutThickness:S.groutThickness,
+    wallTileHeight:S.wallTileHeight,
+    waterproofing:S.waterproofing,
+    chargeTiles:S.chargeTiles,
+    demoIncluded:S.demoIncluded,
+    demoLabour:S.demoLabour,
+    demoSkip:S.demoSkip,
+    dropEdges:S.dropEdges,
+    dropDepth:S.dropDepth,
+    extras:S.extras,
+    fixes:S.fixes,
+    fixRotations:S.fixRotations,
+    fixSizes:S.fixSizes,
+    shapeMode:S.shapeMode,
+    customPts:S.customPts,
+    customClosed:S.customClosed,
+    customWalls:S.customWalls,
+  };
+  const json=JSON.stringify(snap);
+  // Compress with a simple base64 encoding
+  const b64=btoa(unescape(encodeURIComponent(json)));
+  return b64;
+}
+
+function decodeState(b64){
+  try{
+    const json=decodeURIComponent(escape(atob(b64)));
+    const snap=JSON.parse(json);
+    Object.assign(S,snap);
+    return true;
+  }catch(e){console.warn('State decode failed',e);return false;}
+}
+
+function shareProject(){
+  const code=encodeState();
+  const url=location.origin+location.pathname+'#'+code;
+  if(navigator.share){
+    navigator.share({title:'Bathroom Quote',url}).catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(url).then(()=>{
+      alert('Share link copied to clipboard!');
+    }).catch(()=>{
+      // Fallback: show in prompt
+      prompt('Copy this share link:',url);
+    });
+  }
+}
+
+// On load: check if URL has a state hash
+(function(){
+  const hash=location.hash.slice(1);
+  if(hash.length>20){
+    if(decodeState(hash)){
+      // State loaded — navigate to quote
+      setTimeout(()=>setStep(5),100);
+    }
+  }
+})();
+function showToast(msg,duration=3500){
+  document.querySelectorAll('.app-toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className='app-toast';
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:1.2rem;right:1.2rem;background:var(--slate);color:white;padding:.7rem 1.1rem;border-radius:10px;font-size:.85rem;font-family:DM Sans,sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.25);max-width:260px;line-height:1.4;animation:slideInRight .2s ease';
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},duration);
+}
+
+function nextStep(){
+  if(S.step===2&&!S.sel.floorTile){
+    window.scrollTo({top:0,behavior:'smooth'});
+    showToast('⚠️ Please select a floor tile to continue.');
+    return;
+  }
+  if(S.step===4&&!S.sel.floorTile){
+    setStep(2);
+    setTimeout(()=>window.scrollTo({top:0,behavior:'smooth'}),80);
+    setTimeout(()=>showToast('⚠️ Please select a floor tile before generating your quote.'),120);
+    return;
+  }
+  if(S.step<5)setStep(S.step+1);
+}
 function jumpStep(n){
-  // Allow jumping to any previously visited step or the next one
+  if(n===5&&!S.sel.floorTile){
+    alert('Please select a floor tile in Step 2 before viewing the quote.');
+    setStep(2);return;
+  }
   if(n<=S.step+1)setStep(n);
 }
 function prevStep(){if(S.step>1)setStep(S.step-1)}
@@ -1188,6 +1297,9 @@ function drawPlan(){
   ctx.clearRect(0,0,cW,cH);
 
   const meta=getPlanMeta(cv);
+  // Preserve in-progress drag state across redraws
+  meta._rotDrag=planMeta._rotDrag;
+  meta._rotHandle=planMeta._rotHandle;
   planMeta=meta;
   const{ox,oy,scale,w,l}=meta;
 
@@ -1456,16 +1568,63 @@ function drawOneFix(ctx,ox,oy,scale,name,pos){
 
   // ── DRAIN ──
   if(d.isDrain){
+    const drainShape=d.drainShape||'round';
     const r=hfw*.9;
     ctx.shadowColor='rgba(43,58,74,.2)';ctx.shadowBlur=5;
     ctx.fillStyle='rgba(75,75,70,.9)';ctx.strokeStyle=isSelected?'#BF7B5E':'#444';ctx.lineWidth=isSelected?2:1.5;
-    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
-    ctx.strokeStyle='rgba(200,200,190,.7)';ctx.lineWidth=1;
-    for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(i*(r*.4),-r*.7);ctx.lineTo(i*(r*.4),r*.7);ctx.stroke();}
+    if(drainShape==='square'||drainShape==='rect'){
+      ctx.beginPath();ctx.rect(-hfw*.9,-hfh*.9,ufw0*.9,ufh0*.9);ctx.fill();ctx.stroke();
+      ctx.shadowBlur=0;
+      // Slots on rect/square drain
+      ctx.strokeStyle='rgba(200,200,190,.7)';ctx.lineWidth=1;
+      const slots=drainShape==='rect'?4:3;
+      for(let i=-slots+1;i<=slots-1;i+=2){ctx.beginPath();ctx.moveTo(i*(hfw*.35),-hfh*.7);ctx.lineTo(i*(hfw*.35),hfh*.7);ctx.stroke();}
+    } else {
+      ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+      ctx.strokeStyle='rgba(200,200,190,.7)';ctx.lineWidth=1;
+      for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(i*(r*.4),-r*.7);ctx.lineTo(i*(r*.4),r*.7);ctx.stroke();}
+    }
     ctx.restore();
-    if(isSelected){ctx.save();ctx.strokeStyle='rgba(191,123,94,.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.strokeRect(cx2-hfw-5,cy2-hfh-5,fw+10,fh+10);ctx.setLineDash([]);ctx.restore();}
+    if(isSelected){
+      ctx.save();ctx.strokeStyle='rgba(191,123,94,.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+      ctx.strokeRect(cx2-hfw-5,cy2-hfh-5,fw+10,fh+10);ctx.setLineDash([]);
+      ctx.restore();
+      // Rotate handle — top of drain in local space, rotated with it
+      // Position: above the drain centre, rotated with the drain
+      const rhDist=Math.max(hfwHit,hfhHit)+16;
+      const cosR2=Math.cos(rot),sinR2=Math.sin(rot);
+      // Local (0,-rhDist) rotated by rot → world
+      const rhCx=cx2+(-rhDist)*(-sinR2); // local -y rotated
+      const rhCy=cy2+(-rhDist)*(cosR2);
+      // Draw the rotate icon: arc arrow on top half + diamond centre
+      const rr=12; // radius of handle circle
+      ctx.save();
+      ctx.translate(rhCx,rhCy);
+      // White background circle
+      ctx.beginPath();ctx.arc(0,0,rr,0,Math.PI*2);
+      ctx.fillStyle='rgba(74,124,111,0.95)';ctx.fill();
+      ctx.strokeStyle='white';ctx.lineWidth=1;ctx.stroke();
+      // Arc arrow (top semicircle, counterclockwise from right to left)
+      ctx.strokeStyle='white';ctx.lineWidth=2.2;ctx.lineCap='round';
+      ctx.beginPath();ctx.arc(0,0,6.5,0.1,-Math.PI+0.1,false);ctx.stroke();
+      // Arrow at left end
+      ctx.beginPath();
+      ctx.moveTo(-6.5*Math.cos(Math.PI-0.1),-6.5*Math.sin(Math.PI-0.1));
+      const aAng=-Math.PI+0.1+Math.PI/2;
+      ctx.lineTo(-6.5*Math.cos(Math.PI-0.1)+3.5*Math.cos(aAng+0.5),-6.5*Math.sin(Math.PI-0.1)+3.5*Math.sin(aAng+0.5));
+      ctx.moveTo(-6.5*Math.cos(Math.PI-0.1),-6.5*Math.sin(Math.PI-0.1));
+      ctx.lineTo(-6.5*Math.cos(Math.PI-0.1)+3.5*Math.cos(aAng-0.5),-6.5*Math.sin(Math.PI-0.1)+3.5*Math.sin(aAng-0.5));
+      ctx.stroke();
+      // Diamond centre
+      ctx.strokeStyle='white';ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.moveTo(0,-3.5);ctx.lineTo(3,0);ctx.lineTo(0,3.5);ctx.lineTo(-3,0);ctx.closePath();ctx.stroke();
+      ctx.restore();
+      if(planMeta)planMeta._rotHandle={x:rhCx,y:rhCy,name};
+    } else {
+      if(planMeta&&planMeta._rotHandle?.name===name)delete planMeta._rotHandle;
+    }
     ctx.fillStyle=isSelected?'#BF7B5E':'#555';ctx.font='8px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText(name.replace('drain-','')+'drain',cx2,cy2+hfh+4);
+    ctx.fillText(name.replace('drain-','')+'drain',cx2,cy2+Math.max(hfwHit,hfhHit)+4);
     return;
   }
 
@@ -1544,19 +1703,28 @@ function drawOneFix(ctx,ox,oy,scale,name,pos){
 
   if(isSelected){
     ctx.fillStyle='rgba(191,123,94,.85)';
-    const hintW=148,hintH=18,hintX=cx2-hintW/2,hintY=cy2-Math.max(hfwHit,hfhHit)-26;
+    const isMobile='ontouchstart' in window;
+    const hintText=isMobile?'Hold to resize & remove':'Dbl-click resize · Del remove';
+    const hintW=isMobile?140:175,hintH=18,hintX=cx2-hintW/2,hintY=cy2-Math.max(hfwHit,hfhHit)-26;
     ctx.beginPath();if(ctx.roundRect)ctx.roundRect(hintX,hintY,hintW,hintH,4);else ctx.rect(hintX,hintY,hintW,hintH);
     ctx.fill();
     ctx.fillStyle='white';ctx.font='bold 8.5px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('Dbl-click resize · R rotate · Del remove',cx2,hintY+9);
+    ctx.fillText(hintText,cx2,hintY+9);
+
     ctx.save();ctx.translate(cx2,cy2);ctx.rotate(rot);
+    // Dashed selection box
     ctx.strokeStyle='rgba(191,123,94,.6)';ctx.lineWidth=2;ctx.setLineDash([5,3]);
     ctx.strokeRect(-hfw-4,-hfh-4,ufw0+8,ufh0+8);ctx.setLineDash([]);
-    [[-hfw,-hfh],[hfw,-hfh],[-hfw,hfh],[hfw,hfh]].forEach(([hx,hy])=>{
-      ctx.beginPath();ctx.arc(hx,hy,5,0,Math.PI*2);ctx.fillStyle='#BF7B5E';ctx.fill();
+
+    // Three resize dots (all corners except top-right)
+    [[-hfw,-hfh],[-hfw,hfh],[hfw,hfh]].forEach(([hx,hy])=>{
+      ctx.beginPath();ctx.arc(hx,hy,5,0,Math.PI*2);
+      ctx.fillStyle='#BF7B5E';ctx.fill();
       ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
     });
+
     ctx.restore();
+    if(planMeta)delete planMeta._rotHandle; // only drains get rotate handle
   } else {
     ctx.save();ctx.translate(cx2,cy2);ctx.rotate(rot);
     [[-hfw,-hfh],[hfw,-hfh],[-hfw,hfh],[hfw,hfh]].forEach(([hx,hy])=>{
@@ -1651,14 +1819,15 @@ function initFixtureDragDrop(){
 
   // ── Canvas single-click: add custom corner, place activeFix, or select fixture ──
   cv.addEventListener('click',e=>{
+    const{cx,cy}=canvasCoords(e,cv);
+    // Check rotate handle first
+    // rotate handle click is handled by mousedown drag — skip here
     // In custom mode, only intercept clicks for drawing if shape not yet closed
     if(S.shapeMode==='custom'&&!S.customClosed){
       handleCustomClick(e,cv);
       updateCanvasHintAndCursor(cv);
       return;
     }
-
-    const {cx,cy}=canvasCoords(e,cv);
 
     if(S.activeFix){
       placeFixtureAtEvent(e,cv,false);
@@ -1670,14 +1839,13 @@ function initFixtureDragDrop(){
       return;
     }
 
-    // Click on a placed fixture → select/deselect
+    // Click on empty space → deselect. Mousedown already handled fixture selection.
     const hit=hitTestFixture(cx,cy);
-    if(hit){
-      S.selectedFix=(S.selectedFix===hit)?null:hit;
-    } else {
+    if(!hit){
       S.selectedFix=null;
+      S.selectedCustomWall=null;
+      drawPlan();
     }
-    drawPlan();
   });
 
   // ── Double-click on canvas: close custom shape OR open fixture editor ──
@@ -1697,9 +1865,26 @@ function initFixtureDragDrop(){
   // ── Mousedown: start dragging a placed fixture ──
   let draggedName=null,dragOffX=0,dragOffY=0,didDrag=false;
   cv.addEventListener('mousedown',e=>{
+    document.activeElement?.blur(); // deselect any input that has focus
     if(S.shapeMode==='custom'&&!S.customClosed)return;
     if(S.activeFix)return;
     const{cx,cy}=canvasCoords(e,cv);
+    // Check rotate handle
+    const rh=planMeta?._rotHandle;
+    if(rh){
+      const dx=cx-rh.x,dy=cy-rh.y;
+      if(Math.sqrt(dx*dx+dy*dy)<18){
+        const fixPos=S.fixes[rh.name];
+        if(fixPos){
+          const fcx=planMeta.ox+fixPos.x*planMeta.scale;
+          const fcy=planMeta.oy+fixPos.y*planMeta.scale;
+          planMeta._rotDrag={name:rh.name,cx:fcx,cy:fcy,startAngle:Math.atan2(cy-fcy,cx-fcx),startRot:S.fixRotations[rh.name]||0};
+          cv.style.cursor='grabbing';
+        }
+        e.preventDefault();
+        return;
+      }
+    }
     // Check custom wall hit first
     const cwHit=hitTestCustomWall(cx,cy);
     if(cwHit){
@@ -1730,7 +1915,16 @@ function initFixtureDragDrop(){
   });
 
   window.addEventListener('mousemove',e=>{
-    // Drag custom wall
+    // Rotation drag
+    if(planMeta?._rotDrag){
+      const rc=cv.getBoundingClientRect();
+      const sx=cv.width/rc.width,sy=cv.height/rc.height;
+      const cx2=(e.clientX-rc.left)*sx, cy2=(e.clientY-rc.top)*sy;
+      const rd=planMeta._rotDrag;
+      const angle=Math.atan2(cy2-rd.cy,cx2-rd.cx);
+      S.fixRotations[rd.name]=(rd.startRot+(angle-rd.startAngle)+Math.PI*2)%(Math.PI*2);
+      drawPlan();return;
+    }
     const movingCW=(S.customWalls||[]).find(w=>w._dragOffX!==undefined);
     if(movingCW){
       const rc=cv.getBoundingClientRect();
@@ -1994,7 +2188,7 @@ function initFixtureDragDrop(){
     }
 
     // Snap centre to other fixture centres (drains use smaller snap zone)
-    const snapThresh=FIXES_BASE[draggedName]?.isDrain?0.05:SNAP_M;
+    const snapThresh=FIXES_BASE[draggedName]?.isDrain?0.04:SNAP_M;
     for(const[oname,opos]of Object.entries(S.fixes)){
       if(oname===draggedName||!opos)continue;
       if(Math.abs(mx-opos.x)<snapThresh)mx=opos.x;
@@ -2077,13 +2271,31 @@ function initFixtureDragDrop(){
   }
 
   let touchDragName=null,touchDragOffX=0,touchDragOffY=0,touchDidMove=false,touchStartTime=0;
+  let longPressTimer=null,longPressFix=null,longPressCW=null;
 
   cv.addEventListener('touchstart',e=>{
     e.preventDefault();
+    document.activeElement?.blur(); // deselect any input
     const touch=e.touches[0];
     const{cx,cy}=touchCanvasCoords(touch);
     touchStartTime=Date.now();
     touchDidMove=false;
+
+    // Check rotate handle first
+    const rh2=planMeta?._rotHandle;
+    if(rh2){
+      const dx=cx-rh2.x,dy=cy-rh2.y;
+      if(Math.sqrt(dx*dx+dy*dy)<18){
+        // Start rotation drag — track angle from fixture centre
+        const fixPos=S.fixes[rh2.name];
+        if(fixPos){
+          const fcx=planMeta.ox+fixPos.x*planMeta.scale;
+          const fcy=planMeta.oy+fixPos.y*planMeta.scale;
+          planMeta._rotDrag={name:rh2.name,cx:fcx,cy:fcy,startAngle:Math.atan2(cy-fcy,cx-fcx),startRot:S.fixRotations[rh2.name]||0};
+        }
+        return;
+      }
+    }
 
     // Custom shape drawing mode — tap adds corners
     if(S.shapeMode==='custom'&&!S.customClosed){
@@ -2124,10 +2336,31 @@ function initFixtureDragDrop(){
       touchDragOffY=cy-(planMeta.oy+pos.y*planMeta.scale);
       S.selectedFix=hit;
       drawPlan();
+      // Long press timer — 500ms hold opens fixture editor
+      longPressFix=hit;
+      longPressTimer=setTimeout(()=>{
+        if(longPressFix&&!touchDidMove){
+          openFixtureEditor(longPressFix);
+          longPressFix=null;
+        }
+      },500);
     }
   },{passive:false});
 
   cv.addEventListener('touchmove',e=>{
+    // Rotation drag
+    if(planMeta?._rotDrag){
+      e.preventDefault();
+      const touch=e.touches[0];
+      const rc=cv.getBoundingClientRect();
+      const sx=cv.width/rc.width,sy=cv.height/rc.height;
+      const cx2=(touch.clientX-rc.left)*sx, cy2=(touch.clientY-rc.top)*sy;
+      const rd=planMeta._rotDrag;
+      const angle=Math.atan2(cy2-rd.cy,cx2-rd.cx);
+      const delta=angle-rd.startAngle;
+      S.fixRotations[rd.name]=(rd.startRot+delta+Math.PI*2)%(Math.PI*2);
+      drawPlan();return;
+    }
     // Drag custom wall on touch
     const movingCW2=(S.customWalls||[]).find(w=>w._dragOffX!==undefined);
     if(movingCW2){
@@ -2169,6 +2402,7 @@ function initFixtureDragDrop(){
     if(!touchDragName)return;
     e.preventDefault();
     touchDidMove=true;
+    if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;longPressFix=null;}
     const touch=e.touches[0];
     // Reuse the mousemove logic by synthesising coords
     const rc=cv.getBoundingClientRect();
@@ -2219,16 +2453,19 @@ function initFixtureDragDrop(){
     const touch=e.changedTouches[0];
     const{cx,cy}=touchCanvasCoords(touch);
 
+    // End rotation drag
+    if(planMeta?._rotDrag){delete planMeta._rotDrag;drawPlan();return;}
+
     // End custom wall drag
     const wasDraggingCW=(S.customWalls||[]).some(w=>w._dragOffX!==undefined);
     (S.customWalls||[]).forEach(w=>{delete w._dragOffX;delete w._dragOffY;});
 
     // End fixture drag
-    const wasDraggingFix=!!touchDragName;
+    const wasDraggingFix=touchDidMove&&!!touchDragName; // only counts as drag if finger moved
     touchDragName=null;
 
     // If something was being dragged, just finish — no deselect
-    if(wasDraggingCW||wasDraggingFix||touchDidMove){
+    if(wasDraggingCW||wasDraggingFix){
       touchDidMove=false;
       drawPlan();
       return;
@@ -2236,15 +2473,15 @@ function initFixtureDragDrop(){
 
     touchDidMove=false;
 
+    // Check rotate handle tap
+    // rotate handle click is handled by mousedown drag — skip here
+
     // Short tap — work out what was tapped
     const hitFix=hitTestFixture(cx,cy);
     const hitCW=hitTestCustomWall(cx,cy);
 
+    if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;longPressFix=null;}
     if(hitFix){
-      // Double-tap = open editor
-      if(S.selectedFix===hitFix&&Date.now()-touchStartTime<300){
-        openFixtureEditor(hitFix);
-      }
       S.selectedFix=hitFix;
       S.selectedCustomWall=null;
     } else if(hitCW){
@@ -2279,7 +2516,19 @@ function initFixtureDragDrop(){
   });
   // ──────────────────────────────────────────────────────────────────────────
 
+  // Deselect fixtures/custom walls when clicking anywhere outside the plan canvas
+  document.addEventListener('mousedown',e=>{
+    if(S.step!==1)return; // only on floor plan step
+    const cv2=document.getElementById('planCanvas');
+    if(cv2&&!cv2.contains(e.target)){
+      S.selectedFix=null;
+      S.selectedCustomWall=null;
+      drawPlan();
+    }
+  });
+
   window.addEventListener('mouseup',e=>{
+    if(planMeta?._rotDrag){delete planMeta._rotDrag;cv.style.cursor='default';drawPlan();return;}
     // End custom wall drag
     (S.customWalls||[]).forEach(w=>{delete w._dragOffX;delete w._dragOffY;});
     if(draggedCorner>=0){
@@ -2305,6 +2554,7 @@ function canvasCoords(e,cv){
 // Drains tested first so they get mouse priority over larger overlapping fixtures
 function hitTestFixture(cx,cy){
   const meta=planMeta;
+  if(!meta)return null;
   const names=Object.keys(S.fixes);
   const drains=names.filter(n=>FIXES_BASE[n]?.isDrain);
   const others=names.filter(n=>!FIXES_BASE[n]?.isDrain);
@@ -2330,6 +2580,7 @@ function openFixtureEditor(name){
   S.selectedFix=name;
   const d=FIXES_DEF[name];
   const base=FIXES_BASE[name];
+  const isDrain=base?.isDrain;
   const ovr=S.fixSizes[name]||{};
   const isShower=name==='shower';
 
@@ -2340,27 +2591,35 @@ function openFixtureEditor(name){
     ?(base.shapes||['Square','Rectangle']).map(s=>`<option value="${s}"${(ovr.shape||'Square')===s?' selected':''}>${s}</option>`).join('')
     :'';
 
+  const curDrainShape=FIXES_DEF[name]?.drainShape||FIXES_BASE[name]?.drainShape||'round';
   const modal=document.createElement('div');
   modal.className='fix-modal-overlay';
   modal.id='fixModal';
   modal.innerHTML=`
     <div class="fix-modal">
       <button class="fix-modal-close" onclick="closeFixtureEditor()">✕</button>
-      <h3>${d.emoji} Edit ${name.charAt(0).toUpperCase()+name.slice(1)}</h3>
+      <h3>${d.emoji} Edit ${name.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase())}</h3>
       ${isShower?`
         <label class="lbl">Shape</label>
         <select id="fe-shape" onchange="previewFixSize('${name}')" style="margin-bottom:.8rem">
           ${shapeOptions}
         </select>`:''}
+      ${isDrain?`
+        <label class="lbl" style="margin-bottom:.4rem;display:block">Drain shape</label>
+        <div style="display:flex;gap:.4rem;margin-bottom:.9rem;flex-wrap:wrap">
+          <button class="grout-w-btn ${curDrainShape==='round'?'on':''}" onclick="setDrainShape('${name}','round',this)">● Round</button>
+          <button class="grout-w-btn ${curDrainShape==='square'?'on':''}" onclick="setDrainShape('${name}','square',this)">◻ Square</button>
+          <button class="grout-w-btn ${curDrainShape==='rect'?'on':''}" onclick="setDrainShape('${name}','rect',this)">▭ Linear</button>
+        </div>`:''}
       <div class="modal-row">
         <div>
-          <label class="lbl">Width (m)</label>
+          <label class="lbl">Width</label>
           <input class="inp" type="number" id="fe-w" value="${Math.round(d.fw*1000)}"
             min="${Math.round(base.minW*1000)}" max="${Math.round(base.maxW*1000)}" step="50" oninput="previewFixSize('${name}')">
           <div style="font-size:.68rem;color:#9AABB8">${Math.round(base.minW*1000)}–${Math.round(base.maxW*1000)} mm</div>
         </div>
         <div>
-          <label class="lbl">Depth (m)</label>
+          <label class="lbl">Depth</label>
           <input class="inp" type="number" id="fe-h" value="${Math.round(d.fh*1000)}"
             min="${Math.round(base.minH*1000)}" max="${Math.round(base.maxH*1000)}" step="50" oninput="previewFixSize('${name}')">
           <div style="font-size:.68rem;color:#9AABB8">${Math.round(base.minH*1000)}–${Math.round(base.maxH*1000)} mm</div>
@@ -2368,7 +2627,6 @@ function openFixtureEditor(name){
       </div>
       <div class="modal-actions">
         <button class="modal-actions btn-remove" onclick="removeFixture('${name}')">Remove</button>
-        <button class="btn-next" style="background:var(--sage);border:none;padding:.65rem 1rem;font-size:.88rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:600;color:white;cursor:pointer" onclick="rotateFixture('${name}')">↻ Rotate</button>
         <button class="btn-next" onclick="applyFixtureSize('${name}')">Apply</button>
       </div>
     </div>`;
@@ -2378,11 +2636,39 @@ function openFixtureEditor(name){
   document.body.appendChild(modal);
 }
 
+function setDrainShape(name,shape,btn){
+  if(!S.fixSizes[name])S.fixSizes[name]={};
+  S.fixSizes[name].drainShape=shape;
+  document.querySelectorAll('#fixModal .grout-w-btn').forEach(b=>{
+    if(['● Round','◻ Square','▭ Linear'].includes(b.textContent.trim()))b.classList.remove('on');
+  });
+  btn.classList.add('on');
+  // For linear drain: make it rectangular (adjust fh)
+  if(shape==='rect'){
+    S.fixSizes[name].fw=FIXES_BASE[name].fw||0.08;
+    S.fixSizes[name].fh=(S.fixSizes[name].fw)*3;
+    const wInp=document.getElementById('fe-w');
+    const hInp=document.getElementById('fe-h');
+    if(wInp)wInp.value=Math.round(FIXES_DEF[name].fw*1000);
+    if(hInp)hInp.value=Math.round(FIXES_DEF[name].fh*1000);
+  } else {
+    // Reset to square proportions
+    const sq=FIXES_BASE[name].fw||0.1;
+    S.fixSizes[name].fw=sq;S.fixSizes[name].fh=sq;
+    const wInp=document.getElementById('fe-w');
+    const hInp=document.getElementById('fe-h');
+    if(wInp)wInp.value=Math.round(sq*1000);
+    if(hInp)hInp.value=Math.round(sq*1000);
+  }
+  drawPlan();
+}
+
 function previewFixSize(name){
   const w=parseFloat(document.getElementById('fe-w')?.value)/1000; // mm→m
   const h=parseFloat(document.getElementById('fe-h')?.value)/1000;
   const shape=document.getElementById('fe-shape')?.value;
   const base=FIXES_BASE[name];
+  const isDrain=base?.isDrain;
   if(!isNaN(w)&&!isNaN(h)){
     if(!S.fixSizes[name])S.fixSizes[name]={};
     S.fixSizes[name].fw=Math.max(base.minW,Math.min(base.maxW,w));
@@ -3243,6 +3529,21 @@ function calcQuote(){
   // Tiling labour — only if there are tiles to lay (regardless of chargeTiles)
   const hasFloorTile=(ft||ftId==='byo')&&fp;
   const hasWallTile=(wt||wtId==='byo')&&wp&&S.wallTileHeight!=='none';
+
+  // BT500 tile adhesive — 20kg bags at $27 each, ~4.5kg/m² coverage
+  const GLUE_BAG=RATES.glue_bag_price, GLUE_KG=RATES.glue_kg_per_m2;
+  if(hasFloorTile){
+    const floorBags=Math.ceil(fA*GLUE_KG/20);
+    const floorGlueCost=floorBags*GLUE_BAG;
+    items.push({n:`BT500 floor adhesive — ${floorBags}× 20kg bag${floorBags>1?'s':''} (${fA.toFixed(1)}m²)`,p:floorGlueCost,type:'mat'});
+    matSub+=floorGlueCost;
+  }
+  if(hasWallTile){
+    const wallBags=Math.ceil(wA*GLUE_KG/20);
+    const wallGlueCost=wallBags*GLUE_BAG;
+    items.push({n:`BT500 wall adhesive — ${wallBags}× 20kg bag${wallBags>1?'s':''} (${wA.toFixed(1)}m²)`,p:wallGlueCost,type:'mat'});
+    matSub+=wallGlueCost;
+  }
   if(hasFloorTile) totalTilingLab+=Math.round(fA*RATES.tiling_floor*ftDiff);
   if(hasWallTile)  totalTilingLab+=Math.round(wA*RATES.tiling_wall*wtDiff);
   if(hasFloorTile||hasWallTile) totalGroutingLab=RATES.grouting; // flat rate per job
