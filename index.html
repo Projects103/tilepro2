@@ -631,31 +631,13 @@ h1.hero-title em{color:var(--terra);font-style:italic}
     <div class="luke-cmnt"><div class="sm-av">L</div><div>"A few extra things that can make a big difference to the final cost. Let me know what applies to your job."</div></div>
 
 
-    <!-- Floor edge tile-down -->
+    <!-- Demo -->
     <div class="card" style="margin-bottom:1.2rem">
-      <h4 style="margin-bottom:.5rem">📐 Floor Edge Tile-Down</h4>
-      <p style="font-size:.82rem;color:#7A8A99;margin-bottom:.9rem;line-height:1.5">Select which edges drop down to an adjoining room and need tiling on the face. Tap multiple edges to select them.</p>
-      <div id="dropEdgeBtns" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem"></div>
-      <div style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap">
-        <label class="lbl" style="margin:0;white-space:nowrap">Drop depth</label>
-        <input type="number" id="dropDepth" value="50" min="10" max="500" step="10" oninput="S.dropDepth=parseInt(this.value)||50"
-          style="width:80px;padding:.45rem .7rem;border:2px solid #E0D8CE;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--slate);background:var(--cream)">
-        <span style="font-size:.82rem;color:#9AABB8">mm</span>
-      </div>
-    </div>
-
-    <!-- Demo fee -->
-    <div class="card" style="margin-bottom:1.2rem">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;margin-bottom:.7rem">
-        <div>
-          <h4>🔨 Demolition</h4>
-          <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;line-height:1.5">Strip out existing tiles, fixtures, and fittings.</p>
-        </div>
-        <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;flex-shrink:0">
-          <input type="checkbox" id="demoToggle" checked onchange="S.demoIncluded=this.checked;updateDemoFee()"
-            style="width:20px;height:20px;cursor:pointer;accent-color:var(--terra)">
-          <span style="font-size:.9rem;font-weight:600;color:var(--slate)" id="demoLabel">Included</span>
-        </label>
+      <h4>🔨 Does the job include demolition?</h4>
+      <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">Stripping out existing tiles, fixtures, and fittings.</p>
+      <div style="display:flex;gap:.5rem;margin-bottom:.9rem">
+        <button id="demoYes" onclick="S.demoIncluded=true;document.getElementById('demoYes').classList.add('on');document.getElementById('demoNo').classList.remove('on');updateDemoFee()" class="grout-w-btn on" style="flex:1;justify-content:center">Yes</button>
+        <button id="demoNo" onclick="S.demoIncluded=false;document.getElementById('demoNo').classList.add('on');document.getElementById('demoYes').classList.remove('on');updateDemoFee()" class="grout-w-btn" style="flex:1;justify-content:center">No</button>
       </div>
       <div id="demoFeeRow" style="display:block;padding-top:.9rem;border-top:1px solid #F0EAE0">
         <div style="margin-bottom:.9rem">
@@ -685,31 +667,21 @@ h1.hero-title em{color:var(--terra);font-style:italic}
 
     <!-- Tile charge toggle -->
     <div class="card" style="margin-bottom:1.2rem">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem">
-        <div>
-          <h4>🪟 Charge for Tiles</h4>
-          <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;line-height:1.5">Disable if the customer has already purchased their own tiles and you only need to quote labour.</p>
-        </div>
-        <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;flex-shrink:0">
-          <input type="checkbox" id="chargeTiles" checked onchange="S.chargeTiles=this.checked"
-            style="width:20px;height:20px;cursor:pointer;accent-color:var(--terra)">
-          <span style="font-size:.9rem;font-weight:600;color:var(--slate)" id="chargeTilesLabel">Included</span>
-        </label>
+      <h4>🪟 Has the customer already bought their tiles?</h4>
+      <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">If yes, tile materials will be excluded from the quote — labour only.</p>
+      <div style="display:flex;gap:.5rem">
+        <button id="tilesNo" onclick="S.chargeTiles=true;this.classList.add('on');document.getElementById('tilesYes').classList.remove('on')" class="grout-w-btn on" style="flex:1;justify-content:center">No — include tiles</button>
+        <button id="tilesYes" onclick="S.chargeTiles=false;this.classList.add('on');document.getElementById('tilesNo').classList.remove('on')" class="grout-w-btn" style="flex:1;justify-content:center">Yes — labour only</button>
       </div>
     </div>
 
     <!-- Waterproofing toggle -->
     <div class="card" style="margin-bottom:1.2rem">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem">
-        <div>
-          <h4>💧 Waterproofing</h4>
-          <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;line-height:1.5">Required in wet areas. Disable only if existing waterproofing is confirmed intact by a licensed inspector.</p>
-        </div>
-        <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;flex-shrink:0">
-          <input type="checkbox" id="wpToggle" checked onchange="S.waterproofing=this.checked;updateExtras()"
-            style="width:20px;height:20px;cursor:pointer;accent-color:var(--terra)">
-          <span style="font-size:.9rem;font-weight:600;color:var(--slate)" id="wpLabel">Included</span>
-        </label>
+      <h4>💧 Does the job include waterproofing?</h4>
+      <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">Required in all wet areas. Only exclude if existing waterproofing is confirmed intact by a licensed inspector.</p>
+      <div style="display:flex;gap:.5rem">
+        <button id="wpYes" onclick="S.waterproofing=true;this.classList.add('on');document.getElementById('wpNo').classList.remove('on')" class="grout-w-btn on" style="flex:1;justify-content:center">Yes</button>
+        <button id="wpNo" onclick="S.waterproofing=false;this.classList.add('on');document.getElementById('wpYes').classList.remove('on')" class="grout-w-btn" style="flex:1;justify-content:center">No</button>
       </div>
     </div>
 
@@ -802,8 +774,10 @@ const RATES = {
   grouting:         180,   // $ flat — grouting (total job)
   glue_bag_price:    27,   // $ per 20kg bag — BT500 tile adhesive
   glue_kg_per_m2:   4.5,   // kg/m² coverage (20kg bag covers ~4.4m² floor, ~3.5m² wall)
-  waterproof_mat:    30,   // $/m² — membrane + primer materials
-  waterproof_labour: 35,   // $/m² — waterproofing application labour
+  waterproof_primer:   12,  // $/m² — sealing primer
+  waterproof_tape:      8,   // $/m linear — edge tape (only if walls present)
+  waterproof_membrane: 18,  // $/m² — waterproof membrane (2 coats)
+  waterproof_labour:   35,   // $/m² — waterproofing application labour
   screed_labour:     50,   // $/m² — screed bed laying incl. fall setting
   screed_standby:   240,   // $ flat — 1-day revisit fee after cure wait
   sand_per_kg:      0.09,  // $/kg — coarse washed sand
@@ -844,6 +818,8 @@ const S = {
   extras:[], // [{desc:'',amount:0}]
   dropEdges:[],
   customWalls:[], // [{id,label,length,height,tiled,tileSel}]
+  drainSelections:{}, // {fixtureName: drainProductId}
+  drainLinked:{}, // {type: bool} — 'floor' or 'shower'
   dropDepth:50,
   toiletSTL:null,
   tileSupFilter:'all',
@@ -925,11 +901,9 @@ const TILES_PER_PAGE=5;
 const TILES=[...ALL_TILES];
 
 const TAPS=[
-  {id:'blk',  name:'Matte Black',    css:'tap-blk', beau:380, whol:220, desc:'Contemporary arch',   tag:'pop', tagLbl:'Best Seller', threeCol:0x222222},
-  {id:'chr',  name:'Brushed Chrome', css:'tap-chr', beau:180, whol:110, desc:'Classic & timeless',                                   threeCol:0xCCCCCC},
-  {id:'gld',  name:'Brushed Gold',   css:'tap-gld', beau:520, whol:310, desc:'Luxury finish',       tag:'new', tagLbl:'Premium',      threeCol:0xC4A040},
-  {id:'cop',  name:'Aged Copper',    css:'tap-cop', beau:450, whol:290, desc:'Industrial-chic',                                      threeCol:0xB87333},
-  {id:'wht',  name:'Matte White',    css:'tap-wht', beau:290, whol:175, desc:'Soft & modern',       tag:'new', tagLbl:'New',          threeCol:0xEAEAEA},
+  {id:'tap-chrome',  name:'Basin Mixer — Chrome',         beau:90,  whol:90,  col:'#C0C0BE', threeCol:0xC8C8C8, bg:'#F0F0EE', css:''},
+  {id:'tap-bn',      name:'Basin Mixer — Brushed Nickel', beau:120, whol:120, col:'#B0A898', threeCol:0xBDB5A6, bg:'#EBE8E4', css:''},
+  {id:'tap-black',   name:'Basin Mixer — Matte Black',    beau:130, whol:130, col:'#2A2A2A', threeCol:0x2A2A2A, bg:'#D8D5D0', css:''},
 ];
 const VANS=[
   {id:'wht',  name:'Floating White 900mm',  css:'van-wht', beau:1200, whol:750,  desc:'Wall-hung, stone top',       tag:'pop', tagLbl:'Popular', threeCol:0xF0EFED, threeW:0.9},
@@ -938,9 +912,14 @@ const VANS=[
   {id:'grn',  name:'Sage Green 900mm',      css:'van-grn', beau:1350, whol:840,  desc:'Terrazzo top, sage lacquer', tag:'new', tagLbl:'Trending',threeCol:0x4A6B5A, threeW:0.9},
 ];
 const TOIS=[
-  {id:'btw',  name:'Back-to-Wall Suite',  bg:'#F4F4F2', beau:900,  whol:580, desc:'Concealed cistern',      tag:'pop', tagLbl:'Best Seller'},
-  {id:'whu',  name:'Wall-Hung Pan',       bg:'#EEEEEE', beau:1400, whol:890, desc:'Floating, space-saving',  tag:'new', tagLbl:'Premium'},
-  {id:'cls',  name:'Close Coupled',       bg:'#F8F8F6', beau:650,  whol:420, desc:'Traditional, great value'},
+  {id:'toi-estilo-cc',  name:'Estilo Close Coupled Rimless',        beau:189, whol:189, bg:'#F5F4F2',css:''},
+  {id:'toi-mondella-cc',name:'Mondella Cadenza Close Coupled',       beau:234, whol:234, bg:'#F5F4F2',css:''},
+  {id:'toi-mondella-btw',name:'Mondella Rococo Back to Wall',        beau:279, whol:279, bg:'#F5F4F2',css:''},
+  {id:'toi-mondella-con',name:'Mondella Concerto Back to Wall',      beau:309, whol:309, bg:'#F5F4F2',css:''},
+  {id:'toi-mondella-sig',name:'Mondella Signature Rimless BTW',      beau:328, whol:328, bg:'#F5F4F2',css:''},
+  {id:'toi-mondella-torn',name:'Mondella Tornado Rimless BTW',       beau:349, whol:349, bg:'#F5F4F2',css:''},
+  {id:'toi-caroma-luna', name:'Caroma Luna Back to Wall',            beau:514, whol:514, bg:'#F5F4F2',css:''},
+  {id:'toi-caroma-luna-wf',name:'Caroma Luna Wall Faced',            beau:579, whol:579, bg:'#F5F4F2',css:''},
 ];
 const SHOS=[
   {id:'frm',  name:'Frameless Glass',     bg:'linear-gradient(135deg,rgba(200,230,255,.55),rgba(180,210,240,.3))', beau:2200, whol:1400, desc:'10mm toughened',   tag:'new', tagLbl:'Premium'},
@@ -970,6 +949,27 @@ function getFixDef(name){
 // Proxy so FIXES_DEF.toilet etc. work
 const FIXES_DEF=new Proxy({},{get:(_,name)=>getFixDef(name)});
 
+// ══════════════════════════════════════════════
+// DRAIN PRODUCTS
+// ══════════════════════════════════════════════
+const FLOOR_DRAINS=[
+  {id:'fd-round-chrome', name:'Kinetic 100mm Round Chrome',     desc:'100mm chrome brass round grate',        beau:24,  bg:'#E8E8E6'},
+  {id:'fd-round-black',  name:'Kinetic 100mm Round Matte Black',desc:'100mm matte black round grate',         beau:26,  bg:'#D8D8D6'},
+  {id:'fd-linear-300',   name:'Linear Channel 300mm',           desc:'300mm SS linear channel drain',         beau:80,  bg:'#DCDCDA'},
+  {id:'fd-linear-600',   name:'Mondella Rumba 600mm Tile-In',   desc:'600mm SS tile insert floor grate',      beau:62,  bg:'#DCDCDA'},
+  {id:'fd-linear-900',   name:'Mondella Rumba 900mm Tile-In',   desc:'900mm SS tile insert floor grate',      beau:99,  bg:'#DCDCDA'},
+  {id:'fd-tile-in',      name:'Mondella 100mm Tile-In Square',  desc:'100×100mm tile-in SS square grate',     beau:39,  bg:'#D8D6CF'},
+];
+const SHOWER_DRAINS=[
+  {id:'sd-round-chrome', name:'Kinetic 100mm Round Chrome',     desc:'100mm chrome brass round shower grate', beau:24,  bg:'#E8E8E6'},
+  {id:'sd-round-black',  name:'Mondella Concerto Round Black',  desc:'100mm matte black square shower grate', beau:47,  bg:'#D8D8D6'},
+  {id:'sd-linear-600',   name:'Mondella 600mm Rect Grate',      desc:'600×90mm SS rectangle floor grate',     beau:80,  bg:'#DCDCDA'},
+  {id:'sd-linear-900',   name:'Mondella 900mm Rect Grate',      desc:'900×90mm SS rectangle floor grate',     beau:117, bg:'#DCDCDA'},
+  {id:'sd-tile-in',      name:'Mondella 100mm Tile-In Square',  desc:'100×100mm SS tile-in shower grate',     beau:39,  bg:'#D8D6CF'},
+];
+
+// drainSelections: {[fixtureName]: productId} — per-drain product choice
+// drainLinked: {[type]: bool} — true = all same-type drains share first one's selection
 // ══════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════
@@ -1117,16 +1117,27 @@ function updateCanvasHintAndCursor(cv){
   cv=cv||document.getElementById('floorCanvas');
   if(!cv)return;
   const hint=document.getElementById('canvasHint');
+  if(!hint)return;
+  // If a fixture is selected, show its name and the hold-to-edit hint
+  if(S.selectedFix){
+    const d=FIXES_DEF[S.selectedFix];
+    const name=S.selectedFix.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    const isMobile='ontouchstart' in window;
+    hint.textContent=isMobile
+      ? `— ${name} selected · hold to resize/remove`
+      : `— ${name} selected · dbl-click to resize · Del to remove`;
+    return;
+  }
   if(S.shapeMode==='custom'){
     if(S.customClosed){
-      if(hint)hint.textContent='— shape closed · drag fixtures onto the plan';
+      hint.textContent='— shape closed · drag fixtures onto the plan';
       cv.style.cursor='default';
     } else {
-      if(hint)hint.textContent=`— click to add corners${S.customPts.length>=3?' · press Close Shape when done':''}`;
+      hint.textContent=`— click to add corners${S.customPts.length>=3?' · press Close Shape when done':''}`;
       cv.style.cursor='crosshair';
     }
   } else {
-    if(hint)hint.textContent='— drag fixtures from the left panel';
+    hint.textContent='— drag fixtures from the left panel';
     cv.style.cursor='default';
   }
 }
@@ -1911,6 +1922,7 @@ function initFixtureDragDrop(){
       S.selectedFix=hit;
       cv.style.cursor='grabbing';
       e.preventDefault();
+      updateCanvasHintAndCursor(cv);
     }
   });
 
@@ -3177,9 +3189,13 @@ function renderFixtureSections(){
   const hasBath=!!S.fixes.bath;
   const needsTap=hasVanity||hasShower;
 
+  const floorDrains=Object.keys(S.fixes).filter(n=>n==='drain-floor'||n.startsWith('drain-floor-'));
+  const showerDrains=Object.keys(S.fixes).filter(n=>n==='drain-shower'||n.startsWith('drain-shower-'));
+  const hasDrains=floorDrains.length>0||showerDrains.length>0;
+
   let html='';
 
-  if(!hasVanity&&!hasToilet&&!hasShower&&!hasBath){
+  if(!hasVanity&&!hasToilet&&!hasShower&&!hasBath&&!hasDrains){
     html=`<div class="luke-cmnt" style="border-left-color:#9AABB8"><div class="sm-av" style="background:#9AABB8">L</div>
       <div>"You haven't placed any fixtures on the floor plan yet. Go back to Step 1 and drag a toilet, shower, vanity or bath onto the plan — then come back here to choose the style."</div></div>
       <div class="nav-btns" style="margin-top:0;padding-top:0;border-top:none">
@@ -3227,16 +3243,13 @@ function renderFixtureSections(){
     </div>`;
   }
 
-  // Shower screen
+  // Shower screen — separate quote
   if(hasShower){
     html+=`<div class="prod-sec">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;gap:.8rem;flex-wrap:wrap">
-        <div class="prod-sec-title" style="margin:0">🚿 Shower Screen</div>
-        <div class="tile-search-wrap">
-          <input class="tile-search-inp" type="text" placeholder="Search shower screens…" oninput="filterFixGrid('shoGrid','sho',this.value)">
-        </div>
+      <div class="prod-sec-title">🚿 Shower Screen</div>
+      <div class="luke-cmnt"><div class="sm-av">L</div>
+        <div>"Shower screens vary a lot — frameless, semi-frameless, fixed vs pivot. I'll quote the screen separately after we've confirmed the shower size and style on site."</div>
       </div>
-      <div class="prod-grid" id="shoGrid"></div>
     </div>`;
   }
 
@@ -3246,13 +3259,124 @@ function renderFixtureSections(){
       <div>"You've placed a bath on the plan — I'll include plumbing connection costs in the quote. Chat to me about bath selection when I come for the site visit."</div></div>`;
   }
 
+  // Drain sections — one per placed drain
+
+  // Floor drains
+  floorDrains.forEach((name,i)=>{
+    const isFirst=i===0;
+    const linked=S.drainLinked?.floor;
+    const gridId=`fdGrid_${i}`;
+    html+=`<div class="prod-sec" id="fdSec_${i}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;gap:.8rem;flex-wrap:wrap">
+        <div class="prod-sec-title" style="margin:0">⊙ Floor Drain${floorDrains.length>1?' '+(i+1):''}</div>
+        ${isFirst&&floorDrains.length>1?`<button class="grout-w-btn ${linked?'on':''}" id="fdLinkBtn" onclick="toggleDrainLink('floor',this)" style="font-size:.72rem">🔗 Link all floor drains</button>`:''}
+        ${!isFirst&&linked?`<div style="font-size:.75rem;color:var(--sage)">Linked to drain 1</div>`:''}
+      </div>
+      ${!isFirst&&linked?`<div class="prod-grid" id="${gridId}" style="pointer-events:none;opacity:.5"></div>`:
+        `<div class="prod-grid" id="${gridId}"></div>`}
+    </div>`;
+  });
+
+  // Shower drains
+  showerDrains.forEach((name,i)=>{
+    const isFirst=i===0;
+    const linked=S.drainLinked?.shower;
+    const gridId=`sdGrid_${i}`;
+    html+=`<div class="prod-sec" id="sdSec_${i}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;gap:.8rem;flex-wrap:wrap">
+        <div class="prod-sec-title" style="margin:0">⊕ Shower Drain${showerDrains.length>1?' '+(i+1):''}</div>
+        ${isFirst&&showerDrains.length>1?`<button class="grout-w-btn ${linked?'on':''}" id="sdLinkBtn" onclick="toggleDrainLink('shower',this)" style="font-size:.72rem">🔗 Link all shower drains</button>`:''}
+        ${!isFirst&&linked?`<div style="font-size:.75rem;color:var(--sage)">Linked to drain 1</div>`:''}
+      </div>
+      <div class="prod-grid" id="${gridId}" ${!isFirst&&linked?'style="pointer-events:none;opacity:.5"':''}></div>
+    </div>`;
+  });
+
   el.innerHTML=html;
 
-  // Now render the grids that were just inserted
-  if(needsTap) renderGrid('tapGrid',TAPS,'tap',t=>tapSVG(t),t=>`from $${t.whol}`);
+  // Render all grids
+  if(needsTap) renderGrid('tapGrid',TAPS,'tap',t=>`
+    <div style="height:105px;display:flex;align-items:center;justify-content:center;background:${t.col};border-radius:8px 8px 0 0">
+      ${tapSVG(t)}
+    </div>`,t=>`from $${t.whol}`);
   if(hasVanity) renderGrid('vanGrid',VANS,'van',t=>`<div class="prod-preview ${t.css}"></div>`,t=>`from $${t.whol}`);
   if(hasToilet) renderGrid('toiGrid',TOIS,'toi',t=>`<div class="prod-preview" style="background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:3rem">🚽</div>`,t=>`from $${t.whol}`);
   if(hasShower) renderGrid('shoGrid',SHOS,'sho',t=>`<div class="prod-preview" style="background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:3rem">🚿</div>`,t=>`from $${t.whol}`);
+
+  // Render drain grids
+  const drainPreview=d=>`<div style="background:${d.bg};height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem">⊙</div>`;
+  floorDrains.forEach((name,i)=>{
+    renderDrainGrid(`fdGrid_${i}`,FLOOR_DRAINS,name,i===0||!S.drainLinked?.floor?name:floorDrains[0]);
+  });
+  showerDrains.forEach((name,i)=>{
+    renderDrainGrid(`sdGrid_${i}`,SHOWER_DRAINS,name,i===0||!S.drainLinked?.shower?name:showerDrains[0]);
+  });
+}
+
+function renderDrainGrid(gridId,catalog,drainName,selKey){
+  const el=document.getElementById(gridId);if(!el)return;
+  // Filter catalog to match drain shape
+  const shape=FIXES_DEF[drainName]?.drainShape||'round';
+  const filtered=catalog.filter(d=>{
+    if(shape==='round') return d.id.includes('round');
+    if(shape==='square') return d.id.includes('square')||d.id.includes('tile-in');
+    if(shape==='rect') return d.id.includes('linear')||d.id.includes('channel');
+    return true;
+  });
+  const items=filtered.length?filtered:catalog;
+  // Auto-select first if nothing selected yet, or if current selection not in filtered list
+  if(!S.drainSelections)S.drainSelections={};
+  const currentSel=S.drainSelections[selKey];
+  if(!currentSel||!items.find(d=>d.id===currentSel)){
+    S.drainSelections[selKey]=items[0].id;
+    // If this is the key drain and linking is on, propagate
+    const isFloor=drainName.startsWith('drain-floor');
+    const type=isFloor?'floor':'shower';
+    if(S.drainLinked?.[type]){
+      const all=Object.keys(S.fixes).filter(n=>isFloor?(n==='drain-floor'||n.startsWith('drain-floor-')):(n==='drain-shower'||n.startsWith('drain-shower-')));
+      all.forEach(n=>{S.drainSelections[n]=items[0].id;});
+    }
+  }
+  const selId=S.drainSelections[selKey];
+  el.innerHTML=items.map(d=>`
+    <div class="prod-card ${selId===d.id?'sel':''}" onclick="pickDrain('${drainName}','${d.id}',this)">
+      <div class="prod-preview" style="background:${d.bg};display:flex;align-items:center;justify-content:center;font-size:2.5rem;height:80px">${shape==='rect'?'▭':shape==='square'?'◻':'●'}</div>
+      <div class="prod-chk">✓</div>
+      <div class="prod-info">
+        <div class="prod-name">${d.name}</div>
+        <div class="prod-price">$${d.beau} · ${d.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function pickDrain(drainName,productId,el){
+  if(!S.drainSelections)S.drainSelections={};
+  S.drainSelections[drainName]=productId;
+  // If linked, sync all same-type drains
+  const isFloor=drainName.startsWith('drain-floor');
+  const type=isFloor?'floor':'shower';
+  if(S.drainLinked?.[type]){
+    const allOfType=Object.keys(S.fixes).filter(n=>isFloor?(n==='drain-floor'||n.startsWith('drain-floor-')):(n==='drain-shower'||n.startsWith('drain-shower-')));
+    allOfType.forEach(n=>{S.drainSelections[n]=productId;});
+  }
+  // Update card selection UI
+  const sec=el.closest('.prod-sec');
+  if(sec)sec.querySelectorAll('.prod-card').forEach(c=>c.classList.toggle('sel',c===el));
+  renderFixtureSections(); // re-render to sync linked grids
+}
+
+function toggleDrainLink(type,btn){
+  if(!S.drainLinked)S.drainLinked={};
+  S.drainLinked[type]=!S.drainLinked[type];
+  btn.classList.toggle('on',S.drainLinked[type]);
+  if(S.drainLinked[type]){
+    // Sync all to first drain's selection
+    const isFloor=type==='floor';
+    const allOfType=Object.keys(S.fixes).filter(n=>isFloor?(n==='drain-floor'||n.startsWith('drain-floor-')):(n==='drain-shower'||n.startsWith('drain-shower-')));
+    const firstSel=S.drainSelections?.[allOfType[0]];
+    if(firstSel)allOfType.forEach(n=>{S.drainSelections[n]=firstSel;});
+  }
+  renderFixtureSections();
 }
 
 function renderGridItems(cid,items,key,previewFn,priceFn){
@@ -3270,7 +3394,7 @@ function renderGridItems(cid,items,key,previewFn,priceFn){
       <div class="prod-chk">✓</div>
       <div class="prod-info">
         <div class="prod-name">${item.name}${item.tag==='pop'?`<span class="tag-pop">${item.tagLbl}</span>`:item.tag==='new'?`<span class="tag-new">${item.tagLbl}</span>`:''}</div>
-        <div class="prod-price">${priceFn(item)} · ${item.desc}</div>
+        <div class="prod-price">${priceFn(item)}${item.desc?' · '+item.desc:''}</div>
         ${supBadge?`<div style="margin-top:.2rem">${supBadge}</div>`:''}
       </div>
     </div>`;
@@ -3285,14 +3409,15 @@ function renderGrid(cid,items,key,previewFn,priceFn){
       <div class="prod-chk">✓</div>
       <div class="prod-info">
         <div class="prod-name">${item.name}${item.tag==='pop'?`<span class="tag-pop">${item.tagLbl}</span>`:item.tag==='new'?`<span class="tag-new">${item.tagLbl}</span>`:''}</div>
-        <div class="prod-price">${priceFn(item)} · ${item.desc}</div>
+        <div class="prod-price">${priceFn(item)}${item.desc?' · '+item.desc:''}</div>
       </div>
     </div>`).join('');
 }
 
 function tapSVG(t){
-  const c=t.id==='blk'?'#222':t.id==='chr'?'#CCC':t.id==='gld'?'#C4A040':t.id==='cop'?'#B87333':'#E8E8E8';
-  return`<div class="prod-preview ${t.css}"><svg width="70" height="100" viewBox="0 0 70 100" style="margin:auto;display:block;padding-top:10px"><rect x="27" y="8" width="16" height="55" rx="8" fill="${c}"/><rect x="10" y="50" width="50" height="8" rx="4" fill="${c}"/><circle cx="20" cy="54" r="8" fill="${c}" stroke="rgba(255,255,255,.2)" stroke-width="2"/><rect x="10" y="58" width="22" height="26" rx="11" fill="${c}" opacity=".7"/></svg></div>`;
+  // Use a light contrasting colour for the tap icon on coloured backgrounds
+  const stroke=t.id==='tap-black'?'rgba(255,255,255,0.7)':'rgba(255,255,255,0.9)';
+  return`<svg width="70" height="100" viewBox="0 0 70 100" style="margin:auto;display:block;padding-top:10px"><rect x="27" y="8" width="16" height="55" rx="8" fill="${stroke}"/><rect x="10" y="50" width="50" height="8" rx="4" fill="${stroke}"/><circle cx="20" cy="54" r="8" fill="${stroke}" stroke="rgba(0,0,0,.1)" stroke-width="2"/><rect x="10" y="58" width="22" height="26" rx="11" fill="${stroke}" opacity=".7"/></svg>`;
 }
 
 function openByoTileModal(key){
@@ -3608,11 +3733,24 @@ function calcQuote(){
   const wpTotalArea=fA+shWallArea+bathWallArea;
   const wpTotal=Math.round(wpTotalArea*(RATES.waterproof_mat+RATES.waterproof_labour));
   if(S.waterproofing){
-    const wpMatOnly=Math.round(wpTotalArea*RATES.waterproof_mat);
+    // Waterproofing: primer, tape (if walls), membrane
+    const primerCost=Math.round(wpTotalArea*RATES.waterproof_primer);
+    const membraneCost=Math.round(wpTotalArea*RATES.waterproof_membrane);
+    items.push({n:`Waterproofing primer (${wpTotalArea.toFixed(1)}m²)`,p:primerCost,type:'mat'});
+    // Edge tape only if walls are tiled
+    const hasWallsForTape=S.wallTileHeight!=='none';
+    let tapeCost=0;
+    if(hasWallsForTape){
+      const perim=S.shapeMode==='custom'&&S.customClosed
+        ? (()=>{const pts=S.customPts;let p=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];p+=Math.sqrt((b.x-a.x)**2+(b.y-a.y)**2);}return p;})()
+        : 2*(S.room.w+S.room.l);
+      tapeCost=Math.round(perim*RATES.waterproof_tape);
+      items.push({n:`Waterproof edge tape (${perim.toFixed(1)}m perimeter)`,p:tapeCost,type:'mat'});
+    }
+    items.push({n:`Waterproof membrane — 2 coats (${wpTotalArea.toFixed(1)}m²)`,p:membraneCost,type:'mat'});
     const wpLabOnly=Math.round(wpTotalArea*RATES.waterproof_labour);
-    items.push({n:`Waterproofing primer + membrane (${wpTotalArea.toFixed(1)}m²)`,p:wpMatOnly,type:'mat'});
     items.push({n:`Waterproofing application labour (${wpTotalArea.toFixed(1)}m²)`,p:wpLabOnly,type:'labour'});
-    matSub+=wpMatOnly+wpLabOnly;
+    matSub+=primerCost+tapeCost+membraneCost+wpLabOnly;
   }
 
 
@@ -4335,18 +4473,17 @@ function moveCam(){
 // ══════════════════════════════════════════════
 function initExtras(){
   populateDropEdgeBtns();
-  const wpToggle=document.getElementById('wpToggle');
-  if(wpToggle)wpToggle.checked=S.waterproofing;
-  const wpLabel=document.getElementById('wpLabel');
-  if(wpLabel)wpLabel.textContent=S.waterproofing?'Included':'Not included';
-  const chargeTiles=document.getElementById('chargeTiles');
-  if(chargeTiles)chargeTiles.checked=S.chargeTiles!==false;
-  const chargeTilesLabel=document.getElementById('chargeTilesLabel');
-  if(chargeTilesLabel)chargeTilesLabel.textContent=S.chargeTiles!==false?'Included':'Not included';
-  const demoToggle=document.getElementById('demoToggle');
-  if(demoToggle)demoToggle.checked=S.demoIncluded||false;
+  // Sync demo Yes/No
+  document.getElementById('demoYes')?.classList.toggle('on',S.demoIncluded!==false);
+  document.getElementById('demoNo')?.classList.toggle('on',S.demoIncluded===false);
   const dropDepth=document.getElementById('dropDepth');
   if(dropDepth)dropDepth.value=S.dropDepth||50;
+  // Sync tiles Yes/No
+  document.getElementById('tilesNo')?.classList.toggle('on',S.chargeTiles!==false);
+  document.getElementById('tilesYes')?.classList.toggle('on',S.chargeTiles===false);
+  // Sync waterproofing Yes/No
+  document.getElementById('wpYes')?.classList.toggle('on',S.waterproofing!==false);
+  document.getElementById('wpNo')?.classList.toggle('on',S.waterproofing===false);
   updateDemoFee();
   renderExtraItems();
 }
@@ -4439,9 +4576,7 @@ function updateDemoTotal(){
 
 function updateDemoFee(){
   const row=document.getElementById('demoFeeRow');
-  const lbl=document.getElementById('demoLabel');
   if(row)row.style.display=S.demoIncluded?'block':'none';
-  if(lbl)lbl.textContent=S.demoIncluded?'Included':'Not included';
   updateDemoTotal();
 }
 
@@ -4485,23 +4620,98 @@ function removeExtraItem(i){
   renderExtraItems();
 }
 
+function toggleExtraEdge(i,edge,btn){
+  const ex=S.extras[i];
+  if(!ex.edgeEdges)ex.edgeEdges=['front'];
+  const idx=ex.edgeEdges.indexOf(edge);
+  if(idx>=0&&ex.edgeEdges.length>1){
+    ex.edgeEdges.splice(idx,1);
+    btn.classList.remove('on');
+  } else if(idx<0){
+    ex.edgeEdges.push(edge);
+    btn.classList.add('on');
+  }
+  updateExtraEdgeCost(i);
+}
+
+function setExtraType(i,type){
+  S.extras[i].type=type;
+  if(type==='edge'){
+    S.extras[i].edgeEdge=S.extras[i].edgeEdge||'front';
+    S.extras[i].edgeDepth=S.extras[i].edgeDepth||50;
+    updateExtraEdgeCost(i);
+  }
+  renderExtraItems();
+}
+
+function updateExtraEdgeCost(i){
+  const ex=S.extras[i];
+  if(ex.type!=='edge')return;
+  const{w,l}=S.room;
+  const edgeLens={front:w,back:w,left:l,right:l};
+  const edges=ex.edgeEdges||[ex.edgeEdge||'front'];
+  const edgeLen=edges.reduce((s,e)=>s+(edgeLens[e]||0),0)||w;
+  const dropM=(ex.edgeDepth||50)/1000;
+  const dropArea=edgeLen*dropM;
+  const ftPrice=S.sel.floorTile?getTilePrice(S.sel.floorTile,'floor'):0;
+  const matCost=S.chargeTiles!==false?Math.round(ftPrice*dropArea*1.1):0;
+  const labCost=150;
+  ex.amount=matCost+labCost;
+  const eLabels=(ex.edgeEdges||[ex.edgeEdge||'front']).join(', ');
+  ex.desc=`${eLabels} edge${ex.edgeEdges?.length>1?'s':''} ${ex.edgeDepth||50}mm drop`;
+  renderExtraItems();
+}
+
 function renderExtraItems(){
   const el=document.getElementById('extraItems');if(!el)return;
-  if(!S.extras.length){el.innerHTML='<p style="font-size:.82rem;color:#9AABB8;margin-bottom:.4rem">No additional items yet.</p>';return;}
-  el.innerHTML=S.extras.map((item,i)=>`
-    <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.6rem;flex-wrap:wrap">
-      <input type="text" placeholder="Description" value="${item.desc}"
-        oninput="S.extras[${i}].desc=this.value"
-        style="flex:1;min-width:160px;padding:.5rem .8rem;border:2px solid #E0D8CE;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--slate);background:var(--cream)">
-      <div style="display:flex;align-items:center;gap:.3rem">
-        <span style="font-size:.9rem;color:#9AABB8">$</span>
-        <input type="number" placeholder="0" value="${item.amount||''}"
-          oninput="S.extras[${i}].amount=parseFloat(this.value)||0"
-          style="width:90px;padding:.5rem .8rem;border:2px solid #E0D8CE;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--slate);background:var(--cream)">
+  if(!S.extras.length){el.innerHTML='<p style="font-size:.82rem;color:#9AABB8;margin:.2rem 0 .8rem">No additional items yet.</p>';return;}
+  el.innerHTML=S.extras.map((item,i)=>{
+    const isEdge=item.type==='edge';
+    const{w,l}=S.room;
+    const wMM=Math.round(w*1000),lMM=Math.round(l*1000);
+    return `
+    <div style="background:white;border:2px solid #EDE8E1;border-radius:12px;padding:.9rem 1rem;margin-bottom:.7rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;gap:.5rem">
+        <div style="display:flex;gap:.3rem">
+          <button onclick="setExtraType(${i},'other',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${!isEdge?'var(--terra)':'#E0D8CE'};background:${!isEdge?'var(--terra)':'white'};color:${!isEdge?'white':'#9AABB8'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">Other</button>
+          <button onclick="setExtraType(${i},'edge',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${isEdge?'var(--terra)':'#E0D8CE'};background:${isEdge?'var(--terra)':'white'};color:${isEdge?'white':'#9AABB8'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">📐 Edge tile-down</button>
+        </div>
+        <button onclick="removeExtraItem(${i})" style="background:none;border:none;cursor:pointer;color:#9AABB8;font-size:1rem;padding:.1rem .3rem;line-height:1">✕</button>
       </div>
-      <button onclick="removeExtraItem(${i})" style="background:none;border:none;cursor:pointer;color:#BF7B5E;font-size:1.1rem;padding:.2rem .5rem">✕</button>
-    </div>`).join('');
+      ${isEdge?`
+        <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;margin-bottom:.4rem">Select edges</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-bottom:.7rem">
+          ${['front','back','left','right'].map(edge=>{
+            const len=edge==='front'||edge==='back'?wMM:lMM;
+            const on=(item.edgeEdges||['front']).includes(edge);
+            return '<button class="grout-w-btn '+(on?'on':'')+'" onclick="toggleExtraEdge('+i+',\''+edge+'\',this)" style="font-size:.72rem;justify-content:center;width:100%">'+edge.charAt(0).toUpperCase()+edge.slice(1)+' ('+len+'mm)</button>';
+          }).join('')}
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span style="font-size:.78rem;color:#9AABB8;white-space:nowrap">Drop depth</span>
+          <input type="number" value="${item.edgeDepth||50}" min="10" max="500" step="10"
+            oninput="S.extras[${i}].edgeDepth=parseInt(this.value)||50;updateExtraEdgeCost(${i})"
+            style="width:72px;padding:.35rem .55rem;border:2px solid #E0D8CE;border-radius:8px;font-family:DM Sans,sans-serif;font-size:.82rem;background:#FAFAF8;color:var(--slate)">
+          <span style="font-size:.78rem;color:#9AABB8">mm</span>
+          <span style="margin-left:auto;font-size:.9rem;font-weight:700;color:var(--terra)">$${(item.amount||0).toLocaleString()}</span>
+        </div>
+      `:`
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input type="text" placeholder="Description…" value="${item.desc||''}"
+            oninput="S.extras[${i}].desc=this.value"
+            style="flex:1;padding:.5rem .75rem;border:2px solid #E0D8CE;border-radius:10px;font-family:DM Sans,sans-serif;font-size:.85rem;color:var(--slate);background:#FAFAF8;min-width:0">
+          <div style="display:flex;align-items:center;gap:.25rem;flex-shrink:0">
+            <span style="font-size:.85rem;color:#9AABB8">$</span>
+            <input type="number" placeholder="0" value="${item.amount||''}"
+              oninput="S.extras[${i}].amount=parseFloat(this.value)||0"
+              style="width:82px;padding:.5rem .55rem;border:2px solid #E0D8CE;border-radius:10px;font-family:DM Sans,sans-serif;font-size:.85rem;color:var(--slate);background:#FAFAF8;text-align:right">
+          </div>
+        </div>
+      `}
+    </div>`;
+  }).join('');
 }
+
 
 function setView(v,btn){
   document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('on'));
