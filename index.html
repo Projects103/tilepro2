@@ -355,6 +355,7 @@ h1.hero-title em{color:var(--terra);font-style:italic}
 
   <div class="hero-btns">
     <button class="btn-primary" onclick="startWizard()">🛁 Start My Quote</button>
+    <a href="./renovations.html" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">📷 Previous Renovations</a>
     <button class="btn-secondary" onclick="scrollTo({top:400,behavior:'smooth'})">See How It Works ↓</button>
   </div>
 
@@ -986,6 +987,125 @@ function goHome(){
   window.scrollTo(0,0);
 }
 function startOver(){location.reload()}
+
+// ── Past Renovations Gallery ──────────────────────────────────────────────────
+async function openPastRenos(){
+  document.querySelectorAll('.renos-modal').forEach(function(m){m.remove();});
+  const m=document.createElement('div');
+  m.className='renos-modal';
+  m.style.cssText='position:fixed;inset:0;background:var(--slate);z-index:9999;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .3s ease';
+  m.innerHTML=
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;background:var(--slate);flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.1)">'+
+    '<h2 style="font-family:\'DM Serif Display\',serif;color:white;font-size:1.4rem;margin:0">📷 Previous Renovations</h2>'+
+    '<button onclick="this.closest(\'.renos-modal\').remove();document.body.style.overflow=\'\';" style="background:rgba(255,255,255,.1);border:none;color:white;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1.1rem">✕</button>'+
+    '</div>'+
+    '<div id="renosContent" style="flex:1;overflow-y:auto;padding:1.2rem">'+
+    '<div style="color:rgba(255,255,255,.4);text-align:center;padding:3rem;font-size:.9rem">Loading…</div>'+
+    '</div>';
+  document.body.appendChild(m);
+  document.body.style.overflow='hidden';
+  m.addEventListener('click',function(e){if(e.target===m){m.remove();document.body.style.overflow='';}});
+
+  // Load renos manifest
+  try{
+    const res=await fetch('./pastRenos/manifest.json',{cache:'no-cache'});
+    if(!res.ok)throw new Error('no manifest');
+    const jobs=await res.json(); // [{name,folder,images:[...]}]
+    renderRenosContent(jobs,m.querySelector('#renosContent'));
+  }catch(e){
+    // Fallback: try auto-discovery of common job folder names
+    m.querySelector('#renosContent').innerHTML=
+      '<div style="color:rgba(255,255,255,.5);text-align:center;padding:3rem;line-height:1.8;font-size:.88rem">'+
+      'No manifest found at <code style="background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:4px">pastRenos/manifest.json</code><br><br>'+
+      'Create a <code style="background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:4px">pastRenos/manifest.json</code> file to show your past jobs here.'+
+      '</div>';
+  }
+}
+
+function renderRenosContent(jobs,el){
+  if(!jobs||!jobs.length){
+    el.innerHTML='<div style="color:rgba(255,255,255,.4);text-align:center;padding:3rem">No renovations added yet.</div>';
+    return;
+  }
+  let html='';
+  jobs.forEach(function(job,ji){
+    html+='<div style="margin-bottom:2rem">'+
+      '<h3 style="color:white;font-family:\'DM Serif Display\',serif;font-size:1.1rem;margin:0 0 .7rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,255,255,.1)">'+
+      (job.name||'Job '+(ji+1))+(job.location?'<span style="font-size:.78rem;color:rgba(255,255,255,.4);font-family:DM Sans,sans-serif;font-weight:400;margin-left:.6rem">'+job.location+'</span>':'')+
+      '</h3>'+
+      '<div id="renoGrid_'+ji+'" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.5rem"></div>'+
+      '</div>';
+  });
+  el.innerHTML=html;
+
+  // Populate each job grid
+  jobs.forEach(function(job,ji){
+    const grid=el.querySelector('#renoGrid_'+ji);
+    if(!grid)return;
+    const imgs=job.images||[];
+    imgs.forEach(function(src,imgIdx){
+      const fullSrc='./pastRenos/'+job.folder+'/'+src;
+      const img=document.createElement('div');
+      img.style.cssText='aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;background:#1A2530';
+      img.innerHTML='<img src="'+fullSrc+'" style="width:100%;height:100%;object-fit:cover;transition:transform .2s ease" loading="lazy" onerror="this.parentNode.style.display=\'none\'" onmouseover="this.style.transform=\'scale(1.04)\'" onmouseout="this.style.transform=\'\'">'+
+        (job.caption?'<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.6));color:white;font-size:.72rem;padding:.4rem .5rem">'+job.caption+'</div>':'');
+      img.style.position='relative';
+      img.addEventListener('click',function(){openRenoLightbox(jobs,ji,imgIdx);});
+      grid.appendChild(img);
+    });
+  });
+}
+
+let _renoLightboxJobs=null;
+function openRenoLightbox(jobs,jobIdx,imgIdx){
+  _renoLightboxJobs=jobs;
+  document.querySelectorAll('.reno-lightbox').forEach(function(l){l.remove();});
+  // Flatten all images across this job for navigation
+  const job=jobs[jobIdx];
+  const imgs=job.images||[];
+  const box=document.createElement('div');
+  box.className='reno-lightbox';
+  box.dataset.job=jobIdx;
+  box.dataset.img=imgIdx;
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease';
+  const src='./pastRenos/'+job.folder+'/'+imgs[imgIdx];
+  box.innerHTML=
+    '<button onclick="renoLbNav(-1)" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:white;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.4rem;z-index:2;display:'+(imgs.length>1?'flex':'none')+';align-items:center;justify-content:center">‹</button>'+
+    '<img id="renoLbImg" src="'+src+'" style="max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;transition:opacity .2s ease" loading="lazy">'+
+    '<button onclick="renoLbNav(1)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:white;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.4rem;z-index:2;display:'+(imgs.length>1?'flex':'none')+';align-items:center;justify-content:center">›</button>'+
+    '<div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:.78rem">'+(job.name||'')+(imgs.length>1?' · '+(imgIdx+1)+' / '+imgs.length:'')+' <span style="margin-left:.4rem;opacity:.4">tap outside to close</span></div>'+
+    '<button onclick="this.parentNode.remove()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.15);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem">✕</button>';
+  document.body.appendChild(box);
+  box.addEventListener('click',function(e){if(e.target===box)box.remove();});
+  // Swipe support
+  let lbDragStart=0,lbDragging=false;
+  box.addEventListener('touchstart',function(e){lbDragStart=e.touches[0].clientX;lbDragging=true;},{passive:true});
+  box.addEventListener('touchend',function(e){
+    if(!lbDragging)return;lbDragging=false;
+    const delta=e.changedTouches[0].clientX-lbDragStart;
+    if(Math.abs(delta)>60)renoLbNav(delta<0?1:-1);
+  });
+}
+
+function renoLbNav(dir){
+  const box=document.querySelector('.reno-lightbox');
+  if(!box||!_renoLightboxJobs)return;
+  const jobIdx=parseInt(box.dataset.job);
+  const job=_renoLightboxJobs[jobIdx];
+  const imgs=job.images||[];
+  if(imgs.length<2)return;
+  let imgIdx=(parseInt(box.dataset.img)+dir+imgs.length)%imgs.length;
+  box.dataset.img=imgIdx;
+  const imgEl=box.querySelector('#renoLbImg');
+  if(!imgEl)return;
+  imgEl.style.opacity='0';
+  setTimeout(function(){
+    imgEl.src='./pastRenos/'+job.folder+'/'+imgs[imgIdx];
+    imgEl.style.opacity='1';
+    const counter=box.querySelector('div:last-child');
+    if(counter)counter.firstChild.textContent=(job.name||'')+' · '+(imgIdx+1)+' / '+imgs.length+' ';
+  },200);
+}
 
 // ── State sharing via Cloudflare Worker KV ────────────────────────────────────
 function encodeState(){
@@ -3641,8 +3761,9 @@ function _updateTileDetailImages(m,images){
   }
   function onDragEnd(){
     if(!dragging)return;dragging=false;
-    if(Math.abs(dragDelta)>50){tdNav(dragDelta<0?1:-1);}
-    else{hero.style.transition='transform .25s ease';hero.style.transform='translateX(0)';}
+    hero.style.transition='transform .2s ease';
+    hero.style.transform='translateX(0)';
+    if(Math.abs(dragDelta)>50){setTimeout(function(){tdNav(dragDelta<0?1:-1);},50);}
   }
   hero.addEventListener('mousedown',function(e){onDragStart(e.clientX);e.preventDefault();});
   window.addEventListener('mousemove',function(e){onDragMove(e.clientX);});
@@ -3655,27 +3776,36 @@ function _updateTileDetailImages(m,images){
 function tdNav(dir){
   const m=document.querySelector('.tile-detail-modal');
   if(!m||!m._tdImages||m._tdImages.length<2)return;
+  const oldIdx=m._tdIdx;
   m._tdIdx=(m._tdIdx+dir+m._tdImages.length)%m._tdImages.length;
-  const hero=document.getElementById('tdHero');
-  const counter=document.getElementById('tdCounter');
-  if(!hero)return;
-  // Slide out, swap src, slide in
-  const outDir=dir>0?-1:1;
-  hero.style.transition='transform .2s ease,opacity .2s ease';
-  hero.style.transform='translateX('+(outDir*60)+'px)';
-  hero.style.opacity='0';
-  setTimeout(function(){
-    hero.src=m._tdImages[m._tdIdx];
-    hero.style.transition='none';
-    hero.style.transform='translateX('+(-outDir*60)+'px)';
+  const wrap=m.querySelector('#tdImgWrap');
+  const hero=m.querySelector('#tdHero');
+  const counter=m.querySelector('#tdCounter');
+  if(!hero||!wrap)return;
+  // Preload next image
+  const nextSrc=m._tdImages[m._tdIdx];
+  const nextImg=document.createElement('img');
+  nextImg.style.cssText='position:absolute;inset:0;width:100%;max-height:320px;object-fit:contain;background:#F9F7F4;opacity:0;transition:opacity .3s ease;display:block;pointer-events:none';
+  nextImg.src=nextSrc;
+  wrap.appendChild(nextImg);
+  // Crossfade
+  nextImg.onload=function(){
+    nextImg.style.opacity='1';
+    hero.style.transition='opacity .3s ease';
     hero.style.opacity='0';
-    // Force reflow
-    hero.offsetHeight;
-    hero.style.transition='transform .22s ease,opacity .22s ease';
-    hero.style.transform='translateX(0)';
-    hero.style.opacity='1';
-    if(counter)counter.textContent=(m._tdIdx+1)+' / '+m._tdImages.length;
-  },200);
+    setTimeout(function(){
+      hero.src=nextSrc;
+      hero.style.transition='none';
+      hero.style.opacity='1';
+      hero.style.transform='translateX(0)';
+      if(nextImg.parentNode)nextImg.parentNode.removeChild(nextImg);
+      if(counter)counter.textContent=(m._tdIdx+1)+' / '+m._tdImages.length;
+    },310);
+  };
+  nextImg.onerror=function(){
+    if(nextImg.parentNode)nextImg.parentNode.removeChild(nextImg);
+  };
+  if(counter)counter.textContent='…';
 }
 
 function _buildTileDetailModal(tile,images,tileId,loading,surface){
