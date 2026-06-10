@@ -109,9 +109,9 @@ body.wizard-active .room-stats{background:transparent;border:none}
 /* Wall dimension editor */
 .wall-dim-row{display:flex;align-items:center;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid #F0EAE0;gap:.5rem}
 .wall-dim-row:last-child{border-bottom:none}
-.wall-dim-label{font-size:.75rem;font-weight:600;color:var(--slate);flex-shrink:0}
+.wall-dim-label{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.7);flex-shrink:0}
 .wall-dir{font-size:.65rem;font-weight:400;color:#9AABB8;margin-left:.2rem}
-.wall-dim-inp{width:62px;padding:.3rem .5rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--slate);text-align:right;background:var(--cream)}
+.wall-dim-inp{width:62px;padding:.3rem .5rem;border:1px solid rgba(255,255,255,.12);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:white;text-align:right;background:rgba(255,255,255,.07)}
 .wall-dim-inp:focus{outline:none;border-color:var(--terra)}
 .wall-dim-unit{font-size:.72rem;color:#9AABB8;font-weight:600}
 .dims-row{margin-top:.5rem;background:var(--cream);border-radius:10px;padding:.4rem .6rem}
@@ -203,7 +203,7 @@ body.wizard-active .mat-sum{color:rgba(255,255,255,.5)}
 .q-card{background:white;border-radius:var(--radius);padding:2.3rem;box-shadow:var(--shadow);max-width:680px;margin:2.5rem auto 0}
 body.wizard-active .q-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);box-shadow:none}
 .q-hdr{text-align:center;padding-bottom:1.4rem;border-bottom:1px solid #EEE;margin-bottom:1.4rem}
-.q-logo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--terra)}
+.q-logo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:white}
 .q-title{font-family:'DM Serif Display',serif;font-size:1.9rem;margin:.4rem 0}
 .q-date{font-size:.78rem;color:#9AABB8}
 .q-sec-title{font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#9AABB8;margin:1.1rem 0 .5rem}
@@ -312,7 +312,8 @@ body.wizard-active .q-sec-title{color:rgba(255,255,255,.3)}
 /* Quote card */
 body.wizard-active .q-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);box-shadow:none}
 body.wizard-active .q-hdr{border-bottom-color:rgba(255,255,255,.07)}
-body.wizard-active .q-title,.q-date{color:rgba(255,255,255,.8)}
+body.wizard-active .q-title{color:white}
+body.wizard-active .q-date{color:rgba(255,255,255,.5)}
 body.wizard-active .q-row{border-bottom-color:rgba(255,255,255,.06)}
 body.wizard-active .q-row .qn{color:rgba(255,255,255,.6)}
 body.wizard-active .q-row .qp{color:rgba(255,255,255,.9)}
@@ -4413,11 +4414,11 @@ function renderCustomWallsList(){
   el.innerHTML=(S.customWalls||[]).map(w=>`
     <div style="background:var(--cream);border-radius:10px;padding:.7rem .9rem;margin-bottom:.5rem;border:2px solid #E0D8CE"><div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.5rem"><input type="text" value="${w.label}" placeholder="Wall name"
           oninput="updateCustomWall('${w.id}','label',this.value)"
-          style="flex:1;min-width:100px;padding:.35rem .6rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;background:white;color:var(--slate)"><button onclick="removeCustomWall('${w.id}')" style="background:none;border:none;cursor:pointer;color:#BF7B5E;font-size:1rem;padding:.1rem .4rem">✕</button></div><div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center"><div style="display:flex;align-items:center;gap:.3rem"><span style="font-size:.72rem;color:#9AABB8;white-space:nowrap">Length</span><input type="number" value="${Math.round(w.length*1000)}" min="100" max="10000" step="50"
+          style="flex:1;min-width:100px;padding:.35rem .6rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;background:white;color:var(--slate)"><button onclick="removeCustomWall('${w.id}')" style="background:none;border:none;cursor:pointer;color:#BF7B5E;font-size:1rem;padding:.1rem .4rem">✕</button></div><div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center"><div style="display:flex;align-items:center;gap:.3rem"><span style="font-size:.72rem;color:rgba(255,255,255,.4);white-space:nowrap">Length</span><input type="number" value="${Math.round(w.length*1000)}" min="100" max="10000" step="50"
             oninput="updateCustomWall('${w.id}','length',parseFloat(this.value)/1000)"
-            style="width:75px;padding:.3rem .5rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;background:white;color:var(--slate)"><span style="font-size:.72rem;color:#9AABB8">mm</span></div><div style="display:flex;align-items:center;gap:.3rem"><span style="font-size:.72rem;color:#9AABB8;white-space:nowrap">Height</span><input type="number" value="${Math.round(w.height*1000)}" min="100" max="4000" step="50"
+            style="width:75px;padding:.3rem .5rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;background:white;color:var(--slate)"><span style="font-size:.72rem;color:#9AABB8">mm</span></div><div style="display:flex;align-items:center;gap:.3rem"><span style="font-size:.72rem;color:rgba(255,255,255,.4);white-space:nowrap">Height</span><input type="number" value="${Math.round(w.height*1000)}" min="100" max="4000" step="50"
             oninput="updateCustomWall('${w.id}','height',parseFloat(this.value)/1000)"
-            style="width:75px;padding:.3rem .5rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;background:white;color:var(--slate)"><span style="font-size:.72rem;color:#9AABB8">mm</span></div><div style="display:flex;align-items:center;gap:.3rem"><span style="font-size:.72rem;color:#9AABB8;white-space:nowrap">Thick</span><input type="number" value="${Math.round((w.thickness||0.1)*1000)}" min="50" max="500" step="25"
+            style="width:75px;padding:.3rem .5rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;background:white;color:var(--slate)"><span style="font-size:.72rem;color:#9AABB8">mm</span></div><div style="display:flex;align-items:center;gap:.3rem"><span style="font-size:.72rem;color:rgba(255,255,255,.4);white-space:nowrap">Thick</span><input type="number" value="${Math.round((w.thickness||0.1)*1000)}" min="50" max="500" step="25"
             oninput="updateCustomWall('${w.id}','thickness',parseFloat(this.value)/1000)"
             style="width:65px;padding:.3rem .5rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;background:white;color:var(--slate)"><span style="font-size:.72rem;color:#9AABB8">mm</span></div><label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.78rem;color:var(--slate)"><input type="checkbox" ${w.tiled?'checked':''} onchange="updateCustomWall('${w.id}','tiled',this.checked)"
             style="width:16px;height:16px;accent-color:var(--terra);cursor:pointer">Tiled
