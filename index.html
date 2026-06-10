@@ -357,7 +357,9 @@ body.wizard-active .prev-ctrl button.on,
 body.wizard-active .prev-ctrl button:hover{background:rgba(191,123,94,.2);color:var(--terra);border-color:var(--terra)}
 
 /* Misc text */
-body.wizard-active p,body.wizard-active span,body.wizard-active div{color:inherit}
+/* targeted text colour overrides instead of blanket inherit */
+body.wizard-active .q-logo{color:rgba(255,255,255,.5)}
+body.wizard-active .q-date{color:rgba(255,255,255,.4)}
 body.wizard-active a{color:var(--terra)}
 
 /* Grout swatches */
