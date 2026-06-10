@@ -18,9 +18,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--slate)
 
 /* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(26,36,48,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s}
-body.wizard-active nav{background:rgba(245,239,230,.95);border-bottom-color:rgba(43,58,74,.08)}
 .nav-logo{display:flex;align-items:center;gap:.55rem;font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--cream);text-decoration:none;opacity:.9;transition:color .3s}
-body.wizard-active .nav-logo{color:var(--slate);opacity:1}
 .nav-cta{background:var(--terra);color:white;border:none;cursor:pointer;padding:.5rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;transition:all .2s}
 .nav-cta:hover{background:#A8644A}
 
@@ -101,7 +99,7 @@ body.wizard-active .btn-secondary:hover{background:var(--slate);color:white;bord
 .step-sub{color:#7A8A99;font-size:.92rem}
 
 /* Luke comment */
-.luke-cmnt{background:white;border-left:4px solid var(--terra);border-radius:0 12px 12px 0;padding:.9rem 1.3rem;margin-bottom:2rem;font-style:italic;color:var(--slate);font-size:.88rem;display:flex;gap:.8rem;align-items:flex-start;box-shadow:0 3px 14px rgba(43,58,74,.06)}
+.luke-cmnt{background:rgba(255,255,255,.04);border-left:4px solid var(--terra);border-radius:0 12px 12px 0;padding:.9rem 1.3rem;margin-bottom:2rem;font-style:italic;color:var(--slate);font-size:.88rem;display:flex;gap:.8rem;align-items:flex-start;box-shadow:0 3px 14px rgba(43,58,74,.06)}
 .sm-av{width:34px;height:34px;border-radius:50%;background:var(--terra);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;color:white;font-weight:700;font-family:'DM Serif Display',serif}
 
 /* ── STEP 1 FLOOR PLAN ── */
@@ -221,10 +219,12 @@ body.wizard-active .btn-secondary:hover{background:var(--slate);color:white;bord
 .view-btn:hover{border-color:var(--terra);color:var(--terra)}
 .view-btn.on{background:var(--terra);color:white;border-color:var(--terra)}
 .mat-sum{font-size:.8rem;color:#5A6E80;line-height:1.9;margin-top:.5rem}
+body.wizard-active .mat-sum{color:rgba(255,255,255,.5)}
 .mat-sum div::before{content:'• ';color:var(--terra)}
 
 /* ── QUOTE ── */
 .q-card{background:white;border-radius:var(--radius);padding:2.3rem;box-shadow:var(--shadow);max-width:680px;margin:2.5rem auto 0}
+body.wizard-active .q-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);box-shadow:none}
 .q-hdr{text-align:center;padding-bottom:1.4rem;border-bottom:1px solid #EEE;margin-bottom:1.4rem}
 .q-logo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--terra)}
 .q-title{font-family:'DM Serif Display',serif;font-size:1.9rem;margin:.4rem 0}
@@ -297,7 +297,7 @@ body.wizard-active select:focus{border-color:var(--terra);outline:none}
 body.wizard-active .lbl{color:rgba(255,255,255,.5)}
 
 /* Labels & text */
-body.wizard-active .room-stats .stat-v{color:white}
+body.wizard-active .room-stats .stat-v{color:white;font-weight:700}
 body.wizard-active .room-stats .stat-l{color:rgba(255,255,255,.4)}
 body.wizard-active .room-stats .stat{border-color:rgba(255,255,255,.08)}
 
@@ -358,6 +358,7 @@ body.wizard-active .shape-tab.on{border-color:var(--terra);background:rgba(191,1
 
 /* Room stats card */
 body.wizard-active .room-stats{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+body.wizard-active .stat{border-color:rgba(255,255,255,.07)}
 
 /* Drag separators */
 body.wizard-active hr,.divider{border-color:rgba(255,255,255,.07)}
@@ -569,7 +570,7 @@ body.wizard-active a{color:var(--terra)}
 
       <div class="card step1-canvas-card">
         <h4>Floor Plan <span style="font-size:.75rem;color:#9AABB8;font-family:'DM Sans',sans-serif;font-weight:400" id="canvasHint">— drag fixtures from the left panel</span></h4>
-        <canvas id="floorCanvas" height="380"></canvas>
+        <canvas id="floorCanvas" height="380" style="background:#1A2430;border-radius:8px"></canvas>
       </div>
 
       <div class="room-stats step1-stats-card">
@@ -833,9 +834,9 @@ body.wizard-active a{color:var(--terra)}
     <div class="luke-cmnt"><div class="sm-av">L</div><div id="prevcmt">"Looking great! This quote is my best estimate — I'll confirm the final price after an on-site visit. I'm usually booked about 6 weeks out, so feel free to reach out any time."</div></div>
 
     <canvas id="threeCanvas" style="width:100%;border-radius:var(--radius);box-shadow:0 20px 60px rgba(43,58,74,.2);cursor:grab;display:block;background:#1a2530"></canvas>
-    <div style="margin-top:1rem;padding:.8rem 1.2rem;background:white;border-radius:var(--radius);box-shadow:var(--shadow)">
+    <div style="margin-top:1rem;padding:.8rem 1.2rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius)">
       <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;margin-bottom:.5rem">🎨 Selected Materials</div>
-      <div class="mat-sum" id="matSum"><div style="color:#CCC">No selections yet</div></div>
+      <div class="mat-sum" id="matSum" id="matSum"><div style="color:#CCC">No selections yet</div></div>
     </div>
 
     <!-- QUOTE CARD -->
@@ -1101,16 +1102,13 @@ const SHOWER_DRAINS=[
 function setNavMode(mode){
   const nav=document.querySelector('nav');
   if(!nav)return;
+  // Nav stays dark throughout — only logo colour changes on scroll
+  nav.style.background='rgba(26,36,48,.88)';
+  nav.style.borderBottomColor='rgba(255,255,255,.06)';
   if(mode==='dark'){
-    nav.style.background='rgba(26,36,48,.88)';
-    nav.style.borderBottomColor='rgba(255,255,255,.06)';
     const logo=nav.querySelector('.nav-logo');if(logo)logo.style.color='var(--cream)';
-    const cta=nav.querySelector('.nav-cta');if(cta){cta.style.background='var(--terra)';cta.style.color='white';}
   } else {
-    nav.style.background='rgba(245,239,230,0.96)';
-    nav.style.borderBottomColor='rgba(43,58,74,0.1)';
-    const logo=nav.querySelector('.nav-logo');if(logo)logo.style.color='var(--slate)';
-    const cta=nav.querySelector('.nav-cta');if(cta){cta.style.background='var(--terra)';cta.style.color='white';}
+    const logo=nav.querySelector('.nav-logo');if(logo)logo.style.color='var(--cream)';
   }
 }
 
@@ -1631,6 +1629,9 @@ function drawPlan(){
 }
 
 function drawRectPlan(ctx,meta){
+  // Dark outer area when in wizard mode
+  const isDark=document.body.classList.contains('wizard-active');
+  if(isDark){ctx.fillStyle='#1A2430';ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);}
   const{ox,oy,scale,w,l}=meta;
   const rW=w*scale,rH=l*scale;
 
@@ -1646,7 +1647,7 @@ function drawRectPlan(ctx,meta){
   ctx.fillRect(ox,oy,rW,rH);
 
   // Border
-  ctx.strokeStyle='#2B3A4A';ctx.lineWidth=3;
+  ctx.strokeStyle=document.body.classList.contains('wizard-active')?'rgba(255,255,255,.25)':'#2B3A4A';ctx.lineWidth=3;
   ctx.strokeRect(ox,oy,rW,rH);
 
   // Dimension lines
@@ -1668,7 +1669,7 @@ function drawCustomPlan(ctx,cv,meta){
   if(pts.length===0){
     ctx.fillStyle='rgba(43,58,74,.06)';
     ctx.fillRect(0,0,cv.width,cv.height);
-    ctx.fillStyle='#9AABB8';ctx.font='14px DM Sans,sans-serif';ctx.textAlign='center';
+    ctx.fillStyle=document.body.classList.contains('wizard-active')?'rgba(255,255,255,.3)':'#9AABB8';ctx.font='14px DM Sans,sans-serif';ctx.textAlign='center';
     ctx.fillText('Click anywhere to start placing corners',cv.width/2,cv.height/2-10);
     ctx.fillText('Double-click on the last point to close the shape',cv.width/2,cv.height/2+14);
     return;
@@ -1695,7 +1696,7 @@ function drawCustomPlan(ctx,cv,meta){
   }
 
   // Draw lines
-  ctx.strokeStyle='#2B3A4A';ctx.lineWidth=3;ctx.lineJoin='round';
+  ctx.strokeStyle=document.body.classList.contains('wizard-active')?'rgba(255,255,255,.25)':'#2B3A4A';ctx.lineWidth=3;ctx.lineJoin='round';
   ctx.beginPath();
   ctx.moveTo(ox+pts[0].x*scale,oy+pts[0].y*scale);
   for(let i=1;i<pts.length;i++)ctx.lineTo(ox+pts[i].x*scale,oy+pts[i].y*scale);
@@ -3177,7 +3178,7 @@ function drawTilePreview(cv,tileId){
   const gw=3;
 
   if(tileId==='byo'){
-    ctx.fillStyle='#EDE7DC';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#F5EFE6';ctx.fillRect(0,0,W,H);
     ctx.fillStyle='var(--terra,#BF7B5E)';ctx.font=`${Math.min(W,H)*.3}px serif`;
     ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('✏️',W/2,H/2);
     return;
