@@ -3099,9 +3099,11 @@ function renderTileGrid(gridId,key,surface){
     const preview=item.isBYO
       ?`<div style="height:105px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:linear-gradient(135deg,#F5EFE6,#EDE7DC);color:var(--terra)">✏️</div>`
       :`<canvas class="tile-canvas" data-tile-id="${item.id}" width="180" height="105" style="position:absolute;inset:0;width:100%;height:100%"></canvas>`;
+    const eyeBtn=!item.isBYO?`<button onclick="event.stopPropagation();showTileDetail('${item.id}')"
+      style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.15);z-index:2;line-height:1" title="View details">👁</button>`:'';
     return`<div class="prod-card ${selId===item.id?'sel':''}" data-tile-id="${item.id}"
       onclick="${item.isBYO?`openByoTileModal('${key}')`:(`pickProd('${key}','${item.id}',this)`)}" >
-      <div class="prod-preview" style="position:relative;height:105px">${preview}</div>
+      <div class="prod-preview" style="position:relative;height:105px">${preview}${eyeBtn}</div>
       <div class="prod-chk">✓</div>
       <div class="prod-info">
         <div class="prod-name">${item.name}</div>
@@ -3930,11 +3932,14 @@ function parseCSV(text){
 function csvToTile(r){
   if(!r.id||!r.name)return null;
   const w=parseInt(r.width_mm)||300,h=parseInt(r.height_mm)||300;
-  return{id:r.id,name:r.name,desc:`${w}\xd7${h}mm`,col:r.colour_hex||'#E0D8CC',
+  // images column: pipe-separated URLs e.g. "https://img1.jpg|https://img2.jpg"
+  const images=(r.images||'').split('|').map(s=>s.trim()).filter(Boolean);
+  return{id:r.id,name:r.name,desc:`${w}×${h}mm`,col:r.colour_hex||'#E0D8CC',
     beau:parseFloat(r.cost_per_m2)||0,supplier:r.supplier||'',supplierCss:'',
     difficulty:parseFloat(r.difficulty)||1.0,outdoor:r.outdoor==='true',
     tags:(r.tags||'').split(',').map(t=>t.trim()).filter(Boolean),
-    url:r.link&&r.link!=='#'?r.link:'',css:''};
+    url:r.link&&r.link!=='#'?r.link:'',css:'',
+    images,notes:r.notes||''};
 }
 
 function csvToFixture(r){
