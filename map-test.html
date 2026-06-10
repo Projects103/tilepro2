@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Area Map — Drummond Bathroom Renovations</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#F5EFE6;--slate:#2B3A4A;--terra:#BF7B5E;--sage:#6E9B8C;--dark:#1A2430}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:white;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+
+/* Header */
+.hdr{padding:2rem 2.5rem 1.5rem;max-width:1100px;margin:0 auto;width:100%;align-self:flex-start}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);margin-bottom:.7rem}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;color:white;margin-bottom:.5rem;letter-spacing:-.02em}
+h1 em{color:var(--terra);font-style:italic}
+.subtitle{font-size:.95rem;color:rgba(255,255,255,.4);max-width:420px;line-height:1.6;margin-bottom:1.2rem}
+
+/* Suburb chips */
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem;max-width:900px}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:.25rem .75rem;font-size:.76rem;color:rgba(255,255,255,.6);transition:all .2s;cursor:default}
+.chip.loaded{background:rgba(191,123,94,.15);border-color:rgba(191,123,94,.4);color:var(--terra)}
+.chip.error{opacity:.35}
+
+/* Map */
+.map-wrap{width:100%;max-width:1100px;position:relative;min-height:500px;border-radius:16px;overflow:hidden;margin:0 auto 0}
+#map{height:500px;width:100%}
+
+/* Custom marker */
+.dot-marker{width:14px;height:14px;border-radius:50%;background:var(--terra);border:2.5px solid white;box-shadow:0 0 0 4px rgba(191,123,94,.3),0 2px 8px rgba(0,0,0,.4);position:relative;transition:all .2s}
+.dot-large{width:22px;height:22px;border-width:3px;box-shadow:0 0 0 6px rgba(191,123,94,.35),0 4px 16px rgba(0,0,0,.5)}
+.dot-marker::after{content:'';position:absolute;inset:-6px;border-radius:50%;background:rgba(191,123,94,.15);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.5);opacity:0}}
+
+/* Tooltip */
+.leaflet-tooltip{background:rgba(26,36,48,.95);border:1px solid rgba(255,255,255,.1);color:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;padding:.35rem .7rem;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.leaflet-tooltip::before{display:none}
+
+/* Stats bar */
+.stats-bar{display:flex;gap:2rem;padding:1rem 2.5rem;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.06);width:100%;max-width:1100px}
+.stat{text-align:center}
+.stat-v{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--terra)}
+.stat-l{font-size:.65rem;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:.1rem}
+
+/* Loading overlay */
+.loading{position:absolute;inset:0;background:rgba(26,36,48,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;z-index:999}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--terra);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:rgba(255,255,255,.5);font-size:.85rem}
+
+@media(max-width:600px){
+  .hdr{padding:1.5rem 1.2rem 1rem}
+  .stats-bar{gap:1rem;padding:.8rem 1.2rem}
+}
+.leaflet-control-attribution{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="eyebrow">Service Area</div>
+  <h1>Where we've<br><em>worked.</em></h1>
+  <p class="subtitle">Bathrooms completed across greater Adelaide and surrounds.</p>
+  <div class="chips" id="chips"></div>
+</div>
+
+<div class="map-wrap">
+  <div id="map"></div>
+  <div class="loading" id="loading" style="display:none">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Locating suburbs…</div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-v" id="statSuburbs">—</div><div class="stat-l">Suburbs</div></div>
+  <div class="stat"><div class="stat-v" id="statArea">SA</div><div class="stat-l">State</div></div>
+  <div class="stat"><div class="stat-v" id="statStatus">—</div><div class="stat-l">Located</div></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// SUBURBS LIST — edit this array or load from suburbs.txt
+// ─────────────────────────────────────────────────────────────
+const SUBURBS = [
+  "Palmer",
+  "Bedford Park",
+  "Sturt",
+  "Strathalbyn",
+  "Smithfield Plains",
+  "Huntfield Heights",
+  "Underdale",
+  "Pooraka",
+];
+
+// ─────────────────────────────────────────────────────────────
+// Map setup — centred on Adelaide
+// ─────────────────────────────────────────────────────────────
+const map = L.map('map', {
+  center: [-35.0, 138.7],
+  zoom: 10,
+  zoomControl: true,
+  attributionControl: false,
+});
+
+// Dark map tiles from CartoDB
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  subdomains: 'abcd',
+  maxZoom: 19,
+}).addTo(map);
+
+// attribution hidden
+
+// Custom marker icon
+function makeIcon(large=false) {
+  const s = large ? 22 : 14;
+  return L.divIcon({
+    className: '',
+    html: '<div class="dot-marker' + (large?' dot-large':'') + '"></div>',
+    iconSize: [s, s],
+    iconAnchor: [s/2, s/2],
+    tooltipAnchor: [s/2+4, 0],
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// Geocode each suburb using Nominatim (free, no key)
+// Rate limited to 1/sec
+// ─────────────────────────────────────────────────────────────
+async function geocode(suburb) {
+  const q = encodeURIComponent(suburb + ', South Australia, Australia');
+  const url = `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=au`;
+  const res = await fetch(url, { headers: { 'User-Agent': 'DrummondBathroomsMapTest/1.0' } });
+  const data = await res.json();
+  if (data && data[0]) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+  return null;
+}
+
+async function loadSuburbs() {
+  const chipsEl = document.getElementById('chips');
+  const loadingEl = document.getElementById('loading');
+  const loadingText = document.getElementById('loadingText');
+  const statSuburbs = document.getElementById('statSuburbs');
+  const statStatus = document.getElementById('statStatus');
+
+  statSuburbs.textContent = SUBURBS.length;
+
+  // Render chips immediately
+  SUBURBS.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = s;
+    chip.id = 'chip-' + s.replace(/\s+/g, '-');
+    chipsEl.appendChild(chip);
+  });
+
+  const bounds = [];
+  let located = 0;
+  const markers = [];
+  const markerMap = {};
+
+  for (let i = 0; i < SUBURBS.length; i++) {
+    const suburb = SUBURBS[i];
+    // loading hidden
+    const chip = document.getElementById('chip-' + suburb.replace(/\s+/g, '-'));
+
+    try {
+      const pos = await geocode(suburb);
+      if (pos) {
+        const marker = L.marker([pos.lat, pos.lon], { icon: makeIcon() })
+          .bindTooltip(suburb, { permanent: false, direction: 'right', offset: [8, 0] })
+          .addTo(map);
+        markers.push(marker);
+        markerMap[suburb] = marker;
+        // Chip hover → enlarge marker
+        if (chip) {
+          chip.addEventListener('mouseenter', () => {
+            marker.setIcon(makeIcon(true));
+            map.panTo([pos.lat, pos.lon], {animate:true, duration:0.4});
+          });
+          chip.addEventListener('mouseleave', () => marker.setIcon(makeIcon(false)));
+        }
+        bounds.push([pos.lat, pos.lon]);
+        located++;
+        if (chip) chip.classList.add('loaded');
+      } else {
+        if (chip) chip.classList.add('error');
+      }
+    } catch (e) {
+      if (chip) chip.classList.add('error');
+    }
+
+    statStatus.textContent = `${located}/${SUBURBS.length}`;
+    // Respect Nominatim rate limit — 1 request per second
+    await new Promise(r => setTimeout(r, 1100));
+  }
+
+  // Fit map to markers
+  if (bounds.length > 1) {
+    map.fitBounds(bounds, { padding: [60, 60] });
+  } else if (bounds.length === 1) {
+    map.setView(bounds[0], 12);
+  }
+
+  // Hide loading overlay
+  // loading already hidden
+}
+
+loadSuburbs();
+</script>
+</body>
+</html>
