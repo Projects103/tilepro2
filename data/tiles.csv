@@ -1,2 +1,2 @@
-id,name,width_mm,height_mm,colour_hex,link,supplier,cost_per_m2,tags,outdoor,difficulty,images,notes
-dura-light-grey-terazzo300x600,Light Grey Terazzo,600,300,#D3D3D3,https://www.bunnings.com.au/duratile-30-x-60cm-1-08m-light-grey-terrazzo-floor-and-wall-tile-6-carton_p0409786,Bunnings,25.00,"porcelain,floor,wall,neutral,terazzo,grey,matte,indoors",false,1.0,images/tiles/dura-light-grey-terazzo300x600-1.jpeg,
+id,name,width_mm,height_mm,colour_hex,link,supplier,cost_per_m2,tags,outdoor,difficulty,notes
+dura-light-grey-terazzo300x600,Light Grey Terazzo,600,300,#D3D3D3,https://www.bunnings.com.au/duratile-30-x-60cm-1-08m-light-grey-terrazzo-floor-and-wall-tile-6-carton_p0409786,Bunnings,25.00,"porcelain,floor,wall,neutral,terazzo,grey,matte,indoors",false,1.0,
