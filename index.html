@@ -3932,8 +3932,14 @@ function parseCSV(text){
 function csvToTile(r){
   if(!r.id||!r.name)return null;
   const w=parseInt(r.width_mm)||300,h=parseInt(r.height_mm)||300;
-  // images column: pipe-separated URLs e.g. "https://img1.jpg|https://img2.jpg"
-  const images=(r.images||'').split('|').map(s=>s.trim()).filter(Boolean);
+  // images column: pipe-separated paths e.g. "images/tiles/tile-1.jpg|images/tiles/tile-2.jpg"
+  // Supports relative paths (from repo root) or full https:// URLs
+  const images=(r.images||'').split('|').map(s=>{
+    const p=s.trim();
+    if(!p)return null;
+    if(p.startsWith('http')||p.startsWith('/'))return p;
+    return './'+p; // relative to index.html
+  }).filter(Boolean);
   return{id:r.id,name:r.name,desc:`${w}×${h}mm`,col:r.colour_hex||'#E0D8CC',
     beau:parseFloat(r.cost_per_m2)||0,supplier:r.supplier||'',supplierCss:'',
     difficulty:parseFloat(r.difficulty)||1.0,outdoor:r.outdoor==='true',
