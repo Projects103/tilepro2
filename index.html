@@ -1068,10 +1068,8 @@ function showShareModal(code,url){
           if(error||!data)return showToast('⚠️ Share code not found or expired.');
           if(decodeState(data)){
             // Hide landing page, show app immediately at step 5
-            const hero=document.getElementById('home');
-            const app=document.getElementById('wizard');
-            if(hero)hero.style.display='none';
-            if(app)app.style.display='';
+            document.getElementById('home').style.display='none';
+            document.getElementById('wizard').classList.add('active');
             setStep(5);
             // Three.js needs time to render the canvas before building scene
             setTimeout(()=>{
@@ -1086,10 +1084,8 @@ function showShareModal(code,url){
     } else {
       // Legacy URL-hash fallback
       if(decodeState(hash)){
-        const hero=document.getElementById('home');
-        const app=document.getElementById('wizard');
-        if(hero)hero.style.display='none';
-        if(app)app.style.display='';
+        document.getElementById('home').style.display='none';
+        document.getElementById('wizard').classList.add('active');
         setStep(5);
         setTimeout(()=>{if(typeof initThree==='function')initThree();},500);
       }
