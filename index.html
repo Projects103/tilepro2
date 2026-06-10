@@ -986,69 +986,92 @@ function goHome(){
 }
 function startOver(){location.reload()}
 
-// ── State sharing via URL hash ────────────────────────────────────────────────
+// ── State sharing via Cloudflare Worker KV ────────────────────────────────────
 function encodeState(){
-  // Serialise only the key fields needed to reconstruct the quote
   const snap={
-    room:S.room,
-    sel:S.sel,
-    grout:S.grout,
-    groutThickness:S.groutThickness,
-    wallTileHeight:S.wallTileHeight,
-    waterproofing:S.waterproofing,
-    chargeTiles:S.chargeTiles,
-    demoIncluded:S.demoIncluded,
-    demoLabour:S.demoLabour,
-    demoSkip:S.demoSkip,
-    dropEdges:S.dropEdges,
-    dropDepth:S.dropDepth,
-    extras:S.extras,
-    fixes:S.fixes,
-    fixRotations:S.fixRotations,
-    fixSizes:S.fixSizes,
-    shapeMode:S.shapeMode,
-    customPts:S.customPts,
-    customClosed:S.customClosed,
-    customWalls:S.customWalls,
+    room:S.room, sel:S.sel, grout:S.grout, groutThickness:S.groutThickness,
+    wallTileHeight:S.wallTileHeight, waterproofing:S.waterproofing,
+    chargeTiles:S.chargeTiles, demoIncluded:S.demoIncluded,
+    demoLabour:S.demoLabour, demoSkip:S.demoSkip,
+    dropEdges:S.dropEdges, dropDepth:S.dropDepth, extras:S.extras,
+    fixes:S.fixes, fixRotations:S.fixRotations, fixSizes:S.fixSizes,
+    shapeMode:S.shapeMode, customPts:S.customPts, customClosed:S.customClosed,
+    customWalls:S.customWalls, drainSelections:S.drainSelections,
   };
-  const json=JSON.stringify(snap);
-  // Compress with a simple base64 encoding
-  const b64=btoa(unescape(encodeURIComponent(json)));
-  return b64;
+  return btoa(unescape(encodeURIComponent(JSON.stringify(snap))));
 }
 
 function decodeState(b64){
   try{
-    const json=decodeURIComponent(escape(atob(b64)));
-    const snap=JSON.parse(json);
+    const snap=JSON.parse(decodeURIComponent(escape(atob(b64))));
     Object.assign(S,snap);
     return true;
   }catch(e){console.warn('State decode failed',e);return false;}
 }
 
-function shareProject(){
-  const code=encodeState();
-  const url=location.origin+location.pathname+'#'+code;
-  if(navigator.share){
-    navigator.share({title:'Bathroom Quote',url}).catch(()=>{});
-  } else {
-    navigator.clipboard?.writeText(url).then(()=>{
-      alert('Share link copied to clipboard!');
-    }).catch(()=>{
-      // Fallback: show in prompt
-      prompt('Copy this share link:',url);
+async function shareProject(){
+  const btn=document.querySelector('[onclick="shareProject()"]');
+  if(btn){btn.textContent='Saving…';btn.disabled=true;}
+  try{
+    const resp=await fetch(WORKER_URL+'/share',{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:encodeState()
     });
+    const{code,error}=await resp.json();
+    if(error||!code)throw new Error(error||'No code');
+    const url=location.origin+location.pathname+'#share:'+code;
+    // Show share modal
+    showShareModal(code,url);
+  }catch(e){
+    showToast('⚠️ Could not save share link: '+e.message);
+  }finally{
+    if(btn){btn.textContent='🔗 Share this quote';btn.disabled=false;}
   }
 }
 
-// On load: check if URL has a state hash
+function showShareModal(code,url){
+  document.querySelectorAll('.share-modal').forEach(m=>m.remove());
+  const m=document.createElement('div');
+  m.className='share-modal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(43,58,74,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  m.innerHTML=`<div style="background:white;border-radius:18px;padding:1.8rem;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center">
+    <div style="font-size:2rem;margin-bottom:.5rem">🔗</div>
+    <h3 style="font-family:'DM Serif Display',serif;color:var(--slate);margin-bottom:.4rem">Quote link ready</h3>
+    <p style="font-size:.82rem;color:#7A8A99;margin-bottom:1rem">Share this 6-character code or full link. Valid for 90 days.</p>
+    <div style="background:var(--cream);border-radius:10px;padding:.8rem 1rem;margin-bottom:.8rem">
+      <div style="font-size:.72rem;color:#9AABB8;margin-bottom:.3rem">Share code</div>
+      <div style="font-family:monospace;font-size:2rem;font-weight:700;color:var(--terra);letter-spacing:.15em">${code}</div>
+    </div>
+    <input id="shareUrlInput" value="${url}" readonly style="width:100%;padding:.5rem .7rem;border:2px solid #E0D8CE;border-radius:10px;font-size:.75rem;color:var(--slate);background:#FAFAF8;box-sizing:border-box;margin-bottom:.8rem">
+    <div style="display:flex;gap:.5rem">
+      <button onclick="navigator.clipboard?.writeText('${code}').then(()=>showToast('✓ Code copied!'));document.getElementById('shareUrlInput').select()" style="flex:1;padding:.65rem;background:var(--sage);color:white;border:none;border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:.88rem;cursor:pointer">Copy code</button>
+      <button onclick="navigator.clipboard?.writeText('${url}').then(()=>showToast('✓ Link copied!'))" style="flex:1;padding:.65rem;background:var(--cream);color:var(--slate);border:2px solid #E0D8CE;border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:.88rem;cursor:pointer">Copy link</button>
+    </div>
+    <button onclick="this.closest('.share-modal').remove()" style="margin-top:.7rem;background:none;border:none;color:#9AABB8;font-size:.82rem;cursor:pointer;font-family:DM Sans,sans-serif">Close</button>
+  </div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click',e=>{if(e.target===m)m.remove();});
+}
+
+// On load: check for share code in URL hash
 (function(){
   const hash=location.hash.slice(1);
-  if(hash.length>20){
-    if(decodeState(hash)){
-      // State loaded — navigate to quote
-      setTimeout(()=>setStep(5),100);
-    }
+  if(hash.startsWith('share:')){
+    const code=hash.slice(6);
+    fetch(WORKER_URL+'/share?code='+encodeURIComponent(code))
+      .then(r=>r.json())
+      .then(({data,error})=>{
+        if(error||!data)return showToast('⚠️ Share code not found or expired.');
+        if(decodeState(data)){
+          setTimeout(()=>setStep(5),100);
+          showToast('✓ Quote loaded from share code: '+code);
+        }
+      })
+      .catch(()=>showToast('⚠️ Could not load shared quote.'));
+  } else if(hash.length>20&&!hash.startsWith('share:')){
+    // Legacy URL-hash fallback
+    if(decodeState(hash)) setTimeout(()=>setStep(5),100);
   }
 })();
 function showToast(msg,duration=3500){
@@ -1124,20 +1147,20 @@ function updateCanvasHintAndCursor(cv){
     const name=S.selectedFix.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
     const isMobile='ontouchstart' in window;
     hint.textContent=isMobile
-      ? `— ${name} selected · hold to resize/remove`
-      : `— ${name} selected · dbl-click to resize · Del to remove`;
+      ? `— ${name} · hold to resize/remove`
+      : `— ${name} · dbl-click to resize · Del to remove`;
     return;
   }
   if(S.shapeMode==='custom'){
     if(S.customClosed){
-      hint.textContent='— shape closed · drag fixtures onto the plan';
+      hint.textContent='';
       cv.style.cursor='default';
     } else {
-      hint.textContent=`— click to add corners${S.customPts.length>=3?' · press Close Shape when done':''}`;
+      hint.textContent=S.customPts.length>=3?' — press Close Shape when done':'';
       cv.style.cursor='crosshair';
     }
   } else {
-    hint.textContent='— drag fixtures from the left panel';
+    hint.textContent='';
     cv.style.cursor='default';
   }
 }
@@ -1714,13 +1737,7 @@ function drawOneFix(ctx,ox,oy,scale,name,pos){
 
   if(isSelected){
     ctx.fillStyle='rgba(191,123,94,.85)';
-    const isMobile='ontouchstart' in window;
-    const hintText=isMobile?'Hold to resize & remove':'Dbl-click resize · Del remove';
-    const hintW=isMobile?140:175,hintH=18,hintX=cx2-hintW/2,hintY=cy2-Math.max(hfwHit,hfhHit)-26;
-    ctx.beginPath();if(ctx.roundRect)ctx.roundRect(hintX,hintY,hintW,hintH,4);else ctx.rect(hintX,hintY,hintW,hintH);
-    ctx.fill();
-    ctx.fillStyle='white';ctx.font='bold 8.5px DM Sans,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(hintText,cx2,hintY+9);
+    // Hint text shown in canvasHint span instead
 
     ctx.save();ctx.translate(cx2,cy2);ctx.rotate(rot);
     // Dashed selection box
