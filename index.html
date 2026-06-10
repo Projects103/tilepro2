@@ -17,10 +17,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--slate)
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--light)}::-webkit-scrollbar-thumb{background:var(--terra);border-radius:3px}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(26,36,48,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:flex;align-items:center;gap:.55rem;font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--cream);text-decoration:none;opacity:.9}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(26,36,48,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s}
+body.wizard-active nav{background:rgba(245,239,230,.95);border-bottom-color:rgba(43,58,74,.08)}
+.nav-logo{display:flex;align-items:center;gap:.55rem;font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--cream);text-decoration:none;opacity:.9;transition:color .3s}
+body.wizard-active .nav-logo{color:var(--slate);opacity:1}
 .nav-cta{background:var(--terra);color:white;border:none;cursor:pointer;padding:.5rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;transition:all .2s}
-.nav-cta:hover{background:#A8644A;transform:translateY(-1px)}
+.nav-cta:hover{background:#A8644A}
 
 /* ── HERO ── */
 #home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:90px 1.5rem 5rem;text-align:center;position:relative;overflow:hidden;background:#1A2430}
@@ -52,8 +54,12 @@ h1.hero-title em{color:var(--terra);font-style:italic}
 .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
 .btn-primary{background:var(--terra);color:white;padding:.9rem 2.1rem;border-radius:100px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;transition:all .2s;box-shadow:0 8px 32px rgba(191,123,94,.35)}
 .btn-primary:hover{background:#a86445;transform:translateY(-2px)}
-.btn-secondary{background:transparent;color:rgba(255,255,255,.7);padding:.9rem 2.1rem;border-radius:100px;border:2px solid rgba(255,255,255,.25);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;transition:all .2s}
-.btn-secondary:hover{background:rgba(255,255,255,.1);color:white;border-color:rgba(255,255,255,.5)}
+.btn-secondary{background:transparent;color:rgba(255,255,255,.75);padding:.9rem 2.1rem;border-radius:100px;border:2px solid rgba(255,255,255,.3);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;transition:all .2s}
+.btn-secondary:hover{background:rgba(255,255,255,.1);color:white;border-color:rgba(255,255,255,.55)}
+/* wizard context — revert to slate */
+body.wizard-active .btn-secondary,.btn-back,.btn-next{color:var(--slate)}
+body.wizard-active .btn-secondary{border-color:rgba(43,58,74,.3)}
+body.wizard-active .btn-secondary:hover{background:var(--slate);color:white;border-color:var(--slate)}
 
 .features-strip{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:3.5rem;padding:1.8rem 2rem;background:white;border-radius:var(--radius);box-shadow:var(--shadow);max-width:760px;width:100%;position:relative;z-index:1}
 .feature{text-align:center;flex:1;min-width:120px}
@@ -258,8 +264,127 @@ h1.hero-title em{color:var(--terra);font-style:italic}
 .modal-actions .btn-remove:hover{background:#FDF0EB;border-color:var(--terra)}
 .snap-indicator{position:absolute;pointer-events:none;z-index:400}
 
-/* Print */
-@media print{nav,#home,.nav-btns,.sp:not(.active),.prev-ctrl,.luke-cmnt,.progress-wrap{display:none!important}.q-card{box-shadow:none}}
+/* ══════════════════════════════════════════════
+   DARK WIZARD THEME
+   All wizard UI matches the dark hero
+   ══════════════════════════════════════════════ */
+body.wizard-active{background:#1A2430;color:rgba(255,255,255,.88)}
+body.wizard-active ::-webkit-scrollbar-track{background:#1A2430}
+
+/* Progress bar */
+body.wizard-active .ps::after{background:rgba(255,255,255,.1)}
+body.wizard-active .ps.done::after{background:var(--sage)}
+body.wizard-active .ps-dot{background:rgba(255,255,255,.12)}
+body.wizard-active .ps-label{color:rgba(255,255,255,.3)}
+
+/* Step header */
+body.wizard-active .step-title{color:white}
+body.wizard-active .step-sub{color:rgba(255,255,255,.4)}
+
+/* Cards */
+body.wizard-active .card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);box-shadow:none}
+body.wizard-active .card h4{color:rgba(255,255,255,.9)}
+
+/* Inputs */
+body.wizard-active .inp,
+body.wizard-active input[type=number],
+body.wizard-active input[type=text],
+body.wizard-active select,
+body.wizard-active textarea{background:#111c26;border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.85)}
+body.wizard-active .inp:focus,
+body.wizard-active input:focus,
+body.wizard-active select:focus{border-color:var(--terra);outline:none}
+body.wizard-active .lbl{color:rgba(255,255,255,.5)}
+
+/* Labels & text */
+body.wizard-active .room-stats .stat-v{color:white}
+body.wizard-active .room-stats .stat-l{color:rgba(255,255,255,.4)}
+body.wizard-active .room-stats .stat{border-color:rgba(255,255,255,.08)}
+
+/* Buttons */
+body.wizard-active .btn-back{color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.12)}
+body.wizard-active .btn-back:hover{border-color:rgba(255,255,255,.4);color:white}
+body.wizard-active .btn-next{background:var(--terra);color:white}
+body.wizard-active .nav-btns{border-top-color:rgba(255,255,255,.07)}
+
+/* Grout & toggle buttons */
+body.wizard-active .grout-w-btn{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.55)}
+body.wizard-active .grout-w-btn.on{border-color:var(--terra);background:rgba(191,123,94,.15);color:var(--terra)}
+body.wizard-active .grout-w-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8)}
+
+/* Tile grid */
+body.wizard-active .prod-card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08)}
+body.wizard-active .prod-card.sel{border-color:var(--terra);background:rgba(191,123,94,.1)}
+body.wizard-active .prod-name{color:rgba(255,255,255,.85)}
+body.wizard-active .prod-price{color:rgba(255,255,255,.4)}
+
+/* Supplier filter */
+body.wizard-active .sup-filter-btn{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.45)}
+body.wizard-active .sup-filter-btn.on{border-color:var(--terra);background:rgba(191,123,94,.15);color:var(--terra)}
+body.wizard-active .sup-filter-btn:hover{border-color:rgba(255,255,255,.3);color:white}
+
+/* Tile search */
+body.wizard-active .tile-search-inp{background:#111c26;border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+body.wizard-active .tile-search-inp::placeholder{color:rgba(255,255,255,.25)}
+
+/* Stats panel */
+body.wizard-active .mat-sum{background:rgba(255,255,255,.04);border-radius:8px;padding:.5rem}
+
+/* Section titles */
+body.wizard-active .prod-sec-title{color:rgba(255,255,255,.85)}
+body.wizard-active .q-sec-title{color:rgba(255,255,255,.3)}
+
+/* Quote card */
+body.wizard-active .q-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);box-shadow:none}
+body.wizard-active .q-hdr{border-bottom-color:rgba(255,255,255,.07)}
+body.wizard-active .q-title,.q-date{color:rgba(255,255,255,.8)}
+body.wizard-active .q-row{border-bottom-color:rgba(255,255,255,.06)}
+body.wizard-active .q-row .qn{color:rgba(255,255,255,.6)}
+body.wizard-active .q-row .qp{color:rgba(255,255,255,.9)}
+body.wizard-active .q-note{background:rgba(255,255,255,.04);color:rgba(255,255,255,.35)}
+body.wizard-active .q-total{background:var(--terra)}
+
+/* Luke comment */
+body.wizard-active .luke-cmnt{background:rgba(255,255,255,.04);border-left-color:var(--terra);color:rgba(255,255,255,.6)}
+
+/* Fix palette */
+body.wizard-active .fix-btn{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+body.wizard-active .fix-btn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.25);color:white}
+body.wizard-active .fix-btn.on{border-color:var(--terra);background:rgba(191,123,94,.15);color:var(--terra)}
+
+/* Shape tabs */
+body.wizard-active .shape-tab{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
+body.wizard-active .shape-tab.on{border-color:var(--terra);background:rgba(191,123,94,.15);color:var(--terra)}
+
+/* Room stats card */
+body.wizard-active .room-stats{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+
+/* Drag separators */
+body.wizard-active hr,.divider{border-color:rgba(255,255,255,.07)}
+
+/* Fix modal stays light for readability */
+body.wizard-active .fix-modal{background:#1e2d3d;border:1px solid rgba(255,255,255,.1)}
+body.wizard-active .fix-modal h3{color:white}
+body.wizard-active .fix-modal-close{color:rgba(255,255,255,.4)}
+body.wizard-active .fix-modal-close:hover{background:rgba(255,255,255,.08);color:white}
+body.wizard-active .fix-modal .inp{background:#111c26;border-color:rgba(255,255,255,.12);color:white}
+body.wizard-active .fix-modal select{background:#111c26;border-color:rgba(255,255,255,.12);color:white}
+body.wizard-active .fix-modal-overlay{background:rgba(0,0,0,.6)}
+body.wizard-active .modal-actions .btn-remove{border-color:rgba(255,255,255,.1);color:var(--terra)}
+body.wizard-active .modal-actions .btn-remove:hover{background:rgba(191,123,94,.1)}
+
+/* Extras cards */
+body.wizard-active #extraItems > div{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+
+/* 3D view controls */
+body.wizard-active .prev-ctrl button{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.12)}
+body.wizard-active .prev-ctrl button.on,
+body.wizard-active .prev-ctrl button:hover{background:rgba(191,123,94,.2);color:var(--terra);border-color:var(--terra)}
+
+/* Misc text */
+body.wizard-active p,body.wizard-active span,body.wizard-active div{color:inherit}
+body.wizard-active a{color:var(--terra)}
+
 
 /* Grout swatches */
 .grout-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
@@ -973,15 +1098,35 @@ const SHOWER_DRAINS=[
 // ══════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════
+function setNavMode(mode){
+  const nav=document.querySelector('nav');
+  if(!nav)return;
+  if(mode==='dark'){
+    nav.style.background='rgba(26,36,48,.88)';
+    nav.style.borderBottomColor='rgba(255,255,255,.06)';
+    const logo=nav.querySelector('.nav-logo');if(logo)logo.style.color='var(--cream)';
+    const cta=nav.querySelector('.nav-cta');if(cta){cta.style.background='var(--terra)';cta.style.color='white';}
+  } else {
+    nav.style.background='rgba(245,239,230,0.96)';
+    nav.style.borderBottomColor='rgba(43,58,74,0.1)';
+    const logo=nav.querySelector('.nav-logo');if(logo)logo.style.color='var(--slate)';
+    const cta=nav.querySelector('.nav-cta');if(cta){cta.style.background='var(--terra)';cta.style.color='white';}
+  }
+}
+
 function startWizard(){
   document.getElementById('home').style.display='none';
   document.getElementById('wizard').classList.add('active');
+  document.body.classList.add('wizard-active');
+  setNavMode('light');
   window.scrollTo(0,0);
   setTimeout(()=>{drawPlan();updateStats();renderAll();renderCustomWallsList();},60);
 }
 function goHome(){
   document.getElementById('wizard').classList.remove('active');
   document.getElementById('home').style.display='';
+  document.body.classList.remove('wizard-active');
+  setNavMode('dark');
   window.scrollTo(0,0);
 }
 function startOver(){location.reload()}
