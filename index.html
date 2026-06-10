@@ -1057,35 +1057,48 @@ function showShareModal(code,url){
 // On load: check for share code in URL hash
 (function(){
   const hash=location.hash.slice(1);
-  if(hash.startsWith('share:')){
-    const code=hash.slice(6);
-    // Wait for DOM + app to initialise fully before loading state
-    window.addEventListener('load',()=>{
+  if(!hash.startsWith('share:')&&!(hash.length>20))return;
+
+  function doLoad(){
+    if(hash.startsWith('share:')){
+      const code=hash.slice(6);
       fetch(WORKER_URL+'/share?code='+encodeURIComponent(code))
         .then(r=>r.json())
         .then(({data,error})=>{
           if(error||!data)return showToast('⚠️ Share code not found or expired.');
           if(decodeState(data)){
-            // Give the UI a moment to settle, then go to quote and rebuild 3D
+            // Hide landing page, show app immediately at step 5
+            const hero=document.getElementById('home');
+            const app=document.getElementById('wizard');
+            if(hero)hero.style.display='none';
+            if(app)app.style.display='';
             setStep(5);
+            // Three.js needs time to render the canvas before building scene
             setTimeout(()=>{
-              if(typeof initThree==='function')initThree();
+              if(typeof buildRoom3D==='function'&&scene)buildRoom3D();
+              else if(typeof initThree==='function')initThree();
               if(typeof calcQuote==='function')calcQuote();
-            },300);
+            },500);
             showToast('✓ Quote loaded — code: '+code);
           }
         })
         .catch(()=>showToast('⚠️ Could not load shared quote.'));
-    });
-  } else if(hash.length>20&&!hash.startsWith('share:')){
-    // Legacy URL-hash fallback
-    window.addEventListener('load',()=>{
+    } else {
+      // Legacy URL-hash fallback
       if(decodeState(hash)){
+        const hero=document.getElementById('home');
+        const app=document.getElementById('wizard');
+        if(hero)hero.style.display='none';
+        if(app)app.style.display='';
         setStep(5);
-        setTimeout(()=>{if(typeof initThree==='function')initThree();},300);
+        setTimeout(()=>{if(typeof initThree==='function')initThree();},500);
       }
-    });
+    }
   }
+
+  // Fire immediately if already loaded, otherwise wait
+  if(document.readyState==='complete') doLoad();
+  else window.addEventListener('load', doLoad);
 })();
 function showToast(msg,duration=3500){
   document.querySelectorAll('.app-toast').forEach(t=>t.remove());
