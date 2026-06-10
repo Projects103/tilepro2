@@ -2458,32 +2458,47 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
 
   if(S.shapeMode==='rect'){
     const rW=S.room.w,rL=S.room.l;
-    if(snapWall){
-      const isDoorOrWindow=fixName==='door'||fixName==='window';
-      if(isDoorOrWindow){
-        const distL=mx, distR=rW-mx, distT=my, distB=rL-my;
-        const minDist=Math.min(distL,distR,distT,distB);
+    const WALL_FIXTURES=['toilet','vanity','bath','door','window'];
+    if(snapWall && WALL_FIXTURES.includes(fixName)){
+      const fw0=d.fw, fh0=d.fh;
+      const snapDist=fh0/2+0.25;
+      const walls=[
+        {wall:'top',    dist:my},
+        {wall:'bottom', dist:rL-my},
+        {wall:'left',   dist:mx},
+        {wall:'right',  dist:rW-mx},
+      ];
+      const candidates=walls.filter(w=>w.dist<snapDist).sort((a,b)=>a.dist-b.dist);
+      const wall=candidates.length>0?candidates[0].wall:null;
+      if(wall){
         if(!S.fixRotations)S.fixRotations={};
-        if(minDist===distT||minDist===distB){
-          // Top or bottom wall — door width runs horizontal, depth runs vertical
-          S.fixRotations[fixName]=0;
-          const hDepth=d.fh/2; // half-depth in vertical direction
-          my = minDist===distT ? hDepth : rL-hDepth;
-        } else {
-          // Left or right wall — rotate 90°, door width runs vertical, depth runs horizontal
-          S.fixRotations[fixName]=Math.PI/2;
-          const hDepth=d.fh/2; // half-depth in horizontal direction
-          mx = minDist===distL ? hDepth : rW-hDepth;
+        const wallRot=(d.isDoor||d.isWindow)
+          ?{top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall]
+          :{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
+        S.fixRotations[fixName]=wallRot;
+        if(wall==='top'){
+          my=fh0/2;
+          mx=Math.max(fw0/2,Math.min(rW-fw0/2,mx));
+        }else if(wall==='bottom'){
+          my=rL-fh0/2;
+          mx=Math.max(fw0/2,Math.min(rW-fw0/2,mx));
+        }else if(wall==='left'){
+          mx=fh0/2;
+          my=Math.max(fw0/2,Math.min(rL-fw0/2,my));
+        }else{
+          mx=rW-fh0/2;
+          my=Math.max(fw0/2,Math.min(rL-fw0/2,my));
         }
       } else {
-        if(mx-hw<0.15)mx=hw;if(rW-(mx+hw)<0.15)mx=rW-hw;
-        if(my-hh<0.15)my=hh;if(rL-(my+hh)<0.15)my=rL-hh;
+        const{fw:rfw,fh:rfh}=rotateFixDims(fixName);
+        mx=Math.max(rfw/2,Math.min(rW-rfw/2,mx));
+        my=Math.max(rfh/2,Math.min(rL-rfh/2,my));
       }
+    } else {
+      const{fw:rfw,fh:rfh}=rotateFixDims(fixName);
+      mx=Math.max(rfw/2,Math.min(rW-rfw/2,mx));
+      my=Math.max(rfh/2,Math.min(rL-rfh/2,my));
     }
-    // Clamp using post-rotation dims
-    const{fw:rfw2,fh:rfh2}=rotateFixDims(fixName);
-    mx=Math.max(rfw2/2,Math.min(rW-rfw2/2,mx));
-    my=Math.max(rfh2/2,Math.min(rL-rfh2/2,my));
   }
   // For custom mode just place where dropped (polygon clamp is complex; leave free)
   S.fixes[fixName]={x:mx,y:my};
