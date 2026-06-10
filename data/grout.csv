@@ -1,13 +1,5 @@
-id,name,colour_hex,brand,size_kg,cost,finish,notes
-grout-white,White,#F5F5F3,Davco,1.5,14.90,smooth,Standard white — suits most tiles
-grout-off-white,Off White,#EDE8E0,Davco,1.5,14.90,smooth,Warm off-white — suits cream and beige tiles
-grout-beige,Beige,#C8B89A,Davco,1.5,15.90,smooth,Warm beige — popular with natural stone looks
-grout-light-grey,Light Grey,#C8C8C6,Davco,1.5,14.90,smooth,
-grout-mid-grey,Mid Grey,#8A8A88,Davco,1.5,14.90,smooth,
-grout-charcoal,Charcoal,#3A3A38,Davco,1.5,16.90,smooth,
-grout-black,Black,#111111,Davco,1.5,17.90,smooth,Bold contrast — suits dark tiles
-grout-terracotta,Terracotta,#A06040,Davco,1.5,17.90,smooth,Earthy tone — suits terracotta and warm tiles
-grout-white-5kg,White 5kg,#F5F5F3,Davco,5,38.90,smooth,5kg bag for larger jobs
-grout-charcoal-5kg,Charcoal 5kg,#3A3A38,Davco,5,42.90,smooth,5kg bag for larger jobs
-grout-epoxy-white,Epoxy White,#F8F8F6,Mapei,2,48.90,epoxy,Stain-resistant epoxy grout — wet areas recommended
-grout-epoxy-grey,Epoxy Light Grey,#C0C0BE,Mapei,2,49.90,epoxy,
+grout-white,White,#F5F5F3,Davco,1.5,15.00,smooth,
+grout-off-white,Off White,#EDE8E0,Davco,1.5,15.00,smooth,Suits travertine and beige tiles
+grout-mid-grey,Mid Grey,#8A8A88,Davco,1.5,15.00,smooth,
+grout-charcoal,Charcoal,#3A3A38,Davco,1.5,15.00,smooth,Bold contrast — popular with white subway tiles
+grout-beige,Beige,#C8B89A,Davco,1.5,15.00,smooth,Pairs well with travertine and natural stone looks
