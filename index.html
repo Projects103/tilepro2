@@ -513,7 +513,8 @@ h1.hero-title em{color:var(--terra);font-style:italic}
           <div style="display:flex;gap:.4rem;flex-wrap:wrap">
             <button class="grout-w-btn on" id="fu-all" onclick="setTileUsage('floor','all',this)">All</button>
             <button class="grout-w-btn" id="fu-indoor" onclick="setTileUsage('floor','indoor',this)">Indoor</button>
-            <button class="grout-w-btn" id="fu-outdoor" onclick="setTileUsage('floor','outdoor',this)">Outdoor</button>
+            <button class="grout-w-btn" id="fu-both" onclick="setTileUsage('floor','both',this)">Indoor + Outdoor</button>
+            <button class="grout-w-btn" id="fu-outdoor" onclick="setTileUsage('floor','outdoor',this)">Outdoor only</button>
           </div>
         </div>
       </div>
@@ -3033,8 +3034,9 @@ function getMatchingTiles(surface){
   let tiles=ALL_TILES.filter(t=>{
     if(t.isBYO)return false;
     // Usage filter
-    if(usage==='indoor'&&t.outdoor)return false;
-    if(usage==='outdoor'&&!t.outdoor)return false;
+    if(usage==='indoor'&&(t.use==='outdoor'||t.use==='both'))return false;
+    if(usage==='outdoor'&&t.use==='indoor')return false;
+    if(usage==='both'&&t.use==='indoor')return false;
     // Search filter
     if(!q)return true;
     const tags=(t.tags||[]).join(' ');
@@ -3599,26 +3601,32 @@ function showTileDetail(tileId){
   });
 }
 
+function tdNav(dir){
+  const m=document.querySelector('.tile-detail-modal');
+  if(!m||!m._tdImages||m._tdImages.length<2)return;
+  m._tdIdx=(m._tdIdx+dir+m._tdImages.length)%m._tdImages.length;
+  const hero=document.getElementById('tdHero');
+  const counter=document.getElementById('tdCounter');
+  if(hero)hero.src=m._tdImages[m._tdIdx];
+  if(counter)counter.textContent=(m._tdIdx+1)+' / '+m._tdImages.length;
+}
+
 function _buildTileDetailModal(tile,images,tileId){
   const tags=(tile.tags||[]).filter(Boolean);
   const w=tile.desc.match(/(\d+)[\xd7x×](\d+)/);
   const sizeStr=w?w[1]+' × '+w[2]+' mm':(tile.desc||'');
 
-  // Hero = first image. Thumbnail strip = images 2+ (skip first to avoid duplicate)
-  const imgHtml=images.length?
-    '<img id="tdHero" src="'+images[0]+'" alt="'+tile.name+'" loading="lazy" '+
-    'style="width:100%;max-height:320px;object-fit:contain;background:#F9F7F4;border-radius:12px;margin-bottom:'+(images.length>1?'.6rem':'1rem')+'" '+
-    'onerror="this.style.display=\'none\'">'+
-    (images.length>1?
-      '<div style="display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:1rem;scrollbar-width:thin">'+
-      images.map(function(src,i){return(
-        '<img src="'+src+'" alt="'+tile.name+' view '+(i+1)+'" loading="lazy" '+
-        'style="height:64px;min-width:64px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;opacity:'+(i===0?'1':'.65')+';border:2px solid '+(i===0?'var(--terra)':'transparent')+';" '+
-        'onclick="document.getElementById(\'tdHero\').src=\''+src+'\';this.parentNode.querySelectorAll(\'img\').forEach(function(x){x.style.opacity=\'.65\';x.style.borderColor=\'transparent\';});this.style.opacity=\'1\';this.style.borderColor=\'var(--terra)\';" '+
-        'onerror="this.style.display=\'none\'">'
-      );}).join('')+
-      '</div>':''
-    ):
+  const hasImages=images.length>0;
+  const imgHtml=hasImages?
+    '<div style="position:relative;margin-bottom:1rem">'+
+      '<img id="tdHero" src="'+images[0]+'" alt="'+tile.name+'" loading="lazy" '+
+        'style="width:100%;max-height:320px;object-fit:contain;background:#F9F7F4;border-radius:12px;display:block">'+
+      (images.length>1?
+        '<button id="tdPrev" onclick="tdNav(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;font-size:1.1rem;box-shadow:0 2px 8px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;z-index:2">‹</button>'+
+        '<button id="tdNext" onclick="tdNav(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;font-size:1.1rem;box-shadow:0 2px 8px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;z-index:2">›</button>'+
+        '<div id="tdCounter" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);color:white;font-size:.72rem;padding:.2rem .6rem;border-radius:100px;pointer-events:none">1 / '+images.length+'</div>'
+      :'')+
+    '</div>':
     '<div style="width:100%;height:120px;border-radius:12px;margin-bottom:1rem;overflow:hidden">'+
     '<canvas id="tdPreviewCanvas" width="400" height="120" style="width:100%;height:100%"></canvas></div>';
 
@@ -3642,6 +3650,8 @@ function _buildTileDetailModal(tile,images,tileId){
     (tile.url?'<a href="'+tile.url+'" target="_blank" rel="noopener" style="display:block;text-align:center;padding:.7rem;border:2px solid #E0D8CE;border-radius:12px;color:var(--slate);text-decoration:none;font-size:.85rem;font-weight:600;margin-bottom:.8rem">View at '+(tile.supplier||'supplier')+' ↗</a>':'')+
     '</div>';
   document.body.appendChild(m);
+  m._tdImages=images;
+  m._tdIdx=0;
   document.body.style.overflow='hidden';
   function removeTDModal(){m.remove();document.body.style.overflow='';}
   m.addEventListener('click',function(e){if(e.target===m)removeTDModal();});
@@ -4060,7 +4070,10 @@ function csvToTile(r){
   }).filter(Boolean);
   return{id:r.id,name:r.name,desc:`${w}×${h}mm`,col:r.colour_hex||'#E0D8CC',
     beau:parseFloat(r.cost_per_m2)||0,supplier:r.supplier||'',supplierCss:'',
-    difficulty:parseFloat(r.difficulty)||1.0,outdoor:r.outdoor==='true',
+    difficulty:parseFloat(r.difficulty)||1.0,
+    outdoor:r.use==='outdoor'||r.use==='both'||r.outdoor==='true',
+    indoorOk:r.use!=='outdoor'||(r.outdoor!=='false'&&!r.use),
+    use:r.use||(r.outdoor==='true'?'both':'indoor'),
     tags:(r.tags||'').split(',').map(t=>t.trim()).filter(Boolean),
     url:r.link&&r.link!=='#'?r.link:'',css:'',
     images,notes:r.notes||''};
