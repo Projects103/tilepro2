@@ -2461,39 +2461,29 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
     if(snapWall){
       const isDoorOrWindow=fixName==='door'||fixName==='window';
       if(isDoorOrWindow){
-        // Find nearest wall and snap to it, auto-rotating to align
         const distL=mx, distR=rW-mx, distT=my, distB=rL-my;
         const minDist=Math.min(distL,distR,distT,distB);
-        // hfh = half-depth (0.05m) — centre sits ON the wall face
-        if(minDist===distL){
-          mx=hh; // left wall — depth axis points right
-          if(!S.fixRotations) S.fixRotations={};
-          S.fixRotations[fixName]=Math.PI/2; // rotate so width runs vertically
-        } else if(minDist===distR){
-          mx=rW-hh; // right wall
-          if(!S.fixRotations) S.fixRotations={};
-          S.fixRotations[fixName]=Math.PI/2;
-        } else if(minDist===distT){
-          my=hh; // top wall
-          if(!S.fixRotations) S.fixRotations={};
-          S.fixRotations[fixName]=0; // width runs horizontally
-        } else {
-          my=rL-hh; // bottom wall
-          if(!S.fixRotations) S.fixRotations={};
+        if(!S.fixRotations)S.fixRotations={};
+        if(minDist===distT||minDist===distB){
+          // Top or bottom wall — door width runs horizontal, depth runs vertical
           S.fixRotations[fixName]=0;
+          const hDepth=d.fh/2; // half-depth in vertical direction
+          my = minDist===distT ? hDepth : rL-hDepth;
+        } else {
+          // Left or right wall — rotate 90°, door width runs vertical, depth runs horizontal
+          S.fixRotations[fixName]=Math.PI/2;
+          const hDepth=d.fh/2; // half-depth in horizontal direction
+          mx = minDist===distL ? hDepth : rW-hDepth;
         }
       } else {
         if(mx-hw<0.15)mx=hw;if(rW-(mx+hw)<0.15)mx=rW-hw;
         if(my-hh<0.15)my=hh;if(rL-(my+hh)<0.15)my=rL-hh;
       }
     }
-    mx=Math.max(hw,Math.min(rW-hw,mx));
-    my=Math.max(hh,Math.min(rL-hh,my));
-    // For rotated doors/windows on side walls, clamp uses swapped dimensions
-    if((fixName==='door'||fixName==='window')&&S.fixRotations?.[fixName]===Math.PI/2){
-      mx=Math.max(hh,Math.min(rW-hh,mx));
-      my=Math.max(hw,Math.min(rL-hw,my));
-    }
+    // Clamp using post-rotation dims
+    const{fw:rfw2,fh:rfh2}=rotateFixDims(fixName);
+    mx=Math.max(rfw2/2,Math.min(rW-rfw2/2,mx));
+    my=Math.max(rfh2/2,Math.min(rL-rfh2/2,my));
   }
   // For custom mode just place where dropped (polygon clamp is complex; leave free)
   S.fixes[fixName]={x:mx,y:my};
