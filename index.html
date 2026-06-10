@@ -3099,7 +3099,7 @@ function renderTileGrid(gridId,key,surface){
     const preview=item.isBYO
       ?`<div style="height:105px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:linear-gradient(135deg,#F5EFE6,#EDE7DC);color:var(--terra)">✏️</div>`
       :`<canvas class="tile-canvas" data-tile-id="${item.id}" width="180" height="105" style="position:absolute;inset:0;width:100%;height:100%"></canvas>`;
-    const eyeBtn=!item.isBYO?`<button onclick="event.stopPropagation();showTileDetail('${item.id}')"
+    const eyeBtn=!item.isBYO?`<button data-tile-detail="${item.id}"
       style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.15);z-index:2;line-height:1" title="View details">👁</button>`:'';
     return`<div class="prod-card ${selId===item.id?'sel':''}" data-tile-id="${item.id}"
       onclick="${item.isBYO?`openByoTileModal('${key}')`:(`pickProd('${key}','${item.id}',this)`)}" >
@@ -3534,6 +3534,82 @@ function applyByoTile(key){
   filterTiles(key==='floorTile'?'floorGrid':'wallGrid',key,'');
   if(key==='floorTile')drawPlan();
   updateSupPrices();
+}
+
+// Delegated listener for tile detail eye buttons
+document.addEventListener('click',function(e){
+  const btn=e.target.closest('[data-tile-detail]');
+  if(btn){e.stopPropagation();showTileDetail(btn.getAttribute('data-tile-detail'));}
+});
+
+function renderGroutSwatches(){
+  const grouts=window._externalGrouts;
+  if(!grouts||!grouts.length)return;
+  ['floor','wall'].forEach(function(surface){
+    const el=document.getElementById('groutSwatch_'+surface);
+    if(!el)return;
+    el.innerHTML=grouts.map(function(g){return(
+      '<div class="grout-swatch '+(S.grout[surface].color===g.colour_hex?'on':'')+'" '+
+      'onclick="setGrout(this,\''+surface+'\',\''+g.colour_hex+'\',\''+g.name+'\')" '+
+      'style="background:'+g.colour_hex+(g.colour_hex==='#F5F5F3'?';border:2px solid #DDD':'')+'" '+
+      'title="'+g.name+' — '+g.brand+' '+g.size_kg+'kg $'+g.cost+'"></div>');
+    }).join('')+
+    '<input type="color" value="'+(S.grout[surface].color||'#F5F5F3')+'" onchange="setGroutCustom(\''+surface+'\',this.value)" '+
+    'style="width:30px;height:30px;border-radius:6px;border:2px solid #E0D8CE;cursor:pointer;padding:2px" title="Custom">';
+  });
+}
+
+function showTileDetail(tileId){
+  const tile=ALL_TILES.find(function(t){return t.id===tileId;});
+  if(!tile)return;
+  document.querySelectorAll('.tile-detail-modal').forEach(function(m){m.remove();});
+  const images=tile.images||[];
+  const tags=(tile.tags||[]).filter(Boolean);
+  const w=tile.desc.match(/(\d+)[\xd7x×](\d+)/);
+  const sizeStr=w?w[1]+' × '+w[2]+' mm':(tile.desc||'');
+
+  const imgHtml=images.length?
+    '<div style="display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:.8rem;scrollbar-width:thin">'+
+    images.map(function(src,i){return(
+      '<img src="'+src+'" alt="'+tile.name+'" loading="lazy" '+
+      'style="height:'+(i===0?'200':'160')+'px;min-width:'+(i===0?'240':'160')+'px;object-fit:cover;border-radius:10px;flex-shrink:0;cursor:pointer" '+
+      'onclick="document.getElementById(\'tdHero\').src=\''+src+'\'" '+
+      'onerror="this.style.display=\'none\'">'
+    );}).join('')+
+    '</div>'+
+    '<img id="tdHero" src="'+images[0]+'" alt="'+tile.name+'" loading="lazy" '+
+    'style="width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-bottom:1rem" '+
+    'onerror="this.style.display=\'none\'">':
+    '<div style="width:100%;height:120px;border-radius:12px;margin-bottom:1rem;overflow:hidden">'+
+    '<canvas id="tdPreviewCanvas" width="400" height="120" style="width:100%;height:100%"></canvas></div>';
+
+  const m=document.createElement('div');
+  m.className='tile-detail-modal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(43,58,74,.6);z-index:9999;display:flex;align-items:flex-end;justify-content:center';
+  m.innerHTML=
+    '<div style="background:white;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:1.4rem 1.4rem 2.5rem;animation:slideUp .25s ease">'+
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem">'+
+    '<div><h3 style="font-family:\'DM Serif Display\',serif;color:var(--slate);font-size:1.3rem;margin:0 0 .2rem">'+tile.name+'</h3>'+
+    '<div style="font-size:.78rem;color:#9AABB8">'+( tile.supplier||'')+'</div></div>'+
+    '<button onclick="this.closest(\'.tile-detail-modal\').remove()" style="background:var(--cream);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;flex-shrink:0;margin-left:.8rem;line-height:1">✕</button></div>'+
+    imgHtml+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem">'+
+    '<div style="background:var(--cream);border-radius:10px;padding:.7rem .9rem"><div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#9AABB8;margin-bottom:.2rem">Size</div><div style="font-weight:600;color:var(--slate);font-size:.9rem">'+sizeStr+'</div></div>'+
+    '<div style="background:var(--cream);border-radius:10px;padding:.7rem .9rem"><div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#9AABB8;margin-bottom:.2rem">Price</div><div style="font-weight:600;color:var(--terra);font-size:.9rem">$'+tile.beau+'/m²</div></div>'+
+    '<div style="background:var(--cream);border-radius:10px;padding:.7rem .9rem"><div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#9AABB8;margin-bottom:.2rem">Colour</div>'+
+    '<div style="display:flex;align-items:center;gap:.4rem"><div style="width:18px;height:18px;border-radius:4px;background:'+tile.col+';border:1px solid rgba(0,0,0,.1)"></div><span style="font-size:.82rem;color:var(--slate)">'+tile.col+'</span></div></div>'+
+    '<div style="background:var(--cream);border-radius:10px;padding:.7rem .9rem"><div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#9AABB8;margin-bottom:.2rem">Use</div><div style="font-weight:600;color:var(--slate);font-size:.82rem">'+(tile.outdoor?'Indoor + Outdoor':'Indoor only')+'</div></div></div>'+
+    (tags.length?'<div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1rem">'+tags.map(function(t){return'<span style="background:#F0EAE0;color:var(--slate);font-size:.72rem;padding:.25rem .65rem;border-radius:100px;font-weight:500">'+t+'</span>';}).join('')+'</div>':'')+
+    (tile.url?'<a href="'+tile.url+'" target="_blank" rel="noopener" style="display:block;text-align:center;padding:.7rem;border:2px solid #E0D8CE;border-radius:12px;color:var(--slate);text-decoration:none;font-size:.85rem;font-weight:600;margin-bottom:.8rem">View at '+(tile.supplier||'supplier')+' ↗</a>':'')+
+    '</div>';
+  document.body.appendChild(m);
+  m.addEventListener('click',function(e){if(e.target===m)m.remove();});
+  if(!images.length){
+    setTimeout(function(){
+      const cv=document.getElementById('tdPreviewCanvas');
+      if(cv)drawTilePreview(cv,tileId);
+    },80);
+  }
 }
 
 function pickProd(key,id,card){
@@ -3998,7 +4074,18 @@ async function loadExternalData(){
   }catch(e){console.warn('drains.csv failed',e);}
 
   try{
-    const res=await fetch(MODELS_BASE+'toilet.stl',{cache:'no-cache'});
+    const res=await fetch(DATA_BASE+'grout.csv',{cache:'no-cache'});
+    if(res.ok){
+      const rows=parseCSV(await res.text()).filter(r=>r.id&&r.colour_hex);
+      if(rows.length){
+        window._externalGrouts=rows;
+        renderGroutSwatches();
+        console.log(`Loaded ${rows.length} grout options`);
+      }
+    }
+  }catch(e){console.warn('grout.csv failed',e);}
+
+  try{
     if(res.ok){
       const buf=await res.arrayBuffer();
       const view=new DataView(buf);
