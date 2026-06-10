@@ -38,13 +38,17 @@ main{max-width:1200px;margin:0 auto;padding:0 2rem 8rem}
 .job-title{font-family:'DM Serif Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);color:white;letter-spacing:-.01em}
 .job-subtitle{font-size:.8rem;color:rgba(255,255,255,.35);font-weight:500;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
 
-/* Masonry-style grid */
-.photo-grid{columns:3;column-gap:.7rem}
-.photo-grid.small{columns:2}
-@media(max-width:900px){.photo-grid{columns:2}}
-@media(max-width:500px){.photo-grid{columns:1}.photo-grid.small{columns:1}}
-.photo-thumb{break-inside:avoid;margin-bottom:.7rem;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;display:block;background:rgba(255,255,255,.04)}
-.photo-thumb img{width:100%;height:auto;display:block;transition:transform .5s cubic-bezier(.22,1,.36,1),filter .3s ease;filter:brightness(.92)}
+/* Scrollable photo row per job */
+.photo-grid{display:flex;gap:.7rem;overflow-x:auto;padding-bottom:.5rem;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--terra) rgba(255,255,255,.08)}
+.photo-grid::-webkit-scrollbar{height:4px}
+.photo-grid::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:2px}
+.photo-grid::-webkit-scrollbar-thumb{background:var(--terra);border-radius:2px}
+.photo-grid.small{display:flex}
+@media(max-width:900px){.photo-grid{gap:.5rem}}
+@media(max-width:500px){.photo-grid{gap:.4rem}}
+.photo-thumb{break-inside:avoid;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;display:block;background:rgba(255,255,255,.04);flex:0 0 auto;width:280px;height:210px;scroll-snap-align:start}
+@media(max-width:600px){.photo-thumb{width:220px;height:165px}}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1),filter .3s ease;filter:brightness(.92)}
 .photo-thumb:hover img{transform:scale(1.03);filter:brightness(1)}
 .photo-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(26,36,48,.6));opacity:0;transition:opacity .3s}
 .photo-thumb:hover::after{opacity:1}
@@ -102,11 +106,15 @@ main{max-width:1200px;margin:0 auto;padding:0 2rem 8rem}
 // 1. Drop images in pastRenos/ named:  jobname-1.jpg  jobname-2.jpg  etc.
 // 2. Add one entry to JOBS below.
 // ═══════════════════════════════════════════════════════════════════════════
-const JOBS = [
-  { id: 'smithfield-plains-bathroom-toilet',   title: 'Smithfield Plains Bathroom',          subtitle: 'Smithfield Plains · 2025' }
-  // { id: 'brighton-ensuite',   title: 'Brighton Ensuite',          subtitle: 'Brighton SA · 2025' },
-  // { id: 'norwood-bathroom',   title: 'Norwood Family Bathroom',   subtitle: 'Norwood SA · 2025' },
-];
+const JOBS = 
+  [ 
+    { 
+      id: 'smithfield-plains-bathroom-toilet',   
+      title: 'Smithfield Plains Bathroom',          
+      subtitle: 'Smithfield Plains · 2025' 
+    } 
+    // { id: 'brighton-ensuite',   title: 'Brighton Ensuite',          subtitle: 'Brighton SA · 2025' }, // { id: 'norwood-bathroom',   title: 'Norwood Family Bathroom',   subtitle: 'Norwood SA · 2025' }, 
+  ];
 
 const IMG_BASE = './pastRenos/';
 const IMG_EXTS = ['.jpg','.jpeg','.png','.webp'];
