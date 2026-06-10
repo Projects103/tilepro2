@@ -1059,19 +1059,32 @@ function showShareModal(code,url){
   const hash=location.hash.slice(1);
   if(hash.startsWith('share:')){
     const code=hash.slice(6);
-    fetch(WORKER_URL+'/share?code='+encodeURIComponent(code))
-      .then(r=>r.json())
-      .then(({data,error})=>{
-        if(error||!data)return showToast('⚠️ Share code not found or expired.');
-        if(decodeState(data)){
-          setTimeout(()=>setStep(5),100);
-          showToast('✓ Quote loaded from share code: '+code);
-        }
-      })
-      .catch(()=>showToast('⚠️ Could not load shared quote.'));
+    // Wait for DOM + app to initialise fully before loading state
+    window.addEventListener('load',()=>{
+      fetch(WORKER_URL+'/share?code='+encodeURIComponent(code))
+        .then(r=>r.json())
+        .then(({data,error})=>{
+          if(error||!data)return showToast('⚠️ Share code not found or expired.');
+          if(decodeState(data)){
+            // Give the UI a moment to settle, then go to quote and rebuild 3D
+            setStep(5);
+            setTimeout(()=>{
+              if(typeof initThree==='function')initThree();
+              if(typeof calcQuote==='function')calcQuote();
+            },300);
+            showToast('✓ Quote loaded — code: '+code);
+          }
+        })
+        .catch(()=>showToast('⚠️ Could not load shared quote.'));
+    });
   } else if(hash.length>20&&!hash.startsWith('share:')){
     // Legacy URL-hash fallback
-    if(decodeState(hash)) setTimeout(()=>setStep(5),100);
+    window.addEventListener('load',()=>{
+      if(decodeState(hash)){
+        setStep(5);
+        setTimeout(()=>{if(typeof initThree==='function')initThree();},300);
+      }
+    });
   }
 })();
 function showToast(msg,duration=3500){
