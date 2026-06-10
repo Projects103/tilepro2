@@ -1,27 +1,27 @@
-id,name,width_mm,height_mm,colour,link,supplier,cost_per_m2,tags,outdoor,difficulty
-b-crema-600,Crema Porcelain Matt,600,600,#F0EAE0,https://www.bunnings.com.au/search/products?q=crema+porcelain+600,Bunnings,42.90,"porcelain,neutral,stone look,cream",false,1.0
-b-white-sub,White Gloss Subway,100,200,#F8F8F8,https://www.bunnings.com.au/search/products?q=white+subway+tile,Bunnings,28.50,"subway,gloss,white,classic",false,1.05
-b-grey-pietra,Grey Pietra Stone Look,600,600,#9A9A98,https://www.bunnings.com.au/search/products?q=grey+pietra+600,Bunnings,54.90,"stone look,grey,porcelain,modern",false,1.0
-b-nero-600,Nero Black Matt,600,600,#2A2A2A,https://www.bunnings.com.au/search/products?q=nero+black+600,Bunnings,62.90,"black,matte,porcelain,bold",false,1.0
-b-travertine,Travertine Look,300,600,#C8B898,#,Bunnings,48.90,"travertine,natural,warm,stone look",true,1.05
-b-london-blk,London Black Slate,300,600,#3A3A38,#,Bunnings,58.90,"slate,black,texture,feature",true,1.1
-b-lt-grey-300,Light Grey Matt 300x300,300,300,#C8C8C6,#,Bunnings,32.90,"grey,matte,neutral,bathroom",false,1.0
-b-cemento-wh,Cemento White,600,600,#ECECEA,#,Bunnings,52.90,"concrete look,white,modern,porcelain",true,1.0
-b-cemento-ch,Cemento Charcoal,600,600,#5A5A58,#,Bunnings,52.90,"concrete look,charcoal,modern,porcelain",true,1.0
-b-grey-elem,Grey Elements,300,600,#888886,#,Bunnings,44.90,"grey,stone look,textured",true,1.05
-bt-bianco-marble,😏,600,600,#F0EEE8,https://www.beaumonttiles.com.au/search?q=bianco+venato,Beaumonts,89.00,"marble look,white,veining,luxury",false,1.0
-bt-zellige-white,Zellige White Gloss,75,75,#F5F3EE,https://www.beaumonttiles.com.au/search?q=zellige+white,Beaumonts,145.00,"zellige,handmade,white,feature,moroccan",false,1.15
-bt-zellige-sage,Zellige Sage Green,75,75,#8A9E8A,https://www.beaumonttiles.com.au/search?q=zellige+sage,Beaumonts,148.00,"zellige,handmade,green,sage,feature",false,1.15
-bt-terracotta,Terracotta Matt,200,200,#C47A50,https://www.beaumonttiles.com.au/search?q=terracotta,Beaumonts,78.00,"terracotta,warm,earthy,feature",true,1.1
-bt-charcoal-cem,Charcoal Cemento Matt,600,600,#4A4A48,https://www.beaumonttiles.com.au/search?q=charcoal+cemento,Beaumonts,92.00,"concrete look,charcoal,dark,modern",true,1.0
-bt-concrete,Concrete Grey,600,600,#888884,https://www.beaumonttiles.com.au/search?q=concrete+grey,Beaumonts,88.00,"concrete look,grey,industrial",true,1.0
-bt-pompeii,Pompeii Textured,300,600,#B8A890,https://www.beaumonttiles.com.au/search?q=pompeii,Beaumonts,94.00,"stone look,textured,warm,natural",true,1.05
-bt-black-mat,Black Matt Porcelain,600,600,#1A1A18,https://www.beaumonttiles.com.au/search?q=black+matt+porcelain,Beaumonts,98.00,"black,matte,bold,modern",true,1.0
-nt-carrara,Carrara White Marble Look,300,600,#F2F0EC,https://www.nationaltiles.com.au/search?q=carrara,National Tiles,96.00,"marble look,white,carrara,luxury",false,1.0
-nt-sage-subway,Sage Green Subway,75,300,#8A9E88,https://www.nationaltiles.com.au/search?q=sage+green+subway,National Tiles,88.00,"subway,green,sage,feature,colour",false,1.05
-nt-blue-subway,Ocean Blue Subway,75,300,#5A7A9A,https://www.nationaltiles.com.au/search?q=blue+subway,National Tiles,88.00,"subway,blue,ocean,feature,colour",false,1.05
-nt-concrete,Concrete Industrial,600,600,#6A6A68,https://www.nationaltiles.com.au/search?q=concrete+industrial,National Tiles,82.00,"concrete look,grey,industrial,modern",true,1.0
-nt-stone-600,Natural Stone Look,600,600,#C4B8A8,https://www.nationaltiles.com.au/search?q=natural+stone+600,National Tiles,78.00,"stone look,natural,warm,neutral",true,1.0
-nt-beton,Beton Dark,600,600,#4E4E4C,https://www.nationaltiles.com.au/search?q=beton+dark,National Tiles,86.00,"concrete look,dark,modern,beton",true,1.0
-nt-terracotta,Terracotta Rustic,150,150,#B86840,https://www.nationaltiles.com.au/search?q=terracotta+rustic,National Tiles,72.00,"terracotta,rustic,warm,earthy",true,1.1
-nt-travertine,Travertine Classic,400,400,#C8B48A,https://www.nationaltiles.com.au/search?q=travertine+classic,National Tiles,94.00,"travertine,classic,warm,natural",true,1.05
+id,name,width_mm,height_mm,colour_hex,link,supplier,cost_per_m2,tags,outdoor,difficulty,images,notes
+b-crema-600,Crema Porcelain Matt,600,600,#F0EAE0,https://www.bunnings.com.au/search/products?q=crema+porcelain+600,Bunnings,42.90,"porcelain,neutral,stone look,cream",false,1.0,,
+b-white-sub,White Gloss Subway,100,200,#F8F8F8,https://www.bunnings.com.au/search/products?q=white+subway+tile,Bunnings,28.50,"subway,gloss,white,classic",false,1.05,,
+b-grey-pietra,Grey Pietra Stone Look,600,600,#9A9A98,https://www.bunnings.com.au/search/products?q=grey+pietra+600,Bunnings,54.90,"stone look,grey,porcelain,modern",false,1.0,,
+b-nero-600,Nero Black Matt,600,600,#2A2A2A,https://www.bunnings.com.au/search/products?q=nero+black+600,Bunnings,62.90,"black,matte,porcelain,bold",false,1.0,,
+b-travertine,Travertine Look,300,600,#C8B898,#,Bunnings,48.90,"travertine,natural,warm,stone look",true,1.05,,
+b-london-blk,London Black Slate,300,600,#3A3A38,#,Bunnings,58.90,"slate,black,texture,feature",true,1.1,,
+b-lt-grey-300,Light Grey Matt 300x300,300,300,#C8C8C6,#,Bunnings,32.90,"grey,matte,neutral,bathroom",false,1.0,,
+b-cemento-wh,Cemento White,600,600,#ECECEA,#,Bunnings,52.90,"concrete look,white,modern,porcelain",true,1.0,,
+b-cemento-ch,Cemento Charcoal,600,600,#5A5A58,#,Bunnings,52.90,"concrete look,charcoal,modern,porcelain",true,1.0,,
+b-grey-elem,Grey Elements,300,600,#888886,#,Bunnings,44.90,"grey,stone look,textured",true,1.05,,
+bt-bianco-marble,Bianco Venato Marble Look,600,600,#F0EEE8,https://www.beaumonttiles.com.au/search?q=bianco+venato,Beaumonts,89.00,"marble look,white,veining,luxury",false,1.0,,
+bt-zellige-white,Zellige White Gloss,75,75,#F5F3EE,https://www.beaumonttiles.com.au/search?q=zellige+white,Beaumonts,145.00,"zellige,handmade,white,feature,moroccan",false,1.15,,
+bt-zellige-sage,Zellige Sage Green,75,75,#8A9E8A,https://www.beaumonttiles.com.au/search?q=zellige+sage,Beaumonts,148.00,"zellige,handmade,green,sage,feature",false,1.15,,
+bt-terracotta,Terracotta Matt,200,200,#C47A50,https://www.beaumonttiles.com.au/search?q=terracotta,Beaumonts,78.00,"terracotta,warm,earthy,feature",true,1.1,,
+bt-charcoal-cem,Charcoal Cemento Matt,600,600,#4A4A48,https://www.beaumonttiles.com.au/search?q=charcoal+cemento,Beaumonts,92.00,"concrete look,charcoal,dark,modern",true,1.0,,
+bt-concrete,Concrete Grey,600,600,#888884,https://www.beaumonttiles.com.au/search?q=concrete+grey,Beaumonts,88.00,"concrete look,grey,industrial",true,1.0,,
+bt-pompeii,Pompeii Textured,300,600,#B8A890,https://www.beaumonttiles.com.au/search?q=pompeii,Beaumonts,94.00,"stone look,textured,warm,natural",true,1.05,,
+bt-black-mat,Black Matt Porcelain,600,600,#1A1A18,https://www.beaumonttiles.com.au/search?q=black+matt+porcelain,Beaumonts,98.00,"black,matte,bold,modern",true,1.0,,
+nt-carrara,Carrara White Marble Look,300,600,#F2F0EC,https://www.nationaltiles.com.au/search?q=carrara,National Tiles,96.00,"marble look,white,carrara,luxury",false,1.0,,
+nt-sage-subway,Sage Green Subway,75,300,#8A9E88,https://www.nationaltiles.com.au/search?q=sage+green+subway,National Tiles,88.00,"subway,green,sage,feature,colour",false,1.05,,
+nt-blue-subway,Ocean Blue Subway,75,300,#5A7A9A,https://www.nationaltiles.com.au/search?q=blue+subway,National Tiles,88.00,"subway,blue,ocean,feature,colour",false,1.05,,
+nt-concrete,Concrete Industrial,600,600,#6A6A68,https://www.nationaltiles.com.au/search?q=concrete+industrial,National Tiles,82.00,"concrete look,grey,industrial,modern",true,1.0,,
+nt-stone-600,Natural Stone Look,600,600,#C4B8A8,https://www.nationaltiles.com.au/search?q=natural+stone+600,National Tiles,78.00,"stone look,natural,warm,neutral",true,1.0,,
+nt-beton,Beton Dark,600,600,#4E4E4C,https://www.nationaltiles.com.au/search?q=beton+dark,National Tiles,86.00,"concrete look,dark,modern,beton",true,1.0,,
+nt-terracotta,Terracotta Rustic,150,150,#B86840,https://www.nationaltiles.com.au/search?q=terracotta+rustic,National Tiles,72.00,"terracotta,rustic,warm,earthy",true,1.1,,
+nt-travertine,Travertine Classic,400,400,#C8B48A,https://www.nationaltiles.com.au/search?q=travertine+classic,National Tiles,94.00,"travertine,classic,warm,natural",true,1.05,,
