@@ -3563,23 +3563,62 @@ function showTileDetail(tileId){
   const tile=ALL_TILES.find(function(t){return t.id===tileId;});
   if(!tile)return;
   document.querySelectorAll('.tile-detail-modal').forEach(function(m){m.remove();});
-  const images=tile.images||[];
+  // Auto-discover images: probe images/tiles/{id}-1.jpg, -2.jpg, ... until 404
+  const exts=['.jpg','.jpeg','.png','.webp'];
+  function probeImages(id,cb){
+    const found=[];
+    function tryNext(n,extIdx){
+      if(n>8){cb(found);return;} // max 8 images
+      const ext=exts[extIdx%exts.length];
+      const src='./images/tiles/'+id+'-'+n+ext;
+      const img=new Image();
+      img.onload=function(){found.push(src);tryNext(n+1,extIdx);};
+      img.onerror=function(){
+        // Try next extension before giving up on this number
+        const nextExtIdx=extIdx+1;
+        if(nextExtIdx<exts.length){
+          const src2='./images/tiles/'+id+'-'+n+exts[nextExtIdx];
+          const img2=new Image();
+          img2.onload=function(){found.push(src2);tryNext(n+1,0);};
+          img2.onerror=function(){if(n===1)tryNext(n+1,0);else cb(found);}; // stop after first miss beyond 1
+          img2.src=src2;
+        } else {
+          if(n===1)tryNext(n+1,0); // keep going if first image missing
+          else cb(found); // stop on first miss after n>1
+        }
+      };
+      img.src=src;
+    }
+    tryNext(1,0);
+  }
+  // Also use any images baked into the tile object (from CSV) as fallback
+  const csvImages=tile.images||[];
+  probeImages(tileId,function(discovered){
+    const images=discovered.length?discovered:csvImages;
+    _buildTileDetailModal(tile,images,tileId);
+  });
+}
+
+function _buildTileDetailModal(tile,images,tileId){
   const tags=(tile.tags||[]).filter(Boolean);
   const w=tile.desc.match(/(\d+)[\xd7x×](\d+)/);
   const sizeStr=w?w[1]+' × '+w[2]+' mm':(tile.desc||'');
 
+  // Hero = first image. Thumbnail strip = images 2+ (skip first to avoid duplicate)
   const imgHtml=images.length?
-    '<div style="display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:.8rem;scrollbar-width:thin">'+
-    images.map(function(src,i){return(
-      '<img src="'+src+'" alt="'+tile.name+'" loading="lazy" '+
-      'style="height:'+(i===0?'200':'160')+'px;min-width:'+(i===0?'240':'160')+'px;object-fit:cover;border-radius:10px;flex-shrink:0;cursor:pointer" '+
-      'onclick="document.getElementById(\'tdHero\').src=\''+src+'\'" '+
-      'onerror="this.style.display=\'none\'">'
-    );}).join('')+
-    '</div>'+
     '<img id="tdHero" src="'+images[0]+'" alt="'+tile.name+'" loading="lazy" '+
-    'style="width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-bottom:1rem" '+
-    'onerror="this.style.display=\'none\'">':
+    'style="width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin-bottom:'+(images.length>1?'.6rem':'1rem')+'" '+
+    'onerror="this.style.display=\'none\'">'+
+    (images.length>1?
+      '<div style="display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:1rem;scrollbar-width:thin">'+
+      images.map(function(src,i){return(
+        '<img src="'+src+'" alt="'+tile.name+' view '+(i+1)+'" loading="lazy" '+
+        'style="height:64px;min-width:64px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;opacity:'+(i===0?'1':'.65')+';border:2px solid '+(i===0?'var(--terra)':'transparent')+';" '+
+        'onclick="document.getElementById(\'tdHero\').src=\''+src+'\';this.parentNode.querySelectorAll(\'img\').forEach(function(x){x.style.opacity=\'.65\';x.style.borderColor=\'transparent\';});this.style.opacity=\'1\';this.style.borderColor=\'var(--terra)\';" '+
+        'onerror="this.style.display=\'none\'">'
+      );}).join('')+
+      '</div>':''
+    ):
     '<div style="width:100%;height:120px;border-radius:12px;margin-bottom:1rem;overflow:hidden">'+
     '<canvas id="tdPreviewCanvas" width="400" height="120" style="width:100%;height:100%"></canvas></div>';
 
@@ -3610,7 +3649,7 @@ function showTileDetail(tileId){
       if(cv)drawTilePreview(cv,tileId);
     },80);
   }
-}
+} // end _buildTileDetailModal
 
 function pickProd(key,id,card){
   if(!card)return;
