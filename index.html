@@ -744,6 +744,7 @@ async function shareProject(){
             // Hide landing page, show app immediately at step 5
             document.getElementById('home').style.display='none';
             document.getElementById('wizard').classList.add('active');
+            document.body.classList.add('wizard-active');
             setStep(5);
             // Three.js needs time to render the canvas before building scene
             setTimeout(()=>{
@@ -760,6 +761,7 @@ async function shareProject(){
       if(decodeState(hash)){
         document.getElementById('home').style.display='none';
         document.getElementById('wizard').classList.add('active');
+        document.body.classList.add('wizard-active');
         setStep(5);
         setTimeout(()=>{if(typeof initThree==='function')initThree();},500);
       }
@@ -4549,7 +4551,7 @@ function renderExtraItems(){
     const{w,l}=S.room;
     const wMM=Math.round(w*1000),lMM=Math.round(l*1000);
     return `
-    <div style="background:white;border:2px solid #EDE8E1;border-radius:12px;padding:.9rem 1rem;margin-bottom:.7rem"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;gap:.5rem"><div style="display:flex;gap:.3rem"><button onclick="setExtraType(${i},'other',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${!isEdge?'var(--terra)':'#E0D8CE'};background:${!isEdge?'var(--terra)':'white'};color:${!isEdge?'white':'#9AABB8'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">Other</button><button onclick="setExtraType(${i},'edge',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${isEdge?'var(--terra)':'#E0D8CE'};background:${isEdge?'var(--terra)':'white'};color:${isEdge?'white':'#9AABB8'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">Edge tile-down</button></div><button onclick="removeExtraItem(${i})" style="background:none;border:none;cursor:pointer;color:#9AABB8;font-size:1rem;padding:.1rem .3rem;line-height:1">✕</button></div>${isEdge?`
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.9rem 1rem;margin-bottom:.7rem"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;gap:.5rem"><div style="display:flex;gap:.3rem"><button onclick="setExtraType(${i},'other',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${!isEdge?'var(--terra)':'rgba(255,255,255,.15)'};background:${!isEdge?'var(--terra)':'rgba(255,255,255,.06)'};color:${!isEdge?'white':'rgba(255,255,255,.4)'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">Other</button><button onclick="setExtraType(${i},'edge',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${isEdge?'var(--terra)':'rgba(255,255,255,.15)'};background:${isEdge?'var(--terra)':'rgba(255,255,255,.06)'};color:${isEdge?'white':'rgba(255,255,255,.4)'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">Edge tile-down</button></div><button onclick="removeExtraItem(${i})" style="background:none;border:none;cursor:pointer;color:#9AABB8;font-size:1rem;padding:.1rem .3rem;line-height:1">✕</button></div>${isEdge?`
         <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;margin-bottom:.4rem">Select edges</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-bottom:.7rem">${['front','back','left','right'].map(edge=>{
             const len=edge==='front'||edge==='back'?wMM:lMM;
             const on=(item.edgeEdges||['front']).includes(edge);
@@ -4557,12 +4559,12 @@ function renderExtraItems(){
           }).join('')}
         </div><div style="display:flex;gap:.5rem;align-items:center"><span style="font-size:.78rem;color:#9AABB8;white-space:nowrap">Drop depth</span><input type="number" value="${item.edgeDepth||50}" min="10" max="500" step="10"
             oninput="S.extras[${i}].edgeDepth=parseInt(this.value)||50;updateExtraEdgeCost(${i})"
-            style="width:72px;padding:.35rem .55rem;border:2px solid #E0D8CE;border-radius:8px;font-family:DM Sans,sans-serif;font-size:.82rem;background:#FAFAF8;color:var(--slate)"><span style="font-size:.78rem;color:#9AABB8">mm</span><span style="margin-left:auto;font-size:.9rem;font-weight:700;color:var(--terra)">$${(item.amount||0).toLocaleString()}</span></div>`:`
+            style="width:72px;padding:.35rem .55rem;border:1px solid rgba(255,255,255,.12);border-radius:8px;font-family:DM Sans,sans-serif;font-size:.82rem;background:rgba(255,255,255,.06);color:white"><span style="font-size:.78rem;color:#9AABB8">mm</span><span style="margin-left:auto;font-size:.9rem;font-weight:700;color:var(--terra)">$${(item.amount||0).toLocaleString()}</span></div>`:`
         <div style="display:flex;gap:.5rem;align-items:center"><input type="text" placeholder="Description…" value="${item.desc||''}"
             oninput="S.extras[${i}].desc=this.value"
-            style="flex:1;padding:.5rem .75rem;border:2px solid #E0D8CE;border-radius:10px;font-family:DM Sans,sans-serif;font-size:.85rem;color:var(--slate);background:#FAFAF8;min-width:0"><div style="display:flex;align-items:center;gap:.25rem;flex-shrink:0"><span style="font-size:.85rem;color:#9AABB8">$</span><input type="number" placeholder="0" value="${item.amount||''}"
+            style="flex:1;padding:.5rem .75rem;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-family:DM Sans,sans-serif;font-size:.85rem;color:white;background:rgba(255,255,255,.06);min-width:0"><div style="display:flex;align-items:center;gap:.25rem;flex-shrink:0"><span style="font-size:.85rem;color:rgba(255,255,255,.3)">$</span><input type="number" placeholder="0" value="${item.amount||''}"
               oninput="S.extras[${i}].amount=parseFloat(this.value)||0"
-              style="width:82px;padding:.5rem .55rem;border:2px solid #E0D8CE;border-radius:10px;font-family:DM Sans,sans-serif;font-size:.85rem;color:var(--slate);background:#FAFAF8;text-align:right"></div></div>`}
+              style="width:82px;padding:.5rem .55rem;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-family:DM Sans,sans-serif;font-size:.85rem;color:white;background:rgba(255,255,255,.06);text-align:right"></div></div>`}
     </div>`;
   }).join('');
 }
