@@ -119,8 +119,8 @@ body.wizard-active .btn-secondary:hover{background:var(--slate);color:white;bord
 
 .room-stats{display:flex;gap:.8rem;margin-top:1rem}
 .stat{flex:1;background:white;border-radius:10px;padding:.9rem .6rem;text-align:center;box-shadow:0 2px 10px rgba(43,58,74,.06)}
-.stat-v{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--terra)}
-.stat-l{font-size:.65rem;color:#9AABB8;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.stat-v{font-family:'DM Serif Display',serif;font-size:1.5rem;color:#111 !important}
+.stat-l{font-size:.65rem;color:#444 !important;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 
 #floorCanvas{width:100%;border:2px solid #E0D8CE;border-radius:12px;cursor:crosshair;background:#F8F3EC;display:block}
 
@@ -233,7 +233,7 @@ body.wizard-active .q-card{background:rgba(255,255,255,.05);border:1px solid rgb
 .q-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid #F5F5F5;font-size:.88rem}
 .q-row .qn{color:var(--slate)}.q-row .qp{font-weight:600}
 .q-total{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.4rem;background:var(--slate);border-radius:10px;margin-top:1.1rem;color:white}
-.q-total .tl{font-size:.88rem;font-weight:600}.q-total .tp{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--gold)}
+.q-total .tl{font-size:.88rem;font-weight:600}.q-total .tp{font-family:'DM Serif Display',serif;font-size:1.7rem;color:white}
 .q-note{font-size:.74rem;color:#9AABB8;margin-top:.9rem;padding:.75rem;background:var(--cream);border-radius:8px;line-height:1.5}
 .q-acts{display:flex;gap:.9rem;justify-content:center;margin-top:1.4rem;flex-wrap:wrap}
 
@@ -297,8 +297,6 @@ body.wizard-active select:focus{border-color:var(--terra);outline:none}
 body.wizard-active .lbl{color:rgba(255,255,255,.5)}
 
 /* Labels & text */
-body.wizard-active .room-stats .stat-v{color:var(--terra);font-weight:700}
-body.wizard-active .room-stats .stat-l{color:rgba(255,255,255,.5)}
 body.wizard-active .room-stats .stat{border-color:rgba(255,255,255,.08)}
 
 /* Buttons */
@@ -506,7 +504,7 @@ body.wizard-active a{color:var(--terra)}
   <!-- ── STEP 1: FLOOR PLAN ── -->
   <div class="sp active" id="step1">
     <div class="step-hdr">
-      <h2 class="step-title">📐 Your Bathroom Layout</h2>
+      <h2 class="step-title">Your Bathroom Layout</h2>
       <p class="step-sub">Set your room shape, dimensions, then drag fixtures onto the plan</p>
     </div>
     <div class="luke-cmnt">
@@ -536,10 +534,10 @@ body.wizard-active a{color:var(--terra)}
             <p style="font-size:.78rem;color:#7A8A99;margin-bottom:.7rem;line-height:1.5">Click the canvas to place corner points, then press <strong>Close Shape</strong> when done.</p>
             <label class="lbl">Ceiling Height (mm)</label>
             <input class="inp" type="number" id="rH2" value="2400" min="2000" max="4000" step="100" oninput="onRoomChange()">
-            <button class="btn-next" id="closeShapeBtn" style="width:100%;margin-bottom:.5rem;padding:.6rem 1rem;font-size:.85rem" onclick="closeCustomShape()">✓ Close Shape</button>
+            <button class="btn-next" id="closeShapeBtn" style="width:100%;margin-bottom:.5rem;padding:.6rem 1rem;font-size:.85rem" onclick="closeCustomShape()">Close Shape</button>
             <div style="display:flex;gap:.4rem;margin-bottom:.5rem">
-              <button class="fix-btn" style="flex:1;justify-content:center" onclick="undoLastPoint()">↩ Undo Point</button>
-              <button class="fix-btn" style="flex:1;justify-content:center;border-color:#E0D8CE;color:#9AABB8" onclick="clearCustomShape()">✕ Clear</button>
+              <button class="fix-btn" style="flex:1;justify-content:center" onclick="undoLastPoint()">Undo Point</button>
+              <button class="fix-btn" style="flex:1;justify-content:center;border-color:#E0D8CE;color:#9AABB8" onclick="clearCustomShape()">Clear</button>
             </div>
             <div class="dims-row" id="segDims"></div>
           </div>
@@ -759,7 +757,7 @@ body.wizard-active a{color:var(--terra)}
 
     <!-- Demo -->
     <div class="card" style="margin-bottom:1.2rem">
-      <h4>🔨 Does the job include demolition?</h4>
+      <h4>Does the job include demolition?</h4>
       <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">Stripping out existing tiles, fixtures, and fittings.</p>
       <div style="display:flex;gap:.5rem;margin-bottom:.9rem">
         <button id="demoYes" onclick="S.demoIncluded=true;document.getElementById('demoYes').classList.add('on');document.getElementById('demoNo').classList.remove('on');updateDemoFee()" class="grout-w-btn on" style="flex:1;justify-content:center">Yes</button>
@@ -793,7 +791,7 @@ body.wizard-active a{color:var(--terra)}
 
     <!-- Tile charge toggle -->
     <div class="card" style="margin-bottom:1.2rem">
-      <h4>🪟 Has the customer already bought their tiles?</h4>
+      <h4>Has the customer already bought their tiles?</h4>
       <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">If yes, tile materials will be excluded from the quote — labour only.</p>
       <div style="display:flex;gap:.5rem">
         <button id="tilesNo" onclick="S.chargeTiles=true;this.classList.add('on');document.getElementById('tilesYes').classList.remove('on')" class="grout-w-btn on" style="flex:1;justify-content:center">No — include tiles</button>
@@ -803,7 +801,7 @@ body.wizard-active a{color:var(--terra)}
 
     <!-- Waterproofing toggle -->
     <div class="card" style="margin-bottom:1.2rem">
-      <h4>💧 Does the job include waterproofing?</h4>
+      <h4>Does the job include waterproofing?</h4>
       <p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">Required in all wet areas. Only exclude if existing waterproofing is confirmed intact by a licensed inspector.</p>
       <div style="display:flex;gap:.5rem">
         <button id="wpYes" onclick="S.waterproofing=true;this.classList.add('on');document.getElementById('wpNo').classList.remove('on')" class="grout-w-btn on" style="flex:1;justify-content:center">Yes</button>
@@ -813,7 +811,7 @@ body.wizard-active a{color:var(--terra)}
 
     <!-- Extra cost field -->
     <div class="card" style="margin-bottom:1.2rem">
-      <h4 style="margin-bottom:.8rem">➕ Additional Items</h4>
+      <h4 style="margin-bottom:.8rem">Additional Items</h4>
       <p style="font-size:.82rem;color:#7A8A99;margin-bottom:.8rem">Add any other cost items you want included in the quote.</p>
       <div id="extraItems"></div>
       <button onclick="addExtraItem()" class="btn-secondary" style="margin-top:.6rem;padding:.5rem 1.2rem;border:2px solid #E0D8CE;border-radius:100px;background:white;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.82rem;color:var(--slate)">+ Add Item</button>
@@ -828,7 +826,7 @@ body.wizard-active a{color:var(--terra)}
   <!-- ── STEP 5: PREVIEW + QUOTE ── -->
   <div class="sp" id="step5">
     <div class="step-hdr">
-      <h2 class="step-title">🎉 Your Bathroom Preview & Quote</h2>
+      <h2 class="step-title">Your Bathroom Preview & Quote</h2>
 
     </div>
     <div class="luke-cmnt"><div class="sm-av">L</div><div id="prevcmt">"Looking great! This quote is my best estimate — I'll confirm the final price after an on-site visit. I'm usually booked about 6 weeks out, so feel free to reach out any time."</div></div>
@@ -865,7 +863,7 @@ body.wizard-active a{color:var(--terra)}
       </div>
 
       <div style="text-align:center;margin:.8rem 0">
-        <button onclick="shareProject()" style="padding:.55rem 1.4rem;background:var(--sage);color:white;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem">🔗 Share this quote</button>
+        <button onclick="shareProject()" style="padding:.55rem 1.4rem;background:var(--sage);color:white;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem">Share this quote</button>
       </div>
       <div class="q-note">ℹ️ Indicative estimate only. Final price confirmed after Luke's on-site visit. Rates may vary based on site conditions, existing waterproofing, and wall substrate. Luke Drummond is fully licensed and insured (SA).</div>
 
@@ -1137,7 +1135,7 @@ async function openPastRenos(){
   m.style.cssText='position:fixed;inset:0;background:var(--slate);z-index:9999;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .3s ease';
   m.innerHTML=
     '<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;background:var(--slate);flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.1)">'+
-    '<h2 style="font-family:\'DM Serif Display\',serif;color:white;font-size:1.4rem;margin:0">📷 Previous Renovations</h2>'+
+    '<h2 style="font-family:\'DM Serif Display\',serif;color:white;font-size:1.4rem;margin:0">Previous Renovations</h2>'+
     '<button onclick="this.closest(\'.renos-modal\').remove();document.body.style.overflow=\'\';" style="background:rgba(255,255,255,.1);border:none;color:white;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1.1rem">✕</button>'+
     '</div>'+
     '<div id="renosContent" style="flex:1;overflow-y:auto;padding:1.2rem">'+
@@ -1288,7 +1286,7 @@ async function shareProject(){
   }catch(e){
     showToast('⚠️ Could not save share link: '+e.message);
   }finally{
-    if(btn){btn.textContent='🔗 Share this quote';btn.disabled=false;}
+    if(btn){btn.textContent='Share this quote';btn.disabled=false;}
   }
 }
 
@@ -1488,7 +1486,7 @@ function undoLastPoint(){
   if(S.customClosed){
     S.customClosed=false;
     const btn=document.getElementById('closeShapeBtn');
-    if(btn){btn.textContent='✓ Close Shape';btn.style.background='';btn.disabled=false;}
+    if(btn){btn.textContent='Close Shape';btn.style.background='';btn.disabled=false;}
   } else if(S.customPts.length>0){
     S.customPts.pop();
   }
@@ -1499,7 +1497,7 @@ function undoLastPoint(){
 function clearCustomShape(){
   S.customPts=[];S.customClosed=false;
   const btn=document.getElementById('closeShapeBtn');
-  if(btn){btn.textContent='✓ Close Shape';btn.style.background='';btn.disabled=false;}
+  if(btn){btn.textContent='Close Shape';btn.style.background='';btn.disabled=false;}
   updateCanvasHintAndCursor();
   drawPlan();updateSegDims();updateStats();
 }
@@ -4341,7 +4339,7 @@ function calcQuote(){
   const otherTotal2=otherItems.reduce((s,i)=>s+i.p,0);
 
   const rowHTML=i=>`<div class="q-row"><span class="qn">${i.n}</span><span class="qp">$${Math.round(i.p).toLocaleString()}</span></div>`;
-  const boldRow=(label,total)=>`<div class="q-row" style="border-top:2px solid #F0EAE0;margin-top:.3rem;padding-top:.5rem;font-weight:700"><span class="qn" style="color:var(--slate)">${label}</span><span class="qp" style="color:var(--terra)">$${Math.round(total).toLocaleString()}</span></div>`;
+  const boldRow=(label,total)=>`<div class="q-row" style="border-top:2px solid #F0EAE0;margin-top:.3rem;padding-top:.5rem;font-weight:700"><span class="qn">${label}</span><span class="qp" style="color:var(--terra)">$${Math.round(total).toLocaleString()}</span></div>`;
   const secHead=label=>`<div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9AABB8;margin:1rem 0 .4rem">${label}</div>`;
 
   const advanced=document.getElementById('showAdvanced')?.checked||false;
@@ -4362,8 +4360,8 @@ function calcQuote(){
   }
 
   html2+=`<div style="margin-top:1rem;border-top:2px solid #E0D8CE;padding-top:.8rem">
-    <div class="q-row"><span class="qn" style="color:#7A8A99">Subtotal (excl. GST)</span><span class="qp" style="color:#7A8A99">$${matSub.toLocaleString()}</span></div>
-    <div class="q-row"><span class="qn" style="color:#7A8A99">GST (10%)</span><span class="qp" style="color:#7A8A99">$${gst.toLocaleString()}</span></div>
+    <div class="q-row"><span class="qn" style="color:rgba(255,255,255,.45)">Subtotal (excl. GST)</span><span class="qp" style="color:#7A8A99">$${matSub.toLocaleString()}</span></div>
+    <div class="q-row"><span class="qn" style="color:rgba(255,255,255,.45)">GST (10%)</span><span class="qp" style="color:#7A8A99">$${gst.toLocaleString()}</span></div>
   </div>`;
   document.getElementById('qItems')&&(document.getElementById('qItems').innerHTML=html2);
 
@@ -5326,7 +5324,7 @@ function renderExtraItems(){
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;gap:.5rem">
         <div style="display:flex;gap:.3rem">
           <button onclick="setExtraType(${i},'other',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${!isEdge?'var(--terra)':'#E0D8CE'};background:${!isEdge?'var(--terra)':'white'};color:${!isEdge?'white':'#9AABB8'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">Other</button>
-          <button onclick="setExtraType(${i},'edge',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${isEdge?'var(--terra)':'#E0D8CE'};background:${isEdge?'var(--terra)':'white'};color:${isEdge?'white':'#9AABB8'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">📐 Edge tile-down</button>
+          <button onclick="setExtraType(${i},'edge',this)" style="padding:.3rem .8rem;border-radius:100px;border:2px solid ${isEdge?'var(--terra)':'#E0D8CE'};background:${isEdge?'var(--terra)':'white'};color:${isEdge?'white':'#9AABB8'};font-size:.75rem;font-weight:600;font-family:DM Sans,sans-serif;cursor:pointer">Edge tile-down</button>
         </div>
         <button onclick="removeExtraItem(${i})" style="background:none;border:none;cursor:pointer;color:#9AABB8;font-size:1rem;padding:.1rem .3rem;line-height:1">✕</button>
       </div>
