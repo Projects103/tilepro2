@@ -3573,8 +3573,9 @@ function showTileDetail(tileId){
       if(n>8){cb(found);return;} // max 8 images
       const ext=exts[extIdx%exts.length];
       const src='./images/tiles/'+id+'-'+n+ext;
+      console.log('[TileDetail] Probing:', src);
       const img=new Image();
-      img.onload=function(){found.push(src);tryNext(n+1,extIdx);};
+      img.onload=function(){console.log('[TileDetail] ✓ Found:', src);found.push(src);tryNext(n+1,extIdx);};
       img.onerror=function(){
         // Try next extension before giving up on this number
         const nextExtIdx=extIdx+1;
@@ -3596,7 +3597,11 @@ function showTileDetail(tileId){
   // Also use any images baked into the tile object (from CSV) as fallback
   const csvImages=tile.images||[];
   probeImages(tileId,function(discovered){
+    console.log('[TileDetail] tileId:', tileId);
+    console.log('[TileDetail] CSV images:', csvImages);
+    console.log('[TileDetail] Discovered images:', discovered);
     const images=discovered.length?discovered:csvImages;
+    console.log('[TileDetail] Final images used:', images.length, images);
     _buildTileDetailModal(tile,images,tileId);
   });
 }
