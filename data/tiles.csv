@@ -1,2 +1,7 @@
 id,name,width_mm,height_mm,colour_hex,link,supplier,cost_per_m2,tags,outdoor,difficulty,notes
-dura-light-grey-terazzo300x600,Light Grey Terazzo,600,300,#D3D3D3,https://www.bunnings.com.au/duratile-30-x-60cm-1-08m-light-grey-terrazzo-floor-and-wall-tile-6-carton_p0409786,Bunnings,25.00,"porcelain,floor,wall,neutral,terazzo,grey,matte,indoors",false,1.0,
+dura-light-grey-terazzo300x600,Light Grey Terazzo,600,300,#D3D3D3,https://www.bunnings.com.au/duratile-30-x-60cm-1-08m-light-grey-terrazzo-floor-and-wall-tile-6-carton_p0409786,Bunnings,25.00,"porcelain,floor,wall,neutral,terazzo,grey,matte,indoors",true,1.0,
+maxie-white-satin300x600, White Satin, 600, 300, #ffffff, https://www.beaumont-tiles.com.au/1278766-maxie-white-satin,Beaumonts,19.95,"porcelain,wall,white",false,1.0,
+rome-steel-grey-microtec-textured-tile600x600, Steel Grey Microtec, 600, 600, #d3d3d3,https://www.beaumont-tiles.com.au/1214997-rome-steel-grey-microtec-textured-tile,Beaumonts,63.5,"porcelain,cement,floor,grey",true,1.0,
+spark-beige-matte-tile300x600, Matte Beige, 300,600, #fff0db,https://www.beaumont-tiles.com.au/1268108-spark-beige-matt-tile,Beaumonts, 48.99, "biege,porcelain,floor,wall,terrazzo,natural",true,1.0,
+verona-crema-matte-tile600x600, Crema Matte, 600,600, #d7d2cb,https://www.nationaltiles.com.au/verona-crema-matt-tile-nt19-2900fl, National tiles, 37.72, "crema,matte,floor,wall,ivory",true,1.0,
+white-gloss-subway-tile100x200, Gloss White Subway, 100,200, #ffffff,https://www.nationaltiles.com.au/white-gloss-bevelled-tile, National tiles, 37.72, "gloss,bevelled,white,subway,small,wall,ceramic",false,1.0,
