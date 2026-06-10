@@ -3569,30 +3569,31 @@ function showTileDetail(tileId){
   const exts=['.jpg','.jpeg','.png','.webp'];
   function probeImages(id,cb){
     const found=[];
-    function tryNext(n,extIdx){
-      if(n>8){cb(found);return;} // max 8 images
-      const ext=exts[extIdx%exts.length];
-      const src='./images/tiles/'+id+'-'+n+ext;
-      console.log('[TileDetail] Probing:', src);
-      const img=new Image();
-      img.onload=function(){console.log('[TileDetail] ✓ Found:', src);found.push(src);tryNext(n+1,extIdx);};
-      img.onerror=function(){
-        // Try next extension before giving up on this number
-        const nextExtIdx=extIdx+1;
-        if(nextExtIdx<exts.length){
-          const src2='./images/tiles/'+id+'-'+n+exts[nextExtIdx];
-          const img2=new Image();
-          img2.onload=function(){found.push(src2);tryNext(n+1,0);};
-          img2.onerror=function(){if(n===1)tryNext(n+1,0);else cb(found);}; // stop after first miss beyond 1
-          img2.src=src2;
-        } else {
-          if(n===1)tryNext(n+1,0); // keep going if first image missing
-          else cb(found); // stop on first miss after n>1
+    const extsToTry=['.jpg','.jpeg','.png','.webp'];
+    function tryNext(n){
+      if(n>8){cb(found);return;}
+      let extIdx=0;
+      function tryExt(){
+        if(extIdx>=extsToTry.length){
+          // All extensions failed for this number
+          if(found.length>0){cb(found);}  // stop after first miss once we have images
+          else{tryNext(n+1);}             // keep going if we haven't found anything yet
+          return;
         }
-      };
-      img.src=src;
+        const src='./images/tiles/'+id+'-'+n+extsToTry[extIdx];
+        console.log('[TileDetail] Probing:', src);
+        const img=new Image();
+        img.onload=function(){
+          console.log('[TileDetail] ✓ Found:', src);
+          found.push(src);
+          tryNext(n+1);
+        };
+        img.onerror=function(){extIdx++;tryExt();};
+        img.src=src;
+      }
+      tryExt();
     }
-    tryNext(1,0);
+    tryNext(0); // start from 0
   }
   // Also use any images baked into the tile object (from CSV) as fallback
   const csvImages=tile.images||[];
