@@ -3607,7 +3607,7 @@ function _buildTileDetailModal(tile,images,tileId){
   // Hero = first image. Thumbnail strip = images 2+ (skip first to avoid duplicate)
   const imgHtml=images.length?
     '<img id="tdHero" src="'+images[0]+'" alt="'+tile.name+'" loading="lazy" '+
-    'style="width:100%;max-height:280px;object-fit:cover;border-radius:12px;margin-bottom:'+(images.length>1?'.6rem':'1rem')+'" '+
+    'style="width:100%;max-height:320px;object-fit:contain;background:#F9F7F4;border-radius:12px;margin-bottom:'+(images.length>1?'.6rem':'1rem')+'" '+
     'onerror="this.style.display=\'none\'">'+
     (images.length>1?
       '<div style="display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:1rem;scrollbar-width:thin">'+
