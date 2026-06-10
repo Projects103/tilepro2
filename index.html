@@ -19,21 +19,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(26,36,48,.88
 .hero-bg::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:72px 72px}
 
 /* Luke avatar */
-.luke-avatar{width:110px;height:110px;border-radius:50%;margin:0 auto 1.4rem;position:relative;border:4px solid var(--terra);overflow:hidden;box-shadow:0 20px 50px rgba(43,58,74,.25);flex-shrink:0}
-.luke-face{position:absolute;inset:0;background:#D4A574;border-radius:50%}
-.luke-hair{position:absolute;top:0;left:0;right:0;height:35%;background:#4A3520;border-radius:60% 60% 0 0}
-.luke-eye{position:absolute;width:13px;height:13px;background:white;border-radius:50%;top:45%}
-.luke-eye.l{left:27%}.luke-eye.r{right:27%}
-.luke-eye::after{content:'';position:absolute;width:7px;height:7px;background:#3A2810;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
-.luke-brow{position:absolute;width:16px;height:3px;background:#4A3520;border-radius:2px;top:37%}
-.luke-brow.l{left:25%;transform:rotate(-5deg)}.luke-brow.r{right:25%;transform:rotate(5deg)}
-.luke-smile{position:absolute;width:30px;height:12px;border-bottom:3px solid #8B5E3C;border-radius:0 0 50% 50%;bottom:22%;left:50%;transform:translateX(-50%)}
-.luke-cheek{position:absolute;width:10px;height:6px;background:rgba(210,120,80,.25);border-radius:50%;top:55%}
-.luke-cheek.l{left:20%}.luke-cheek.r{right:20%}
-
-.speech-bubble{background:white;border:2px solid var(--slate);border-radius:16px 16px 16px 4px;padding:.9rem 1.3rem;max-width:380px;margin:0 auto 2rem;font-size:.92rem;line-height:1.55;color:var(--slate);position:relative;box-shadow:var(--shadow);font-style:italic;transition:opacity .35s}
-.speech-bubble::before{content:'';position:absolute;left:-2px;bottom:-12px;width:0;height:0;border-left:12px solid transparent;border-top:12px solid var(--slate)}
-.speech-bubble::after{content:'';position:absolute;left:0px;bottom:-9px;width:0;height:0;border-left:10px solid transparent;border-top:10px solid white}
 
 h1.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(2.8rem,5.5vw,4.8rem);line-height:1.08;color:white;margin-bottom:1.4rem;position:relative;z-index:1;letter-spacing:-.02em}
 .hero-rule{width:0;height:1px;background:linear-gradient(90deg,var(--terra),var(--sage));margin:0 auto 1.4rem;animation:ruleGrow .9s .3s cubic-bezier(.22,1,.36,1) forwards}
@@ -375,7 +360,6 @@ body.wizard-active .prev-ctrl button:hover{background:rgba(191,123,94,.2);color:
 body.wizard-active p,body.wizard-active span,body.wizard-active div{color:inherit}
 body.wizard-active a{color:var(--terra)}
 
-
 /* Grout swatches */
 .grout-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
 .grout-swatch.on{border-color:var(--terra)!important;box-shadow:0 0 0 3px rgba(191,123,94,.2);transform:scale(1.12)}
@@ -436,7 +420,7 @@ body.wizard-active a{color:var(--terra)}
   h1.hero-title{font-size:2.3rem}
 }
 </style><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/STLLoader.js"></script></head><body><!-- Drag ghost element --><div class="fix-drag-ghost" id="dragGhost"></div><nav><a class="nav-logo" href="#" onclick="goHome();return false">Drummond Bathroom Renovations</a><button class="nav-cta" onclick="startWizard()">Get a Quote</button></nav><!-- ══════════════ HOME ══════════════ --><section id="home"><div class="hero-bg"></div><div style="position:relative;z-index:1;max-width:680px;width:100%"><div style="display:inline-flex;align-items:center;gap:.6rem;background:rgba(110,155,140,.12);border:1px solid rgba(110,155,140,.3);border-radius:100px;padding:.35rem 1rem .35rem .5rem;margin-bottom:2rem"><div style="width:28px;height:28px;border-radius:50%;background:var(--terra);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:white;font-weight:700;flex-shrink:0">L</div><span style="font-size:.8rem;color:var(--sage);font-weight:600">Luke Drummond · Fully Licensed &amp; Insured</span></div><h1 class="hero-title">Your bathroom,<br><em>beautifully quoted.</em></h1><div class="hero-rule"></div><p class="hero-sub">Design your space online — tiles, fixtures, floor plan — and receive a detailed quote in minutes. No pressure, no sales calls.</p><div class="hero-btns"><button class="btn-primary" onclick="startWizard()">Start My Quote</button><a href="./renovations.html" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">Our Work</a><a href="./service-area.html" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">Service Area</a></div><p style="font-size:.72rem;color:rgba(255,255,255,.25);margin-top:1.4rem;letter-spacing:.08em">SERVING GREATER ADELAIDE · 6 WEEKS AVAILABILITY</p></div><div class="features-strip" style="position:relative;z-index:1"><div class="feature"><div class="feature-label">Custom Floor Plan</div><div class="feature-desc">Draw any room shape</div></div><div class="feature"><div class="feature-label">3D Preview</div><div class="feature-desc">See before you build</div></div><div class="feature"><div class="feature-label">Bunnings · Beaumonts · National</div><div class="feature-desc">Compare all suppliers</div></div><div class="feature"><div class="feature-label">Detailed Quote</div><div class="feature-desc">Materials, labour & GST</div></div></div></section><!-- ══════════════ WIZARD ══════════════ --><section id="wizard"><!-- PROGRESS --><div class="progress-wrap"><div class="ps active" id="ps1" onclick="jumpStep(1)" style="cursor:pointer"><div class="ps-dot">1</div><div class="ps-label">Floor Plan</div></div><div class="ps" id="ps2" onclick="jumpStep(2)" style="cursor:pointer"><div class="ps-dot">2</div><div class="ps-label">Tiles</div></div><div class="ps" id="ps3" onclick="jumpStep(3)" style="cursor:pointer"><div class="ps-dot">3</div><div class="ps-label">Fixtures</div></div><div class="ps" id="ps4" onclick="jumpStep(4)" style="cursor:pointer"><div class="ps-dot">4</div><div class="ps-label">Extras</div></div><div class="ps" id="ps5" onclick="jumpStep(5)" style="cursor:pointer"><div class="ps-dot">5</div><div class="ps-label">Preview & Quote</div></div></div><!-- ── STEP 1: FLOOR PLAN ── --><div class="sp active" id="step1"><div class="step-hdr"><h2 class="step-title">Your Bathroom Layout</h2><p class="step-sub">Set your room shape, dimensions, then drag fixtures onto the plan</p></div><div class="luke-cmnt"><div class="sm-av">L</div><div id="planCmt">"Every bathroom is different — that's what makes them interesting! Enter your dimensions, or draw a custom shape if your room has an unusual layout."</div></div><div class="room-cfg"><div class="step1-sidebar"><div class="card"><h4>Room Shape</h4><div class="shape-tabs"><button class="shape-tab on" id="tab-rect" onclick="setShapeMode('rect')">Rectangle</button><button class="shape-tab" id="tab-custom" onclick="setShapeMode('custom')">✏️ Custom</button></div><div id="rect-inputs"><label class="lbl">Width (mm)</label><input class="inp" type="number" id="rW" value="2000" min="800" max="15000" step="50" oninput="onRoomChange()"><label class="lbl">Length (mm)</label><input class="inp" type="number" id="rL" value="2000" min="800" max="15000" step="50" oninput="onRoomChange()"><label class="lbl">Ceiling Height (mm)</label><input class="inp" type="number" id="rH" value="2400" min="2000" max="4000" step="100" oninput="onRoomChange()"></div><div id="custom-inputs" style="display:none"><p style="font-size:.78rem;color:#7A8A99;margin-bottom:.7rem;line-height:1.5">Click the canvas to place corner points, then press <strong>Close Shape</strong>when done.</p><label class="lbl">Ceiling Height (mm)</label><input class="inp" type="number" id="rH2" value="2400" min="2000" max="4000" step="100" oninput="onRoomChange()"><button class="btn-next" id="closeShapeBtn" style="width:100%;margin-bottom:.5rem;padding:.6rem 1rem;font-size:.85rem" onclick="closeCustomShape()">Close Shape</button><div style="display:flex;gap:.4rem;margin-bottom:.5rem"><button class="fix-btn" style="flex:1;justify-content:center" onclick="undoLastPoint()">Undo Point</button><button class="fix-btn" style="flex:1;justify-content:center;border-color:#E0D8CE;color:#9AABB8" onclick="clearCustomShape()">Clear</button></div><div class="dims-row" id="segDims"></div></div><div style="margin-top:1rem"><label class="lbl">Place Fixtures — drag onto the plan</label><div class="fix-palette"><button class="fix-btn draggable-fix" id="fb-toilet" data-fix="toilet" draggable="true"><span class="fi">🚽</span>Toilet</button><button class="fix-btn draggable-fix" id="fb-shower" data-fix="shower" draggable="true"><span class="fi">🚿</span>Shower</button><button class="fix-btn draggable-fix" id="fb-vanity" data-fix="vanity" draggable="true"><span class="fi">🪥</span>Vanity</button><button class="fix-btn draggable-fix" id="fb-bath"   data-fix="bath"   draggable="true"><span class="fi">🛁</span>Bath</button><button class="fix-btn draggable-fix" id="fb-drain-floor" data-fix="drain-floor" draggable="true"><span class="fi">⊙</span>Floor Drain</button><button class="fix-btn draggable-fix" id="fb-drain-shower" data-fix="drain-shower" draggable="true"><span class="fi">⊕</span>Shower Drain</button><button class="fix-btn draggable-fix" id="fb-door" data-fix="door" draggable="true"><span class="fi">🚪</span>Door</button><button class="fix-btn draggable-fix" id="fb-window" data-fix="window" draggable="true"><span class="fi">🪟</span>Window</button></div><p style="font-size:.7rem;color:#9AABB8;margin-top:.5rem;text-align:center">📱 Tap a button then tap the plan · Desktop: drag onto plan · R to rotate · Del to remove</p><div style="margin-top:1rem"><label class="lbl">Custom Walls</label><p style="font-size:.72rem;color:#9AABB8;margin-bottom:.5rem;line-height:1.4">Add walls that aren't in the floor plan (e.g. a half-wall, shower nib, feature wall).</p><div id="customWallsList"></div><button onclick="addCustomWall()" class="fix-btn" style="width:100%;justify-content:center;margin-top:.4rem">+ Add Wall</button></div></div></div></div><div class="card step1-canvas-card"><h4>Floor Plan <span style="font-size:.75rem;color:#9AABB8;font-family:'DM Sans',sans-serif;font-weight:400" id="canvasHint">— drag fixtures from the left panel</span></h4><canvas id="floorCanvas" height="380" style="background:#1A2430;border-radius:8px"></canvas></div><div class="room-stats step1-stats-card"><div class="stat"><div class="stat-v" id="stA">4.3</div><div class="stat-l">Floor m²</div></div><div class="stat"><div class="stat-v" id="stW">20.2</div><div class="stat-l">Wall m²</div></div><div class="stat"><div class="stat-v" id="stP">8.4</div><div class="stat-l">Perimeter m</div></div></div></div><div class="nav-btns"><button class="btn-back" onclick="goHome()">← Home</button><button class="btn-next" onclick="nextStep()">Choose Tiles →</button></div></div><!-- ── STEP 2: TILES ── --><div class="sp" id="step2"><div class="step-hdr"><h2 class="step-title">Choose Your Tiles</h2><p class="step-sub">Real products from Bunnings, Beaumont Tiles & National Tiles — verified prices, click "View on supplier site" to confirm stock</p></div><div class="luke-cmnt"><div class="sm-av">L</div><div id="tileCmt">"I've put together a solid list of real tiles from Bunnings, Beaumonts and National Tiles with verified prices. Search by name, colour or style — results load 5 at a time so hit Load More if you want to see everything. Each card has a link to the actual supplier page to confirm stock."</div></div><!-- FLOOR TILES --><div class="prod-sec"><!-- Floor grout + thickness --><div class="card" style="margin-bottom:1rem;padding:.9rem 1.2rem"><div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Floor Grout</span><div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><div class="grout-swatch" onclick="setGrout(this,'floor','#F5F5F3')" style="background:#F5F5F3;border:2px solid #DDD" title="White"></div><div class="grout-swatch" onclick="setGrout(this,'floor','#C8C8C6')" style="background:#C8C8C6" title="Light Grey"></div><div class="grout-swatch" onclick="setGrout(this,'floor','#8A8A88')" style="background:#8A8A88" title="Grey"></div><div class="grout-swatch" onclick="setGrout(this,'floor','#3A3A38')" style="background:#3A3A38" title="Charcoal"></div><div class="grout-swatch" onclick="setGrout(this,'floor','#111')" style="background:#111" title="Black"></div><div class="grout-swatch on" onclick="setGrout(this,'floor','#C8B89A')" style="background:#C8B89A" title="Beige"></div><div class="grout-swatch" onclick="setGrout(this,'floor','#A06040')" style="background:#A06040" title="Terracotta"></div><input type="color" id="groutFloorCustom" value="#F5F5F3" onchange="setGroutCustom('floor',this.value)" style="width:30px;height:30px;border-radius:6px;border:2px solid #E0D8CE;cursor:pointer;padding:2px" title="Custom"></div><span id="floorGroutLabel" style="font-size:.75rem;color:#9AABB8">White</span></div><div style="display:flex;align-items:center;gap:.8rem;margin-top:.7rem;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Grout Joint</span><select onchange="setGroutThickness('floor',this.value)" style="padding:.3rem .7rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--slate);background:var(--cream);cursor:pointer"><option value="1">1mm</option><option value="2" selected>2mm</option><option value="3">3mm</option><option value="5">5mm</option><option value="8">8mm</option><option value="10">10mm</option></select></div></div><!-- Floor tile controls: sort + usage filter --><div class="card" style="margin-bottom:.8rem;padding:.8rem 1.2rem"><div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Sort</span><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="grout-w-btn on" id="fs-name" onclick="setTileSort('floor','name',this)">A–Z</button><button class="grout-w-btn" id="fs-priceasc" onclick="setTileSort('floor','priceasc',this)">Price ↑</button><button class="grout-w-btn" id="fs-pricedesc" onclick="setTileSort('floor','pricedesc',this)">Price ↓</button><button class="grout-w-btn" id="fs-size" onclick="setTileSort('floor','size',this)">Size ↑</button></div><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap;margin-left:.5rem">Use</span><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="grout-w-btn on" id="fu-all" onclick="setTileUsage('floor','all',this)">All</button><button class="grout-w-btn" id="fu-indoor" onclick="setTileUsage('floor','indoor',this)">Indoor</button><button class="grout-w-btn" id="fu-both" onclick="setTileUsage('floor','both',this)">Indoor + Outdoor</button><button class="grout-w-btn" id="fu-outdoor" onclick="setTileUsage('floor','outdoor',this)">Outdoor only</button></div></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;gap:.8rem;flex-wrap:wrap"><div class="prod-sec-title" style="margin:0">🏠 Floor Tiles</div><div class="tile-search-wrap"><input class="tile-search-inp" id="floorSearch" type="text" placeholder="Search tiles… e.g. sage green subway, marble, zellige, terracotta" oninput="onTileSearch('floor',this.value)" autocomplete="off"></div></div><div class="prod-grid" id="floorGrid"></div></div><!-- WALL TILES --><div class="prod-sec"><!-- Wall tile height --><div class="card" style="margin-bottom:.8rem;padding:.8rem 1.2rem"><div style="display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Tile Height</span><div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><button class="grout-w-btn on" id="wh-full" onclick="setWallTileHeight(this,'full')">Full Height</button><button class="grout-w-btn" id="wh-1800" onclick="setWallTileHeight(this,1800)">1800mm</button><button class="grout-w-btn" id="wh-1200" onclick="setWallTileHeight(this,1200)">1200mm</button><button class="grout-w-btn" id="wh-900" onclick="setWallTileHeight(this,900)">900mm</button><button class="grout-w-btn" id="wh-600" onclick="setWallTileHeight(this,600)">600mm (dado)</button><button class="grout-w-btn" id="wh-none" onclick="setWallTileHeight(this,'none')">No walls</button></div><span id="wallTileHeightLabel" style="font-size:.75rem;color:#9AABB8">Full ceiling height</span></div></div><div id="wallTileOptions"><!-- Wall grout + thickness --><div class="card" style="margin-bottom:1rem;padding:.9rem 1.2rem"><div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Wall Grout</span><div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><div class="grout-swatch" onclick="setGrout(this,'wall','#F5F5F3')" style="background:#F5F5F3;border:2px solid #DDD" title="White"></div><div class="grout-swatch" onclick="setGrout(this,'wall','#C8C8C6')" style="background:#C8C8C6" title="Light Grey"></div><div class="grout-swatch" onclick="setGrout(this,'wall','#8A8A88')" style="background:#8A8A88" title="Grey"></div><div class="grout-swatch" onclick="setGrout(this,'wall','#3A3A38')" style="background:#3A3A38" title="Charcoal"></div><div class="grout-swatch" onclick="setGrout(this,'wall','#111')" style="background:#111" title="Black"></div><div class="grout-swatch on" onclick="setGrout(this,'wall','#C8B89A')" style="background:#C8B89A" title="Beige"></div><div class="grout-swatch" onclick="setGrout(this,'wall','#A06040')" style="background:#A06040" title="Terracotta"></div><input type="color" id="groutWallCustom" value="#F5F5F3" onchange="setGroutCustom('wall',this.value)" style="width:30px;height:30px;border-radius:6px;border:2px solid #E0D8CE;cursor:pointer;padding:2px" title="Custom"></div><span id="wallGroutLabel" style="font-size:.75rem;color:#9AABB8">White</span></div><div style="display:flex;align-items:center;gap:.8rem;margin-top:.7rem;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Grout Joint</span><select onchange="setGroutThickness('wall',this.value)" style="padding:.3rem .7rem;border:2px solid #E0D8CE;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--slate);background:var(--cream);cursor:pointer"><option value="1">1mm</option><option value="2" selected>2mm</option><option value="3">3mm</option><option value="5">5mm</option><option value="8">8mm</option><option value="10">10mm</option></select></div></div><!-- Wall tile controls: sort + usage filter --><div class="card" style="margin-bottom:.8rem;padding:.8rem 1.2rem"><div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap">Sort</span><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="grout-w-btn on" id="ws-name" onclick="setTileSort('wall','name',this)">A–Z</button><button class="grout-w-btn" id="ws-priceasc" onclick="setTileSort('wall','priceasc',this)">Price ↑</button><button class="grout-w-btn" id="ws-pricedesc" onclick="setTileSort('wall','pricedesc',this)">Price ↓</button><button class="grout-w-btn" id="ws-size" onclick="setTileSort('wall','size',this)">Size ↑</button></div><span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;white-space:nowrap;margin-left:.5rem">Use</span><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="grout-w-btn on" id="wu-all" onclick="setTileUsage('wall','all',this)">All</button><button class="grout-w-btn" id="wu-indoor" onclick="setTileUsage('wall','indoor',this)">Indoor</button><button class="grout-w-btn" id="wu-outdoor" onclick="setTileUsage('wall','outdoor',this)">Outdoor</button></div></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;gap:.8rem;flex-wrap:wrap"><div class="prod-sec-title" style="margin:0">🧱 Wall Tiles <span style="font-size:.78rem;color:#9AABB8;font-family:'DM Sans',sans-serif;font-weight:400">(or same as floor)</span></div><div class="tile-search-wrap"><input class="tile-search-inp" id="wallSearch" type="text" placeholder="Search tiles… e.g. sage green subway, marble, zellige, terracotta" oninput="onTileSearch('wall',this.value)" autocomplete="off"></div></div><div class="prod-grid" id="wallGrid"></div></div><!-- end #wallTileOptions --></div><div class="nav-btns"><button class="btn-back" onclick="prevStep()">← Floor Plan</button><button class="btn-next" onclick="nextStep()">Choose Fixtures →</button></div></div><!-- ── STEP 3: FIXTURES ── --><div class="sp" id="step3"><div class="step-hdr"><h2 class="step-title">🚿 Fixtures & Fittings</h2><p class="step-sub">Showing options for the fixtures you placed on the floor plan</p></div><div class="luke-cmnt"><div class="sm-av">L</div><div id="fixCmt">"I've pulled up options for everything you placed on the plan. If you want to add something else, head back to Step 1 and drag it onto the plan first."</div></div><div id="fixtureSections"><!-- Dynamically generated based on what's on the floor plan --></div><div class="nav-btns"><button class="btn-back" onclick="prevStep()">← Tiles</button><button class="btn-next" onclick="nextStep()">Extras →</button></div></div><!-- ── STEP 4: EXTRAS ── --><div class="sp" id="step4"><div class="step-hdr"><h2 class="step-title">✨ Extras & Options</h2><p class="step-sub">Additional items that affect the quote</p></div><div class="luke-cmnt"><div class="sm-av">L</div><div>"A few extra things that can make a big difference to the final cost. Let me know what applies to your job."</div></div><!-- Demo --><div class="card" style="margin-bottom:1.2rem"><h4>Does the job include demolition?</h4><p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">Stripping out existing tiles, fixtures, and fittings.</p><div style="display:flex;gap:.5rem;margin-bottom:.9rem"><button id="demoYes" onclick="S.demoIncluded=true;document.getElementById('demoYes').classList.add('on');document.getElementById('demoNo').classList.remove('on');updateDemoFee()" class="grout-w-btn on" style="flex:1;justify-content:center">Yes</button><button id="demoNo" onclick="S.demoIncluded=false;document.getElementById('demoNo').classList.add('on');document.getElementById('demoYes').classList.remove('on');updateDemoFee()" class="grout-w-btn" style="flex:1;justify-content:center">No</button></div><div id="demoFeeRow" style="display:block;padding-top:.9rem;border-top:1px solid #F0EAE0"><div style="margin-bottom:.9rem"><label class="lbl">Labour scope</label><div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem"><button class="grout-w-btn" id="dl-low" onclick="setDemoLabour('low',this)">Low ($400)</button><button class="grout-w-btn on" id="dl-med" onclick="setDemoLabour('medium',this)">Medium ($800)</button><button class="grout-w-btn" id="dl-large" onclick="setDemoLabour('large',this)">Large ($1,400)</button><button class="grout-w-btn" id="dl-massive" onclick="setDemoLabour('massive',this)">Massive ($2,200)</button></div></div><div><label class="lbl">Skip bin</label><div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem"><button class="grout-w-btn" id="ds-none" onclick="setDemoSkip('none',this)">No skip</button><button class="grout-w-btn" id="ds-2m" onclick="setDemoSkip('2m',this)">2m³ ($280)</button><button class="grout-w-btn on" id="ds-4m" onclick="setDemoSkip('4m',this)">4m³ ($500)</button><button class="grout-w-btn" id="ds-6m" onclick="setDemoSkip('6m',this)">6m³ ($600)</button><button class="grout-w-btn" id="ds-9m" onclick="setDemoSkip('9m',this)">9m³ ($800)</button></div></div><div style="margin-top:.7rem;padding:.6rem .8rem;background:var(--cream);border-radius:8px;font-size:.82rem;color:var(--slate)">Demo total: <strong id="demoTotalLabel">$800</strong></div></div></div><!-- Tile charge toggle --><div class="card" style="margin-bottom:1.2rem"><h4>Has the customer already bought their tiles?</h4><p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">If yes, tile materials will be excluded from the quote — labour only.</p><div style="display:flex;gap:.5rem"><button id="tilesNo" onclick="S.chargeTiles=true;this.classList.add('on');document.getElementById('tilesYes').classList.remove('on')" class="grout-w-btn on" style="flex:1;justify-content:center">No — include tiles</button><button id="tilesYes" onclick="S.chargeTiles=false;this.classList.add('on');document.getElementById('tilesNo').classList.remove('on')" class="grout-w-btn" style="flex:1;justify-content:center">Yes — labour only</button></div></div><!-- Waterproofing toggle --><div class="card" style="margin-bottom:1.2rem"><h4>Does the job include waterproofing?</h4><p style="font-size:.82rem;color:#7A8A99;margin-top:.3rem;margin-bottom:.9rem;line-height:1.5">Required in all wet areas. Only exclude if existing waterproofing is confirmed intact by a licensed inspector.</p><div style="display:flex;gap:.5rem"><button id="wpYes" onclick="S.waterproofing=true;this.classList.add('on');document.getElementById('wpNo').classList.remove('on')" class="grout-w-btn on" style="flex:1;justify-content:center">Yes</button><button id="wpNo" onclick="S.waterproofing=false;this.classList.add('on');document.getElementById('wpYes').classList.remove('on')" class="grout-w-btn" style="flex:1;justify-content:center">No</button></div></div><!-- Extra cost field --><div class="card" style="margin-bottom:1.2rem"><h4 style="margin-bottom:.8rem">Additional Items</h4><p style="font-size:.82rem;color:#7A8A99;margin-bottom:.8rem">Add any other cost items you want included in the quote.</p><div id="extraItems"></div><button onclick="addExtraItem()" class="btn-secondary" style="margin-top:.6rem;padding:.5rem 1.2rem;border:2px solid #E0D8CE;border-radius:100px;background:white;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.82rem;color:var(--slate)">+ Add Item</button></div><div class="nav-btns"><button class="btn-back" onclick="prevStep()">← Fixtures</button><button class="btn-next" onclick="nextStep()">3D Preview & Quote →</button></div></div><!-- ── STEP 5: PREVIEW + QUOTE ── --><div class="sp" id="step5"><div class="step-hdr"><h2 class="step-title">Your Bathroom Preview & Quote</h2></div><div class="luke-cmnt"><div class="sm-av">L</div><div id="prevcmt">"Looking great! This quote is my best estimate — I'll confirm the final price after an on-site visit. I'm usually booked about 6 weeks out, so feel free to reach out any time."</div></div><canvas id="threeCanvas" style="width:100%;border-radius:var(--radius);box-shadow:0 20px 60px rgba(43,58,74,.2);cursor:grab;display:block;background:#1a2530"></canvas><div style="margin-top:1rem;padding:.8rem 1.2rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius)"><div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9AABB8;margin-bottom:.5rem">🎨 Selected Materials</div><div class="mat-sum" id="matSum" id="matSum"><div style="color:#CCC">No selections yet</div></div></div><!-- QUOTE CARD --><div class="q-card" id="quoteCard"><div class="q-hdr"><div class="q-logo">Drummond Bathroom Renovations</div><div class="q-title">Bathroom Renovation Quote</div><div class="q-date" id="qDate"></div><div style="font-size:.76rem;color:#9AABB8;margin-top:.25rem">Valid 30 days · All prices include GST · Luke Drummond — Fully Licensed & Insured</div></div><div class="q-sec-title">Room Details</div><div class="q-row"><span class="qn" id="qDims">—</span><span class="qp" id="qArea">—</span></div><div style="display:flex;align-items:center;gap:.6rem;margin:.8rem 0 .2rem"><label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.8rem;color:#7A8A99;user-select:none"><input type="checkbox" id="showAdvanced" onchange="calcQuote()" style="width:15px;height:15px;accent-color:var(--terra);cursor:pointer">Show itemised breakdown
-        </label></div><div id="qItems"></div><div class="q-total" style="margin-top:1rem"><div class="tl">TOTAL<br><span style="font-size:.68rem;opacity:.65;font-weight:400">incl. GST</span></div><div class="tp" id="qTot">—</div></div><div style="text-align:center;margin:.8rem 0"><button onclick="shareProject()" class="nav-cta">Share this quote</button></div><div class="q-note">ℹ️ Indicative estimate only. Final price confirmed after Luke's on-site visit. Rates may vary based on site conditions, existing waterproofing, and wall substrate. Luke Drummond is fully licensed and insured (SA).</div><div class="q-acts"><button class="nav-cta" onclick="window.print()">Print Quote</button><button class="btn-secondary" onclick="startOver()">Start New Quote</button></div></div><div class="nav-btns"><button class="btn-back" onclick="prevStep()">← Extras</button><div></div></div></div></section><script>// ══════════════════════════════════════════════
+        </label></div><div id="qItems"></div><div class="q-total" style="margin-top:1rem"><div class="tl">TOTAL<br><span style="font-size:.68rem;opacity:.65;font-weight:400">incl. GST</span></div><div class="tp" id="qTot">—</div></div><div style="text-align:center;margin:.8rem 0"><button onclick="shareProject()" class="nav-cta">Share this quote</button></div><div class="q-note">ℹ️ Indicative estimate only. Final price confirmed after Luke's on-site visit. Rates may vary based on site conditions, existing waterproofing, and wall substrate. Luke Drummond is fully licensed and insured (SA).</div><div class="q-acts"><button class="nav-cta" onclick="window.print()">Print Quote</button><button class="nav-cta" onclick="startOver()">Start New Quote</button></div></div><div class="nav-btns"><button class="btn-back" onclick="prevStep()">← Extras</button><div></div></div></div></section><script>// ══════════════════════════════════════════════
 // WORKER URL — for URL availability checking
 // ══════════════════════════════════════════════
 const WORKER_URL = 'https://bathroomrenovations.tobias-58b.workers.dev';
@@ -599,11 +583,7 @@ const TOIS=[
   {id:'toi-caroma-luna', name:'Caroma Luna Back to Wall',            beau:514, whol:514, bg:'#F5F4F2',css:''},
   {id:'toi-caroma-luna-wf',name:'Caroma Luna Wall Faced',            beau:579, whol:579, bg:'#F5F4F2',css:''},
 ];
-const SHOS=[
-  {id:'frm',  name:'Frameless Glass',     bg:'linear-gradient(135deg,rgba(200,230,255,.55),rgba(180,210,240,.3))', beau:2200, whol:1400, desc:'10mm toughened',   tag:'new', tagLbl:'Premium'},
-  {id:'sfr',  name:'Semi-Frameless',      bg:'linear-gradient(135deg,rgba(200,230,255,.4),rgba(170,200,230,.2))',  beau:1600, whol:1050, desc:'Sleek & practical', tag:'pop', tagLbl:'Popular'},
-  {id:'wet',  name:'Wet Room Open',       bg:'linear-gradient(135deg,rgba(150,200,220,.3),rgba(120,180,210,.1))', beau:1800, whol:1150, desc:'Open concept'},
-];
+
 const FIXES_BASE={
   toilet:        {emoji:'🚽',fw:0.42,fh:0.68,col:'rgba(240,240,238,.9)',  minW:0.35,maxW:0.6, minH:0.55,maxH:0.85},
   shower:        {emoji:'🚿',fw:0.9, fh:0.9, col:'rgba(180,220,255,.35)', minW:0.7, maxW:2.0, minH:0.7, maxH:2.0,
@@ -682,123 +662,8 @@ function goHome(){
 function startOver(){location.reload()}
 
 // ── Past Renovations Gallery ──────────────────────────────────────────────────
-async function openPastRenos(){
-  document.querySelectorAll('.renos-modal').forEach(function(m){m.remove();});
-  const m=document.createElement('div');
-  m.className='renos-modal';
-  m.style.cssText='position:fixed;inset:0;background:var(--slate);z-index:9999;display:flex;flex-direction:column;overflow:hidden;animation:fadeIn .3s ease';
-  m.innerHTML=
-    '<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;background:var(--slate);flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.1)">'+
-    '<h2 style="font-family:\'DM Serif Display\',serif;color:white;font-size:1.4rem;margin:0">Previous Renovations</h2>'+
-    '<button onclick="this.closest(\'.renos-modal\').remove();document.body.style.overflow=\'\';" style="background:rgba(255,255,255,.1);border:none;color:white;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1.1rem">✕</button>'+
-    '</div>'+
-    '<div id="renosContent" style="flex:1;overflow-y:auto;padding:1.2rem">'+
-    '<div style="color:rgba(255,255,255,.4);text-align:center;padding:3rem;font-size:.9rem">Loading…</div>'+
-    '</div>';
-  document.body.appendChild(m);
-  document.body.style.overflow='hidden';
-  m.addEventListener('click',function(e){if(e.target===m){m.remove();document.body.style.overflow='';}});
-
-  // Load renos manifest
-  try{
-    const res=await fetch('./pastRenos/manifest.json',{cache:'no-cache'});
-    if(!res.ok)throw new Error('no manifest');
-    const jobs=await res.json(); // [{name,folder,images:[...]}]
-    renderRenosContent(jobs,m.querySelector('#renosContent'));
-  }catch(e){
-    // Fallback: try auto-discovery of common job folder names
-    m.querySelector('#renosContent').innerHTML=
-      '<div style="color:rgba(255,255,255,.5);text-align:center;padding:3rem;line-height:1.8;font-size:.88rem">'+
-      'No manifest found at <code style="background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:4px">pastRenos/manifest.json</code><br><br>'+
-      'Create a <code style="background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:4px">pastRenos/manifest.json</code>file to show your past jobs here.'+
-      '</div>';
-  }
-}
-
-function renderRenosContent(jobs,el){
-  if(!jobs||!jobs.length){
-    el.innerHTML='<div style="color:rgba(255,255,255,.4);text-align:center;padding:3rem">No renovations added yet.</div>';
-    return;
-  }
-  let html='';
-  jobs.forEach(function(job,ji){
-    html+='<div style="margin-bottom:2rem">'+
-      '<h3 style="color:white;font-family:\'DM Serif Display\',serif;font-size:1.1rem;margin:0 0 .7rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,255,255,.1)">'+
-      (job.name||'Job '+(ji+1))+(job.location?'<span style="font-size:.78rem;color:rgba(255,255,255,.4);font-family:DM Sans,sans-serif;font-weight:400;margin-left:.6rem">'+job.location+'</span>':'')+
-      '</h3>'+
-      '<div id="renoGrid_'+ji+'" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.5rem"></div>'+
-      '</div>';
-  });
-  el.innerHTML=html;
-
-  // Populate each job grid
-  jobs.forEach(function(job,ji){
-    const grid=el.querySelector('#renoGrid_'+ji);
-    if(!grid)return;
-    const imgs=job.images||[];
-    imgs.forEach(function(src,imgIdx){
-      const fullSrc='./pastRenos/'+job.folder+'/'+src;
-      const img=document.createElement('div');
-      img.style.cssText='aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;background:#1A2530';
-      img.innerHTML='<img src="'+fullSrc+'" style="width:100%;height:100%;object-fit:cover;transition:transform .2s ease" loading="lazy" onerror="this.parentNode.style.display=\'none\'" onmouseover="this.style.transform=\'scale(1.04)\'" onmouseout="this.style.transform=\'\'">'+
-        (job.caption?'<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.6));color:white;font-size:.72rem;padding:.4rem .5rem">'+job.caption+'</div>':'');
-      img.style.position='relative';
-      img.addEventListener('click',function(){openRenoLightbox(jobs,ji,imgIdx);});
-      grid.appendChild(img);
-    });
-  });
-}
 
 let _renoLightboxJobs=null;
-function openRenoLightbox(jobs,jobIdx,imgIdx){
-  _renoLightboxJobs=jobs;
-  document.querySelectorAll('.reno-lightbox').forEach(function(l){l.remove();});
-  // Flatten all images across this job for navigation
-  const job=jobs[jobIdx];
-  const imgs=job.images||[];
-  const box=document.createElement('div');
-  box.className='reno-lightbox';
-  box.dataset.job=jobIdx;
-  box.dataset.img=imgIdx;
-  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease';
-  const src='./pastRenos/'+job.folder+'/'+imgs[imgIdx];
-  box.innerHTML=
-    '<button onclick="renoLbNav(-1)" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:white;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.4rem;z-index:2;display:'+(imgs.length>1?'flex':'none')+';align-items:center;justify-content:center">‹</button>'+
-    '<img id="renoLbImg" src="'+src+'" style="max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;transition:opacity .2s ease" loading="lazy">'+
-    '<button onclick="renoLbNav(1)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:white;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.4rem;z-index:2;display:'+(imgs.length>1?'flex':'none')+';align-items:center;justify-content:center">›</button>'+
-    '<div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:.78rem">'+(job.name||'')+(imgs.length>1?' · '+(imgIdx+1)+' / '+imgs.length:'')+' <span style="margin-left:.4rem;opacity:.4">tap outside to close</span></div>'+
-    '<button onclick="this.parentNode.remove()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.15);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem">✕</button>';
-  document.body.appendChild(box);
-  box.addEventListener('click',function(e){if(e.target===box)box.remove();});
-  // Swipe support
-  let lbDragStart=0,lbDragging=false;
-  box.addEventListener('touchstart',function(e){lbDragStart=e.touches[0].clientX;lbDragging=true;},{passive:true});
-  box.addEventListener('touchend',function(e){
-    if(!lbDragging)return;lbDragging=false;
-    const delta=e.changedTouches[0].clientX-lbDragStart;
-    if(Math.abs(delta)>60)renoLbNav(delta<0?1:-1);
-  });
-}
-
-function renoLbNav(dir){
-  const box=document.querySelector('.reno-lightbox');
-  if(!box||!_renoLightboxJobs)return;
-  const jobIdx=parseInt(box.dataset.job);
-  const job=_renoLightboxJobs[jobIdx];
-  const imgs=job.images||[];
-  if(imgs.length<2)return;
-  let imgIdx=(parseInt(box.dataset.img)+dir+imgs.length)%imgs.length;
-  box.dataset.img=imgIdx;
-  const imgEl=box.querySelector('#renoLbImg');
-  if(!imgEl)return;
-  imgEl.style.opacity='0';
-  setTimeout(function(){
-    imgEl.src='./pastRenos/'+job.folder+'/'+imgs[imgIdx];
-    imgEl.style.opacity='1';
-    const counter=box.querySelector('div:last-child');
-    if(counter)counter.firstChild.textContent=(job.name||'')+' · '+(imgIdx+1)+' / '+imgs.length+' ';
-  },200);
-}
 
 // ── State sharing via Cloudflare Worker KV ────────────────────────────────────
 function encodeState(){
@@ -842,16 +707,6 @@ async function shareProject(){
   }finally{
     if(btn){btn.textContent='Share this quote';btn.disabled=false;}
   }
-}
-
-function showShareModal(code,url){
-  document.querySelectorAll('.share-modal').forEach(m=>m.remove());
-  const m=document.createElement('div');
-  m.className='share-modal';
-  m.style.cssText='position:fixed;inset:0;background:rgba(43,58,74,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
-  m.innerHTML=`<div style="background:white;border-radius:18px;padding:1.8rem;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center"><div style="font-size:2rem;margin-bottom:.5rem">🔗</div><h3 style="font-family:'DM Serif Display',serif;color:var(--slate);margin-bottom:.4rem">Quote link ready</h3><p style="font-size:.82rem;color:#7A8A99;margin-bottom:1rem">Share this 6-character code or full link. Valid for 90 days.</p><div style="background:var(--cream);border-radius:10px;padding:.8rem 1rem;margin-bottom:.8rem"><div style="font-size:.72rem;color:#9AABB8;margin-bottom:.3rem">Share code</div><div style="font-family:monospace;font-size:2rem;font-weight:700;color:var(--terra);letter-spacing:.15em">${code}</div></div><input id="shareUrlInput" value="${url}" readonly style="width:100%;padding:.5rem .7rem;border:2px solid #E0D8CE;border-radius:10px;font-size:.75rem;color:var(--slate);background:#FAFAF8;box-sizing:border-box;margin-bottom:.8rem"><div style="display:flex;gap:.5rem"><button onclick="navigator.clipboard?.writeText('${code}').then(()=>showToast('Code copied!'));document.getElementById('shareUrlInput').select()" style="flex:1;padding:.65rem;background:var(--sage);color:white;border:none;border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:.88rem;cursor:pointer">Copy code</button><button onclick="navigator.clipboard?.writeText('${url}').then(()=>showToast('Link copied!'))" style="flex:1;padding:.65rem;background:var(--cream);color:var(--slate);border:2px solid #E0D8CE;border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:.88rem;cursor:pointer">Copy link</button></div><button onclick="this.closest('.share-modal').remove()" style="margin-top:.7rem;background:none;border:none;color:#9AABB8;font-size:.82rem;cursor:pointer;font-family:DM Sans,sans-serif">Close</button></div>`;
-  document.body.appendChild(m);
-  m.addEventListener('click',e=>{if(e.target===m)m.remove();});
 }
 
 // On load: check for share code in URL hash
@@ -2771,7 +2626,6 @@ function shiftColor(hex,amount){
 // ══════════════════════════════════════════════
 let searchDebounce={floor:null,wall:null};
 
-
 function onTileSearch(surface,query){
   const gridId=surface==='floor'?'floorGrid':'wallGrid';
   const key=surface==='floor'?'floorTile':'wallTile';
@@ -3382,7 +3236,6 @@ function _buildTileDetailModal(tile,images,tileId,loading,surface){
   m.querySelector('button').addEventListener('click',removeTDModal);
 } // end _buildTileDetailModal
 
-
 function pickProdFromDetail(btn){
   const m=btn.closest('.tile-detail-modal');
   if(!m)return;
@@ -3662,7 +3515,6 @@ function calcQuote(){
     matSub+=primerCost+tapeCost+membraneCost+wpLabOnly;
   }
 
-
   // ── Floor edge tile-down ──
   if(S.dropEdges&&S.dropEdges.length>0){
     const{w,l}=S.room;
@@ -3677,7 +3529,6 @@ function calcQuote(){
     if(dropMatOnly>0){items.push({n:`Edge tile-down materials — ${edgeLabel}`,p:dropMatOnly,type:'mat'});matSub+=dropMatOnly;}
     if(dropLabOnly>0){items.push({n:`Edge tile-down labour — ${edgeLabel}`,p:dropLabOnly,type:'labour'});matSub+=dropLabOnly;}
   }
-
 
   // ── Custom wall tiling ──
   (S.customWalls||[]).forEach(cw=>{
@@ -4039,7 +3890,6 @@ function planTo3D(pos,hw,hl){
   return{x:pos.x-hw, z:pos.y-hl};
 }
 
-
 function makeTileTexture(tileId,isWall){
   const tile=ALL_TILES.find(t=>t.id===tileId);
   const byoData=isWall?S.byoTile.wall:S.byoTile.floor;
@@ -4290,7 +4140,6 @@ function buildRoom3D(){
     makeWall(rW,rH, 0,rH/2, hl, Math.PI);    // front wall
     window.__customCentroid=null;
   }
-
 
   // ── Ceiling light ──
   // ceiling light removed
@@ -4559,7 +4408,6 @@ function updateCustomWall(id,key,val){
   if(w)w[key]=val;
 }
 
-
 const DEMO_LABOUR={low:400,medium:800,large:1400,massive:2200};
 const DEMO_SKIP={none:0,'2m':280,'4m':500,'6m':600,'9m':800};
 
@@ -4699,7 +4547,6 @@ function renderExtraItems(){
     </div>`;
   }).join('');
 }
-
 
 function setView(v,btn){
   document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('on'));
