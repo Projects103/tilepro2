@@ -12,7 +12,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--slate)
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--light)}::-webkit-scrollbar-thumb{background:var(--terra);border-radius:3px}
 nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(245,239,230,.94);backdrop-filter:blur(14px);border-bottom:1px solid rgba(43,58,74,.08);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between}
 .nav-logo{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--slate);text-decoration:none;display:flex;align-items:center;gap:.5rem}
-.nav-cta{background:var(--terra);color:white;border:none;cursor:pointer;padding:.5rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;text-decoration:none}
+.nav-cta{background:var(--terra);color:white;padding:.5rem 1.4rem;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.88rem;text-decoration:none}
 main{padding:88px 2rem 5rem;max-width:1100px;margin:0 auto}
 .page-header{text-align:center;margin-bottom:3rem;padding-top:1.5rem}
 .page-header h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);color:var(--slate);margin-bottom:.6rem}
@@ -24,20 +24,23 @@ main{padding:88px 2rem 5rem;max-width:1100px;margin:0 auto}
 .photo-thumb{aspect-ratio:4/3;border-radius:12px;overflow:hidden;cursor:pointer;background:var(--light)}
 .photo-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease;display:block}
 .photo-thumb:hover img{transform:scale(1.04)}
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;display:none;align-items:center;justify-content:center;animation:fadeIn .2s ease}
-.lightbox.open{display:flex}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;display:none;align-items:center;justify-content:center}
+.lightbox.open{display:flex;animation:fadeIn .2s ease}
 .lb-img{max-width:94vw;max-height:88vh;object-fit:contain;border-radius:8px;transition:opacity .22s ease;user-select:none;-webkit-user-drag:none}
-.lb-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.12);border:none;color:white;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
-.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:white;width:48px;height:48px;border-radius:50%;cursor:pointer;font-size:1.6rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.lb-nav:hover{background:rgba(255,255,255,.25)}
+.lb-btn{background:rgba(255,255,255,.12);border:none;color:white;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lb-btn:hover{background:rgba(255,255,255,.25)}
+.lb-close{position:absolute;top:14px;right:14px;width:38px;height:38px;font-size:1.2rem}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;font-size:1.6rem}
 .lb-prev{left:14px}.lb-next{right:14px}
 .lb-counter{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:.75rem;pointer-events:none}
 .empty{text-align:center;padding:5rem 2rem;color:#9AABB8}
 .empty h2{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:.8rem;color:var(--slate);opacity:.5}
-.skeleton{background:linear-gradient(90deg,var(--light) 25%,#e8e1d6 50%,var(--light) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:12px;aspect-ratio:4/3}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.loading-msg{text-align:center;color:#9AABB8;padding:3rem;font-size:.9rem}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@media(max-width:600px){.photo-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem}.lb-nav{width:38px;height:38px;font-size:1.1rem}}
+@media(max-width:600px){
+  .photo-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem}
+  .lb-nav{width:38px;height:38px;font-size:1.1rem}
+}
 </style>
 </head>
 <body>
@@ -50,125 +53,158 @@ main{padding:88px 2rem 5rem;max-width:1100px;margin:0 auto}
     <h1>Previous Renovations</h1>
     <p>Recent bathroom renovations completed by Luke Drummond across South Australia.</p>
   </div>
-  <div id="gallery"><div class="empty"><h2>Loading…</h2></div></div>
+  <div id="gallery"><div class="loading-msg">Loading…</div></div>
 </main>
 <div id="lightbox" class="lightbox">
-  <button class="lb-close" onclick="lbClose()">✕</button>
-  <button class="lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
+  <button class="lb-btn lb-close" onclick="lbClose()">✕</button>
+  <button class="lb-btn lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
   <img class="lb-img" id="lbImg" src="" alt="">
-  <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
+  <button class="lb-btn lb-nav lb-next" onclick="lbNav(1)">›</button>
   <div class="lb-counter" id="lbCounter"></div>
 </div>
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// SETUP: fill in your GitHub username and repo name below
-// The page will automatically discover all folders inside pastRenos/
-// and display every image it finds — no JSON files, no HTML editing needed.
+// ═══════════════════════════════════════════════════════════════════════════
+// HOW TO ADD PHOTOS — no HTML editing, no JSON, no config files
 //
-// To add a new renovation: create a folder inside pastRenos/ and drop images in.
-// Folder name becomes the job title (hyphens → spaces, capitalised).
-// ─────────────────────────────────────────────────────────────────────────────
-const GITHUB_USER = 'Projects103';       // ← your GitHub username
-const GITHUB_REPO = 'tilepro2';          // ← your repo name
-const RENOS_PATH  = 'tilepro2/pastRenos'; // ← path inside repo to pastRenos folder
-const IMG_EXTS    = ['.jpg','.jpeg','.png','.webp'];
-const API         = 'https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/';
+// 1. Name your images:   jobname-1.jpg, jobname-2.jpg, jobname-3.jpg ...
+//    The job name can be anything without spaces, e.g:
+//       brighton-ensuite-1.jpg
+//       brighton-ensuite-2.jpg
+//       norwood-bathroom-1.jpg
+//       norwood-bathroom-2.jpg
+//
+// 2. Drop them in the pastRenos/ folder
+//
+// 3. Register the job name below in JOBS — just the base name and a display title:
+//    { id: 'brighton-ensuite', title: 'Brighton Ensuite', subtitle: 'Brighton, SA · March 2025' }
+//
+// That's the only thing you ever edit on this page.
+// ═══════════════════════════════════════════════════════════════════════════
 
-// Folder name → readable title: "brighton-ensuite-2024" → "Brighton Ensuite 2024"
-function folderToTitle(name){
-  return name.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-}
+const JOBS = [
+  // ADD YOUR JOBS HERE — copy a line and fill in id, title, subtitle
+  // { id: 'brighton-ensuite',  title: 'Brighton Ensuite',     subtitle: 'Brighton, SA · March 2025' },
+  // { id: 'norwood-bathroom',  title: 'Norwood Family Bathroom', subtitle: 'Norwood, SA · January 2025' },
+  // { id: 'glenelg-ensuite',   title: 'Glenelg Master Ensuite',  subtitle: 'Glenelg, SA · June 2025' },
+];
 
-async function loadGallery(){
-  const gallery=document.getElementById('gallery');
-  try{
-    const res=await fetch(API+RENOS_PATH,{headers:{Accept:'application/vnd.github+json'}});
-    if(!res.ok)throw new Error('Could not reach GitHub API ('+res.status+')');
-    const items=await res.json();
-    const folders=items.filter(i=>i.type==='dir').sort((a,b)=>a.name.localeCompare(b.name));
-    if(!folders.length){
-      gallery.innerHTML='<div class="empty"><h2>No Renovations Yet</h2><p>Create folders inside <code>pastRenos/</code> and drop images in them.</p></div>';
-      return;
+const IMG_BASE  = './pastRenos/';
+const IMG_EXTS  = ['.jpg', '.jpeg', '.png', '.webp'];
+const MAX_IMGS  = 20; // max images per job to probe for
+
+// ── Image discovery ───────────────────────────────────────────────────────────
+function probeJobImages(id) {
+  return new Promise(resolve => {
+    const found = [];
+    function tryNext(n) {
+      if (n > MAX_IMGS) { resolve(found); return; }
+      let extIdx = 0;
+      function tryExt() {
+        if (extIdx >= IMG_EXTS.length) {
+          if (found.length > 0) resolve(found); // stop on first miss after finding some
+          else tryNext(n + 1);                   // keep going if none found yet
+          return;
+        }
+        const src = IMG_BASE + id + '-' + n + IMG_EXTS[extIdx];
+        const img = new Image();
+        img.onload = () => { found.push(src); tryNext(n + 1); };
+        img.onerror = () => { extIdx++; tryExt(); };
+        img.src = src;
+      }
+      tryExt();
     }
-    gallery.innerHTML='';
-    // Show skeletons while loading
-    folders.forEach(f=>{
-      const sec=document.createElement('div');
-      sec.className='job';
-      sec.id='job-'+f.name;
-      sec.innerHTML='<div class="job-header"><div class="job-title">'+folderToTitle(f.name)+'</div></div>'+
-        '<div class="photo-grid">'+Array(4).fill('<div class="skeleton"></div>').join('')+'</div>';
-      gallery.appendChild(sec);
-    });
-    // Load each folder
-    await Promise.all(folders.map(f=>loadFolder(f)));
-  }catch(e){
-    gallery.innerHTML='<div class="empty"><h2>Couldn\'t load</h2><p>'+e.message+'</p></div>';
-  }
+    tryNext(1);
+  });
 }
 
-async function loadFolder(folder){
-  const sec=document.getElementById('job-'+folder.name);
-  if(!sec)return;
-  try{
-    const res=await fetch(API+RENOS_PATH+'/'+folder.name,{headers:{Accept:'application/vnd.github+json'}});
-    if(!res.ok)throw new Error();
-    const items=await res.json();
-    const images=items.filter(i=>i.type==='file'&&IMG_EXTS.some(e=>i.name.toLowerCase().endsWith(e)))
-      .sort((a,b)=>a.name.localeCompare(b.name));
-    const grid=sec.querySelector('.photo-grid');
-    if(!grid)return;
-    if(!images.length){grid.innerHTML='<p style="color:#9AABB8;font-size:.82rem">No images in this folder yet.</p>';return;}
-    // Register for lightbox
-    window._lbJobs=window._lbJobs||{};
-    window._lbJobs[folder.name]=images.map(i=>({
-      // Use raw.githubusercontent.com for direct image URLs
-      src:'https://raw.githubusercontent.com/'+GITHUB_USER+'/'+GITHUB_REPO+'/main/'+RENOS_PATH+'/'+folder.name+'/'+i.name
-    }));
-    grid.innerHTML='';
-    images.forEach((img,idx)=>{
-      const src='https://raw.githubusercontent.com/'+GITHUB_USER+'/'+GITHUB_REPO+'/main/'+RENOS_PATH+'/'+folder.name+'/'+img.name;
-      const thumb=document.createElement('div');
-      thumb.className='photo-thumb';
-      thumb.innerHTML='<img src="'+src+'" loading="lazy" alt="'+img.name+'" onerror="this.closest(\'.photo-thumb\').style.display=\'none\'">';
-      thumb.addEventListener('click',()=>lbOpen(folder.name,idx));
+// ── Gallery builder ───────────────────────────────────────────────────────────
+async function loadGallery() {
+  const gallery = document.getElementById('gallery');
+
+  if (!JOBS.length) {
+    gallery.innerHTML = '<div class="empty"><h2>Coming Soon</h2><p>Renovations will appear here once added.</p></div>';
+    return;
+  }
+
+  gallery.innerHTML = '';
+  const allJobs = [];
+
+  await Promise.all(JOBS.map(async job => {
+    const images = await probeJobImages(job.id);
+    allJobs.push({ ...job, images });
+  }));
+
+  // Render in original order
+  JOBS.forEach(job => {
+    const data = allJobs.find(j => j.id === job.id);
+    if (!data || !data.images.length) return;
+
+    const sec = document.createElement('div');
+    sec.className = 'job';
+    sec.innerHTML =
+      '<div class="job-header">' +
+        '<div class="job-title">' + job.title + '</div>' +
+        (job.subtitle ? '<div style="font-size:.82rem;color:#9AABB8;margin-top:.2rem">' + job.subtitle + '</div>' : '') +
+      '</div>' +
+      '<div class="photo-grid" id="grid-' + job.id + '"></div>';
+    gallery.appendChild(sec);
+
+    const grid = sec.querySelector('#grid-' + job.id);
+    window._lbJobs = window._lbJobs || {};
+    window._lbJobs[job.id] = data.images;
+
+    data.images.forEach((src, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      thumb.innerHTML = '<img src="' + src + '" loading="lazy" alt="' + job.title + ' ' + (idx + 1) + '" onerror="this.closest(\'.photo-thumb\').style.display=\'none\'">';
+      thumb.addEventListener('click', () => lbOpen(job.id, idx));
       grid.appendChild(thumb);
     });
-  }catch(e){
-    const grid=sec.querySelector('.photo-grid');
-    if(grid)grid.innerHTML='<p style="color:#9AABB8;font-size:.82rem">Could not load images.</p>';
+  });
+
+  if (!gallery.children.length) {
+    gallery.innerHTML = '<div class="empty"><h2>No Photos Yet</h2><p>Add images to the <code>pastRenos/</code> folder and register jobs in this page.</p></div>';
   }
 }
 
 // ── Lightbox ──────────────────────────────────────────────────────────────────
-let _lbImages=[],_lbIdx=0;
-function lbOpen(jobKey,idx){
-  _lbImages=(window._lbJobs||{})[jobKey]||[];
-  _lbIdx=idx;lbShow();
+let _lbImgs = [], _lbIdx = 0;
+
+function lbOpen(jobId, idx) {
+  _lbImgs = (window._lbJobs || {})[jobId] || [];
+  _lbIdx = idx;
+  lbShow();
   document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
-function lbShow(){
-  const imgEl=document.getElementById('lbImg');
-  const counter=document.getElementById('lbCounter');
-  const item=_lbImages[_lbIdx];if(!item)return;
-  imgEl.style.opacity='0';
-  setTimeout(()=>{imgEl.src=item.src;imgEl.style.opacity='1';
-    counter.textContent=_lbImages.length>1?(_lbIdx+1)+' / '+_lbImages.length:'';},140);
-  document.querySelector('.lb-prev').style.visibility=_lbImages.length>1?'':'hidden';
-  document.querySelector('.lb-next').style.visibility=_lbImages.length>1?'':'hidden';
+function lbShow() {
+  const el = document.getElementById('lbImg');
+  const ctr = document.getElementById('lbCounter');
+  el.style.opacity = '0';
+  setTimeout(() => { el.src = _lbImgs[_lbIdx]; el.style.opacity = '1'; }, 140);
+  ctr.textContent = _lbImgs.length > 1 ? (_lbIdx + 1) + ' / ' + _lbImgs.length : '';
+  document.querySelector('.lb-prev').style.visibility = _lbImgs.length > 1 ? '' : 'hidden';
+  document.querySelector('.lb-next').style.visibility = _lbImgs.length > 1 ? '' : 'hidden';
 }
-function lbNav(dir){if(_lbImages.length<2)return;_lbIdx=(_lbIdx+dir+_lbImages.length)%_lbImages.length;lbShow();}
-function lbClose(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
-document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))lbClose();});
-document.addEventListener('keydown',e=>{
-  if(!document.getElementById('lightbox').classList.contains('open'))return;
-  if(e.key==='ArrowRight')lbNav(1);if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='Escape')lbClose();
+function lbNav(dir) {
+  if (_lbImgs.length < 2) return;
+  _lbIdx = (_lbIdx + dir + _lbImgs.length) % _lbImgs.length;
+  lbShow();
+}
+function lbClose() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) lbClose(); });
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'Escape')     lbClose();
 });
-let _swX=0;
-const lb=document.getElementById('lightbox');
-lb.addEventListener('touchstart',e=>{_swX=e.touches[0].clientX;},{passive:true});
-lb.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-_swX;if(Math.abs(d)>55)lbNav(d<0?1:-1);});
+let _swX = 0;
+document.getElementById('lightbox').addEventListener('touchstart', e => { _swX = e.touches[0].clientX; }, { passive: true });
+document.getElementById('lightbox').addEventListener('touchend',   e => { const d = e.changedTouches[0].clientX - _swX; if (Math.abs(d) > 55) lbNav(d < 0 ? 1 : -1); });
 
 loadGallery();
 </script>
