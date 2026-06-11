@@ -594,7 +594,7 @@ const FIXES_BASE={
   'drain-floor': {emoji:'⊙', fw:0.1, fh:0.1, col:'rgba(80,80,80,.7)',    minW:0.08,maxW:0.2, minH:0.08,maxH:0.2, isDrain:true,drainShape:'round'},
   'drain-shower':{emoji:'⊕', fw:0.15,fh:0.15,col:'rgba(60,60,60,.7)',    minW:0.08,maxW:0.25,minH:0.08,maxH:0.25,isDrain:true,drainShape:'round'},
 
-  door:          {emoji:'🚪',fw:0.9, fh:0.1, col:'rgba(200,180,150,.9)',  minW:0.6, maxW:1.2, minH:0.05,maxH:0.15,isDoor:true},
+  door:          {emoji:'🚪',fw:0.9, fh:0.05, col:'rgba(200,180,150,.9)',  minW:0.6, maxW:1.2, minH:0.025,maxH:0.1,isDoor:true},
   window:        {emoji:'🪟',fw:1.0, fh:0.1, col:'rgba(180,220,255,.6)',  minW:0.4, maxW:2.0, minH:0.05,maxH:0.15,isWindow:true},
 };
 
@@ -1796,27 +1796,26 @@ function initFixtureDragDrop(){
           // right wall: outward=(+1,0) → sin θ=+1, cos θ=0 → θ=PI/2
           let wallRot;
           if(d.isDoor||d.isWindow){
-            wallRot={top:Math.PI/2,bottom:Math.PI/2,left:Math.PI,right:0}[wall];
+            wallRot={top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall];
           } else {
             wallRot={top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
           }
           S.fixRotations[draggedName]=wallRot;
 
-          // 2. Position: centre sits fh0/2 from wall, fw0/2 is the slide range
-          // top/bottom: fw0 runs horizontally, fh0 goes into room vertically
-          // left/right: fw0 runs vertically, fh0 goes into room horizontally
-          if(wall==='top'){
-            my=fh0/2;
-            mx=Math.max(fw0/2,Math.min(roomW-fw0/2,mx));
-          }else if(wall==='bottom'){
-            my=roomL-fh0/2;
-            mx=Math.max(fw0/2,Math.min(roomW-fw0/2,mx));
-          }else if(wall==='left'){
-            mx=fh0/2;
-            my=Math.max(fw0/2,Math.min(roomL-fw0/2,my));
-          }else{
-            mx=roomW-fh0/2;
-            my=Math.max(fw0/2,Math.min(roomL-fw0/2,my));
+          // Door/window rotated 90°: fw0 is now perpendicular, fh0 runs along wall
+          const wallOff=fh0/2;
+          const slideHalf=fw0/2;
+          if(d.isDoor||d.isWindow){
+            // Half in wall: centre sits ON the wall line
+            if(wall==='top'){my=0;mx=Math.max(slideHalf,Math.min(roomW-slideHalf,mx));}
+            else if(wall==='bottom'){my=roomL;mx=Math.max(slideHalf,Math.min(roomW-slideHalf,mx));}
+            else if(wall==='left'){mx=0;my=Math.max(slideHalf,Math.min(roomL-slideHalf,my));}
+            else{mx=roomW;my=Math.max(slideHalf,Math.min(roomL-slideHalf,my));}
+          } else {
+            if(wall==='top'){my=wallOff;mx=Math.max(slideHalf,Math.min(roomW-slideHalf,mx));}
+            else if(wall==='bottom'){my=roomL-wallOff;mx=Math.max(slideHalf,Math.min(roomW-slideHalf,mx));}
+            else if(wall==='left'){mx=wallOff;my=Math.max(slideHalf,Math.min(roomL-slideHalf,my));}
+            else{mx=roomW-wallOff;my=Math.max(slideHalf,Math.min(roomL-slideHalf,my));}
           }
         }else{
           // Free placement — use post-rotation dims to clamp
@@ -2152,7 +2151,7 @@ function initFixtureDragDrop(){
         const wall=candidates.length>0?candidates[0].wall:null;
         if(wall){
           const d2=FIXES_BASE[touchDragName];
-          const wallRot=d2?.isDoor||d2?.isWindow?{top:Math.PI/2,bottom:Math.PI/2,left:Math.PI,right:0}[wall]:{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
+          const wallRot=d2?.isDoor||d2?.isWindow?{top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall]:{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
           S.fixRotations[touchDragName]=wallRot;
           if(wall==='top'){my=fh0/2;mx=Math.max(fw0/2,Math.min(roomW-fw0/2,mx));}
           else if(wall==='bottom'){my=roomL-fh0/2;mx=Math.max(fw0/2,Math.min(roomW-fw0/2,mx));}
@@ -2474,31 +2473,35 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
       if(wall){
         if(!S.fixRotations)S.fixRotations={};
         const wallRot=(d.isDoor||d.isWindow)
-          ?{top:Math.PI/2,bottom:Math.PI/2,left:Math.PI,right:0}[wall]
+          ?{top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall]
           :{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
         S.fixRotations[fixName]=wallRot;
-        if(wall==='top'){
-          my=fh0/2;
-          mx=Math.max(fw0/2,Math.min(rW-fw0/2,mx));
-        }else if(wall==='bottom'){
-          my=rL-fh0/2;
-          mx=Math.max(fw0/2,Math.min(rW-fw0/2,mx));
-        }else if(wall==='left'){
-          mx=fh0/2;
-          my=Math.max(fw0/2,Math.min(rL-fw0/2,my));
-        }else{
-          mx=rW-fh0/2;
-          my=Math.max(fw0/2,Math.min(rL-fw0/2,my));
+        const wallOff2=fh0/2;
+        const slideHalf2=fw0/2;
+        if(d.isDoor||d.isWindow){
+          if(wall==='top'){my=0;mx=Math.max(slideHalf2,Math.min(rW-slideHalf2,mx));}
+          else if(wall==='bottom'){my=rL;mx=Math.max(slideHalf2,Math.min(rW-slideHalf2,mx));}
+          else if(wall==='left'){mx=0;my=Math.max(slideHalf2,Math.min(rL-slideHalf2,my));}
+          else{mx=rW;my=Math.max(slideHalf2,Math.min(rL-slideHalf2,my));}
+        } else {
+          if(wall==='top'){my=wallOff2;mx=Math.max(slideHalf2,Math.min(rW-slideHalf2,mx));}
+          else if(wall==='bottom'){my=rL-wallOff2;mx=Math.max(slideHalf2,Math.min(rW-slideHalf2,mx));}
+          else if(wall==='left'){mx=wallOff2;my=Math.max(slideHalf2,Math.min(rL-slideHalf2,my));}
+          else{mx=rW-wallOff2;my=Math.max(slideHalf2,Math.min(rL-slideHalf2,my));}
         }
       } else {
+        if(!(d.isDoor||d.isWindow)){
+          const{fw:rfw,fh:rfh}=rotateFixDims(fixName);
+          mx=Math.max(rfw/2,Math.min(rW-rfw/2,mx));
+          my=Math.max(rfh/2,Math.min(rL-rfh/2,my));
+        }
+      }
+    } else {
+      if(!(d.isDoor||d.isWindow)){
         const{fw:rfw,fh:rfh}=rotateFixDims(fixName);
         mx=Math.max(rfw/2,Math.min(rW-rfw/2,mx));
         my=Math.max(rfh/2,Math.min(rL-rfh/2,my));
       }
-    } else {
-      const{fw:rfw,fh:rfh}=rotateFixDims(fixName);
-      mx=Math.max(rfw/2,Math.min(rW-rfw/2,mx));
-      my=Math.max(rfh/2,Math.min(rL-rfh/2,my));
     }
   }
   // For custom mode just place where dropped (polygon clamp is complex; leave free)
