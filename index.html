@@ -1796,7 +1796,7 @@ function initFixtureDragDrop(){
           // right wall: outward=(+1,0) → sin θ=+1, cos θ=0 → θ=PI/2
           let wallRot;
           if(d.isDoor||d.isWindow){
-            wallRot={top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall];
+            wallRot={top:Math.PI/2,bottom:Math.PI/2,left:Math.PI,right:0}[wall];
           } else {
             wallRot={top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
           }
@@ -2152,7 +2152,7 @@ function initFixtureDragDrop(){
         const wall=candidates.length>0?candidates[0].wall:null;
         if(wall){
           const d2=FIXES_BASE[touchDragName];
-          const wallRot=d2?.isDoor||d2?.isWindow?{top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall]:{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
+          const wallRot=d2?.isDoor||d2?.isWindow?{top:Math.PI/2,bottom:Math.PI/2,left:Math.PI,right:0}[wall]:{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
           S.fixRotations[touchDragName]=wallRot;
           if(wall==='top'){my=fh0/2;mx=Math.max(fw0/2,Math.min(roomW-fw0/2,mx));}
           else if(wall==='bottom'){my=roomL-fh0/2;mx=Math.max(fw0/2,Math.min(roomW-fw0/2,mx));}
@@ -2474,7 +2474,7 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
       if(wall){
         if(!S.fixRotations)S.fixRotations={};
         const wallRot=(d.isDoor||d.isWindow)
-          ?{top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall]
+          ?{top:Math.PI/2,bottom:Math.PI/2,left:Math.PI,right:0}[wall]
           :{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
         S.fixRotations[fixName]=wallRot;
         if(wall==='top'){
