@@ -349,7 +349,6 @@ function initMap() {
   });
 
   const markerMap = {};
-  const bounds = [];
 
   function makeIcon(large) {
     const s = large ? 20 : 11;
@@ -361,42 +360,69 @@ function initMap() {
   }
 
   async function geocode(suburb) {
+    // Check localStorage cache first
+    const cacheKey = 'geo_' + suburb.replace(/\s+/g, '_');
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const [lat, lon] = JSON.parse(cached);
+      return [lat, lon];
+    }
     const res = await fetch(
       'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(suburb + ', South Australia, Australia') + '&format=json&limit=1&countrycodes=au',
       { headers: { 'User-Agent': 'DrummondBathroomsOurWork/1.0' } }
     );
     const data = await res.json();
-    return data?.[0] ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : null;
+    if (data?.[0]) {
+      const pos = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      try { localStorage.setItem(cacheKey, JSON.stringify(pos)); } catch {}
+      return pos;
+    }
+    return null;
+  }
+
+  // Geocode with concurrency limit of 4 parallel requests
+  async function geocodeAll(suburbs) {
+    const results = new Array(suburbs.length).fill(null);
+    const CONCURRENCY = 4;
+    let idx = 0;
+    async function worker() {
+      while (idx < suburbs.length) {
+        const i = idx++;
+        try { results[i] = await geocode(suburbs[i]); } catch {}
+        // Small delay only for non-cached requests (Nominatim rate limit)
+        await new Promise(r => setTimeout(r, 280));
+      }
+    }
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+    return results;
   }
 
   (async () => {
-    for (const suburb of SUBURBS) {
+    // Geocode all in parallel
+    const positions = await geocodeAll(SUBURBS);
+    const bounds = [];
+    positions.forEach((pos, i) => {
+      const suburb = SUBURBS[i];
       const chip = document.getElementById('chip-' + suburb.replace(/\s+/g, '-'));
-      try {
-        const pos = await geocode(suburb);
-        if (pos) {
-          const marker = L.marker(pos, { icon: makeIcon(false) })
-            .bindTooltip(suburb, { permanent: false, direction: 'right' })
-            .addTo(map);
-          markerMap[suburb] = { marker, pos };
-          bounds.push(pos);
-          if (chip) {
-            chip.classList.remove('loading');
-            chip.addEventListener('click', () => {
-              document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-              chip.classList.add('active');
-              Object.entries(markerMap).forEach(([n, { marker: m }]) => m.setIcon(makeIcon(n === suburb)));
-              map.flyTo(pos, 13, { duration: 0.8 });
-            });
-          }
-        } else {
-          if (chip) { chip.classList.remove('loading'); chip.style.opacity = '.3'; }
+      if (pos) {
+        const marker = L.marker(pos, { icon: makeIcon(false) })
+          .bindTooltip(suburb, { permanent: false, direction: 'right' })
+          .addTo(map);
+        markerMap[suburb] = { marker, pos };
+        bounds.push(pos);
+        if (chip) {
+          chip.classList.remove('loading');
+          chip.addEventListener('click', () => {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            Object.entries(markerMap).forEach(([n, { marker: m }]) => m.setIcon(makeIcon(n === suburb)));
+            map.flyTo(pos, 13, { duration: 0.8 });
+          });
         }
-      } catch {
+      } else {
         if (chip) { chip.classList.remove('loading'); chip.style.opacity = '.3'; }
       }
-      await new Promise(r => setTimeout(r, 1100));
-    }
+    });
     if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40] });
     else if (bounds.length === 1) map.setView(bounds[0], 12);
   })();
