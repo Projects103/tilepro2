@@ -70,7 +70,7 @@ nav{flex-shrink:0;padding:0 2.5rem;height:62px;display:flex;align-items:center;j
 /* ══════════════════════════════════
    SERVICE AREA PANEL
 ══════════════════════════════════ */
-.map-panel{flex:1;display:grid;grid-template-columns:320px 1fr;overflow:hidden}
+.map-panel{flex:1;display:grid;grid-template-columns:320px 1fr;overflow:hidden;padding-top:1.2rem}
 .map-sidebar{overflow-y:auto;padding:2rem 1.5rem;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:1.2rem}
 .stat-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.75rem 1rem}
 .stat-v{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--terra);line-height:1}
@@ -214,7 +214,10 @@ function switchTab(tab) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('panel-' + tab).classList.add('active');
-  if (tab === 'map' && !mapInited) { mapInited = true; initMap(); }
+  // Map loads in background — just fix size when panel becomes visible
+  if (tab === 'map' && window._leafletMap) {
+    setTimeout(() => window._leafletMap.invalidateSize(), 50);
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -287,6 +290,17 @@ loadRenos();
 // Auto-switch tab from URL hash
 if (window.location.hash === '#map') switchTab('map');
 
+// Start map loading in background immediately (so it's ready when tab is opened)
+let mapIniting = false;
+function maybeInitMap() {
+  if (mapInited || mapIniting) return;
+  mapIniting = true;
+  initMap();
+  mapInited = true;
+}
+// Begin background init after a short delay so renos load first
+setTimeout(maybeInitMap, 1500);
+
 // ── Lightbox ─────────────────────────────────────────
 let _lbImgs = [], _lbIdx = 0;
 function lbOpen(jobId, idx) {
@@ -321,6 +335,7 @@ document.getElementById('lightbox').addEventListener('touchend', e => { const d 
 // ══════════════════════════════════════════════════════
 function initMap() {
   const map = L.map('map', { center: [-35.0, 138.75], zoom: 10, zoomControl: true, attributionControl: false });
+  window._leafletMap = map;
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19 }).addTo(map);
 
   document.getElementById('statCount').textContent = SUBURBS.length;
