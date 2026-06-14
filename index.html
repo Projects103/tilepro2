@@ -2522,6 +2522,7 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
           ?{top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall]
           :{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
         S.fixRotations[placeKey]=wallRot;
+        console.log('[place] placeKey:',placeKey,'wall:',wall,'wallRot:',wallRot);
         const wallOff2=fh0/2;
         const slideHalf2=fw0/2;
         if(d.isDoor||d.isWindow){
