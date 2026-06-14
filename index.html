@@ -2538,13 +2538,10 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
       }
     }
   }
-  // For custom mode just place where dropped (polygon clamp is complex; leave free)
-  // All fixtures allow multiple instances
+  // All fixtures allow multiple instances — always find a unique key
   let placeKey=fixName;
-  if(isMultiOk){
-    let idx=2;
-    while(S.fixes[placeKey]!==undefined){placeKey=fixName+'-'+idx;idx++;}
-  }
+  let pkIdx=2;
+  while(S.fixes[placeKey]!==undefined){placeKey=fixName+'-'+pkIdx;pkIdx++;}
   // Custom mode — snap to nearest wall segment for wall fixtures
   if(S.shapeMode==='custom'&&S.customClosed&&S.customPts.length>=3){
     const WALL_FIX2=['toilet','vanity','bath','door','window'];
