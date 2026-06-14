@@ -1571,9 +1571,8 @@ function initFixtureDragDrop(){
     }
 
     if(S.activeFix){
-      placeFixtureAtEvent(e,cv,false);
+      placeFixtureAtEvent(e,cv,true); // always snap to wall for active fix
       S.selectedFix=null;
-      // Keep activeFix active so user can place more — click palette btn again or press Esc to stop
       drawPlan();
       return;
     }
