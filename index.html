@@ -1276,7 +1276,8 @@ function hitTestCustomWall(cx,cy){
 }
 
 function drawOneFix(ctx,ox,oy,scale,name,pos){
-  const d=FIXES_DEF[name];
+  const baseName=name.replace(/-\d+$/,''); // strip -2, -3 suffix
+  const d=FIXES_DEF[name]; // already strips via getFixDef
   if(!d||!pos)return;
   const isSelected=S.selectedFix===name;
   const rot=getFixtureRotation(name);
@@ -1405,9 +1406,9 @@ function drawOneFix(ctx,ox,oy,scale,name,pos){
   // ── STANDARD FIXTURE ──
   ctx.shadowColor='rgba(43,58,74,.18)';ctx.shadowBlur=isSelected?14:8;ctx.shadowOffsetY=2;
   const shape=d.shape||'Rectangle';
-  if(name==='shower'&&(shape==='L-shape'||shape==='Corner Quadrant')){
+  if(baseName==='shower'&&(shape==='L-shape'||shape==='Corner Quadrant')){
     drawShowerShape(ctx,-hfw,-hfh,fw,fh,shape,d.col,isSelected);
-  } else if(name==='toilet'){
+  } else if(baseName==='toilet'){
     // Unrotated: fw=0.42 (width), fh=0.68 (depth)
     // Cistern = back = TOP of local space (-y). Bowl faces INTO room (+y direction).
     // ctx.rotate(rot) spins the whole symbol to face the correct wall.
@@ -1426,7 +1427,7 @@ function drawOneFix(ctx,ox,oy,scale,name,pos){
     // Seat outline (inner oval)
     ctx.strokeStyle='rgba(43,58,74,0.3)';ctx.lineWidth=1;
     ctx.beginPath();ctx.ellipse(0,bowlCY,hfw*0.62,ufh0*0.24,0,0,Math.PI*2);ctx.stroke();
-  } else if(name==='vanity'){
+  } else if(baseName==='vanity'){
     ctx.fillStyle=d.col;ctx.strokeStyle=isSelected?'#BF7B5E':'#2B3A4A';ctx.lineWidth=isSelected?2.5:1.5;
     ctx.beginPath();ctx.rect(-hfw,-hfh,ufw0,ufh0);ctx.fill();ctx.stroke();
     const basinR=Math.min(hfw,hfh)*0.58;
