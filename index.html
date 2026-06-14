@@ -599,10 +599,12 @@ const FIXES_BASE={
 };
 
 function getFixDef(name){
-  const base=FIXES_BASE[name];
+  const baseName=name.replace(/-\d+$/,''); // strip -2, -3 suffix
+  const base=FIXES_BASE[baseName];
   const isDrain=base?.isDrain;
   if(!base)return null;
-  const ovr=S.fixSizes&&S.fixSizes[name]||{};
+  // Size overrides stored under full name (toilet-2) or base name
+  const ovr=(S.fixSizes&&(S.fixSizes[name]||S.fixSizes[baseName]))||{};
   return{...base,...ovr};
 }
 // Proxy so FIXES_DEF.toilet etc. work
@@ -2340,11 +2342,12 @@ function hitTestFixture(cx,cy){
 // ══════════════════════════════════════════════
 function openFixtureEditor(name){
   S.selectedFix=name;
-  const d=FIXES_DEF[name];
-  const base=FIXES_BASE[name];
+  const baseName=name.replace(/-\d+$/,''); // strip -2, -3 suffix
+  const d=FIXES_DEF[baseName];
+  const base=FIXES_BASE[baseName];
   const isDrain=base?.isDrain;
   const ovr=S.fixSizes[name]||{};
-  const isShower=name==='shower';
+  const isShower=baseName==='shower';
 
   // Remove any existing modal
   document.getElementById('fixModal')?.remove();
