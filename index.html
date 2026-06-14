@@ -1768,7 +1768,7 @@ function initFixtureDragDrop(){
 
     // Fixtures that wall-snap and auto-rotate
     const WALL_FIXTURES=['toilet','vanity','bath','door','window'];
-    const SNAP_DIST=0.25; // metres — distance from wall to trigger snap
+    const SNAP_DIST=0.12; // metres — distance from wall to trigger snap
 
     if(S.shapeMode==='rect'){
       // ── RECTANGULAR ROOM ────────────────────────────────────────────────────
@@ -2172,7 +2172,7 @@ function initFixtureDragDrop(){
     const SNAP_M=0.12;
     const fw0=d.fw,fh0=d.fh;
     const WALL_FIXTURES=['toilet','vanity','bath','door','window'];
-    const SNAP_DIST=0.25;
+    const SNAP_DIST=0.12;
 
     if(S.shapeMode==='rect'){
       if(WALL_FIXTURES.includes(touchDragName)){
@@ -2497,13 +2497,18 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
   if(!d)return;
   const hw=d.fw/2,hh=d.fh/2;
 
+  // Generate unique key first so rotation is stored under the right key
+  let placeKey=fixName;
+  let pkIdx=2;
+  while(S.fixes[placeKey]!==undefined){placeKey=fixName+'-'+pkIdx;pkIdx++;}
+
   if(S.shapeMode==='rect'){
     const rW=S.room.w,rL=S.room.l;
     const WALL_FIXTURES=['toilet','vanity','bath','door','window'];
     if(snapWall && WALL_FIXTURES.includes(fixName)){
       const fw0=d.fw, fh0=d.fh;
       const isDoorOrWindow=d.isDoor||d.isWindow;
-      const snapDist=isDoorOrWindow?Infinity:fh0/2+0.25; // doors/windows always snap
+      const snapDist=isDoorOrWindow?Infinity:fh0/2+0.12; // tighter snap zone
       const walls=[
         {wall:'top',    dist:my},
         {wall:'bottom', dist:rL-my},
@@ -2517,7 +2522,7 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
         const wallRot=(d.isDoor||d.isWindow)
           ?{top:0,bottom:0,left:Math.PI/2,right:Math.PI/2}[wall]
           :{top:0,bottom:Math.PI,left:Math.PI*1.5,right:Math.PI*0.5}[wall];
-        S.fixRotations[fixName]=wallRot;
+        S.fixRotations[placeKey]=wallRot;
         const wallOff2=fh0/2;
         const slideHalf2=fw0/2;
         if(d.isDoor||d.isWindow){
@@ -2546,10 +2551,7 @@ function placeFixtureAtEvent(e,cv,snapWall=false){
       }
     }
   }
-  // All fixtures allow multiple instances — always find a unique key
-  let placeKey=fixName;
-  let pkIdx=2;
-  while(S.fixes[placeKey]!==undefined){placeKey=fixName+'-'+pkIdx;pkIdx++;}
+  // placeKey already generated above
   // Custom mode — snap to nearest wall segment for wall fixtures
   if(S.shapeMode==='custom'&&S.customClosed&&S.customPts.length>=3){
     const WALL_FIX2=['toilet','vanity','bath','door','window'];
