@@ -1569,10 +1569,8 @@ function initFixtureDragDrop(){
 
     if(S.activeFix){
       placeFixtureAtEvent(e,cv,false);
-      S.selectedFix=S.activeFix;
-      S.activeFix=null;
-      document.querySelectorAll('.draggable-fix').forEach(b=>b.classList.remove('on'));
-      cv.style.cursor='default';
+      S.selectedFix=null;
+      // Keep activeFix active so user can place more — click palette btn again or press Esc to stop
       drawPlan();
       return;
     }
@@ -1953,6 +1951,12 @@ function initFixtureDragDrop(){
       if(cw){cw.rot=((cw.rot||0)+Math.PI/4)%(Math.PI*2);drawPlan();e.preventDefault();return;}
     }
     if(!S.selectedFix)return;
+    if(e.key==='Escape'){
+      S.activeFix=null;
+      document.querySelectorAll('.draggable-fix').forEach(b=>b.classList.remove('on'));
+      const cv2=document.getElementById('floorCanvas');if(cv2)cv2.style.cursor='default';
+      drawPlan();
+    }
     if(e.key==='r'||e.key==='R'){
       if(!S.fixRotations[S.selectedFix])S.fixRotations[S.selectedFix]=0;
       const fixBase=S.selectedFix&&S.selectedFix.replace(/-\d+$/,'');
